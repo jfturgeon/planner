@@ -1,1 +1,737 @@
-<h1>Contact</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Episode Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c14;
+    --surface: #0f1420;
+    --surface2: #141929;
+    --border: #1e2a42;
+    --accent-x: #00e5ff;
+    --accent-trek: #ffd700;
+    --text: #c8d8f0;
+    --text-muted: #5a6a8a;
+    --checked: #00ff88;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    padding: 0 0 60px;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(0,229,255,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(255,215,0,0.03) 0%, transparent 60%);
+  }
+
+  header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-x), var(--accent-trek), transparent);
+  }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.4rem, 4vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: 0.25em;
+    background: linear-gradient(135deg, var(--accent-x) 0%, #ffffff 50%, var(--accent-trek) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+
+  .global-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat-box {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-x);
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 20px 20px 0;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .tab {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    padding: 12px 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .tab:first-child { border-radius: 8px 0 0 0; border-right: none; }
+  .tab:last-child { border-radius: 0 8px 0 0; }
+
+  .tab.active-x {
+    background: rgba(0,229,255,0.08);
+    border-color: var(--accent-x);
+    color: var(--accent-x);
+  }
+
+  .tab.active-trek {
+    background: rgba(255,215,0,0.08);
+    border-color: var(--accent-trek);
+    color: var(--accent-trek);
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .show-panel {
+    display: none;
+    border: 1px solid var(--border);
+    border-radius: 0 8px 8px 8px;
+    overflow: hidden;
+  }
+
+  .show-panel.active { display: block; }
+
+  /* Show header */
+  .show-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .show-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .show-x .show-title { color: var(--accent-x); }
+  .show-trek .show-title { color: var(--accent-trek); }
+
+  .show-progress {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .progress-bar-wrap {
+    width: 180px;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+
+  .show-x .progress-bar-fill { background: var(--accent-x); }
+  .show-trek .progress-bar-fill { background: var(--accent-trek); }
+
+  .progress-text {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  /* Series group (Star Trek) */
+  .series-group {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .series-group:last-child { border-bottom: none; }
+
+  .series-header {
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    background: var(--surface2);
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .series-header:hover { background: rgba(255,215,0,0.05); }
+
+  .series-color-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .series-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--accent-trek);
+    flex: 1;
+  }
+
+  .series-full-name {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+  }
+
+  .series-mini-progress {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .series-chevron {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+  }
+
+  .series-group.collapsed .series-chevron { transform: rotate(-90deg); }
+  .series-group.collapsed .series-body { display: none; }
+
+  /* Season row */
+  .season-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 24px;
+    border-top: 1px solid rgba(30,42,66,0.5);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .season-info {
+    min-width: 130px;
+    flex-shrink: 0;
+  }
+
+  .season-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+
+  .season-year {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    opacity: 0.7;
+  }
+
+  .episodes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .ep-checkbox {
+    display: none;
+  }
+
+  .ep-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--surface);
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .ep-label:hover {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+
+  .ep-checkbox:checked + .ep-label {
+    background: rgba(0,255,136,0.15);
+    border-color: var(--checked);
+    color: var(--checked);
+  }
+
+  /* X-Files specific color for checked */
+  .show-x .ep-checkbox:checked + .ep-label {
+    background: rgba(0,229,255,0.12);
+    border-color: var(--accent-x);
+    color: var(--accent-x);
+  }
+
+  .season-check-all {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .season-check-all:hover {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+
+  .reset-btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.1em;
+  }
+
+  .reset-btn:hover {
+    border-color: #ff4444;
+    color: #ff4444;
+  }
+
+  @media (max-width: 600px) {
+    .season-row { padding: 8px 12px; }
+    .show-header { padding: 16px 12px; }
+    .series-header { padding: 12px; }
+    .season-info { min-width: 100px; }
+    .ep-label { width: 22px; height: 22px; font-size: 0.55rem; }
+    .progress-bar-wrap { width: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📺 EPISODE TRACKER</h1>
+  <p class="subtitle">Suivi de visionnement personnel</p>
+  <div class="global-stats">
+    <div class="stat-box">
+      <div class="stat-num" id="global-watched">0</div>
+      <div class="stat-label">Épisodes vus</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="global-total">0</div>
+      <div class="stat-label">Total épisodes</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="global-pct">0%</div>
+      <div class="stat-label">Complété</div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab active-x" onclick="switchTab('xfiles')">✦ X-FILES</button>
+    <button class="tab" onclick="switchTab('trek')">⬡ STAR TREK</button>
+  </div>
+
+  <!-- X-FILES PANEL -->
+  <div class="show-panel show-x active" id="panel-xfiles">
+    <div class="show-header">
+      <div class="show-title">THE X-FILES</div>
+      <div class="show-progress">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="xfiles-bar" style="width:0%"></div>
+        </div>
+        <span class="progress-text" id="xfiles-progress">0 / 0</span>
+        <button class="reset-btn" onclick="resetShow('xfiles')">RESET</button>
+      </div>
+    </div>
+    <div id="xfiles-seasons"></div>
+  </div>
+
+  <!-- STAR TREK PANEL -->
+  <div class="show-panel show-trek" id="panel-trek">
+    <div class="show-header">
+      <div class="show-title">STAR TREK</div>
+      <div class="show-progress">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="trek-bar" style="width:0%"></div>
+        </div>
+        <span class="progress-text" id="trek-progress">0 / 0</span>
+        <button class="reset-btn" onclick="resetShow('trek')">RESET</button>
+      </div>
+    </div>
+    <div id="trek-series"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const XFILES = [
+  { season: 1, year: '1993',      eps: 24 },
+  { season: 2, year: '1994',      eps: 25 },
+  { season: 3, year: '1995',      eps: 24 },
+  { season: 4, year: '1996',      eps: 24 },
+  { season: 5, year: '1997',      eps: 20 },
+  { season: 6, year: '1998',      eps: 22 },
+  { season: 7, year: '1999',      eps: 22 },
+  { season: 8, year: '2000',      eps: 21 },
+  { season: 9, year: '2001',      eps: 20 },
+  { season: 10, year: '2016',     eps: 6  },
+  { season: 11, year: '2018',     eps: 10 },
+];
+
+const STARTREK = [
+  {
+    id: 'tos', name: 'TOS', fullName: 'The Original Series', color: '#ff6b6b',
+    seasons: [
+      { season: 1, year: '1966-1967', eps: 29 },
+      { season: 2, year: '1967-1968', eps: 26 },
+      { season: 3, year: '1968-1969', eps: 24 },
+    ]
+  },
+  {
+    id: 'tas', name: 'TAS', fullName: 'The Animated Series', color: '#ff9f43',
+    seasons: [
+      { season: 1, year: '1973-1974', eps: 16 },
+      { season: 2, year: '1974',      eps: 6  },
+    ]
+  },
+  {
+    id: 'tng', name: 'TNG', fullName: 'The Next Generation', color: '#ffd700',
+    seasons: [
+      { season: 1, year: '1987-1988', eps: 25 },
+      { season: 2, year: '1988-1989', eps: 22 },
+      { season: 3, year: '1989-1990', eps: 26 },
+      { season: 4, year: '1990-1991', eps: 26 },
+      { season: 5, year: '1991-1992', eps: 26 },
+      { season: 6, year: '1992-1993', eps: 26 },
+      { season: 7, year: '1993-1994', eps: 26 },
+    ]
+  },
+  {
+    id: 'ds9', name: 'DS9', fullName: 'Deep Space Nine', color: '#54a0ff',
+    seasons: [
+      { season: 1, year: '1993',      eps: 20 },
+      { season: 2, year: '1993-1994', eps: 26 },
+      { season: 3, year: '1994-1995', eps: 26 },
+      { season: 4, year: '1995-1996', eps: 26 },
+      { season: 5, year: '1996-1997', eps: 26 },
+      { season: 6, year: '1997-1998', eps: 26 },
+      { season: 7, year: '1998-1999', eps: 26 },
+    ]
+  },
+  {
+    id: 'voy', name: 'VOY', fullName: 'Voyager', color: '#5f27cd',
+    seasons: [
+      { season: 1, year: '1995',      eps: 16 },
+      { season: 2, year: '1995-1996', eps: 26 },
+      { season: 3, year: '1996-1997', eps: 26 },
+      { season: 4, year: '1997-1998', eps: 26 },
+      { season: 5, year: '1998-1999', eps: 26 },
+      { season: 6, year: '1999-2000', eps: 26 },
+      { season: 7, year: '2000-2001', eps: 24 },
+    ]
+  },
+  {
+    id: 'ent', name: 'ENT', fullName: 'Enterprise', color: '#00d2d3',
+    seasons: [
+      { season: 1, year: '2001-2002', eps: 26 },
+      { season: 2, year: '2002-2003', eps: 26 },
+      { season: 3, year: '2003-2004', eps: 24 },
+      { season: 4, year: '2004-2005', eps: 22 },
+    ]
+  },
+  {
+    id: 'dsc', name: 'DSC', fullName: 'Discovery', color: '#ff9ff3',
+    seasons: [
+      { season: 1, year: '2017-2018', eps: 15 },
+      { season: 2, year: '2019',      eps: 14 },
+      { season: 3, year: '2020-2021', eps: 13 },
+      { season: 4, year: '2021-2022', eps: 13 },
+      { season: 5, year: '2024',      eps: 10 },
+    ]
+  },
+  {
+    id: 'pic', name: 'PIC', fullName: 'Picard', color: '#a29bfe',
+    seasons: [
+      { season: 1, year: '2020',      eps: 10 },
+      { season: 2, year: '2022',      eps: 10 },
+      { season: 3, year: '2023',      eps: 10 },
+    ]
+  },
+  {
+    id: 'snw', name: 'SNW', fullName: 'Strange New Worlds', color: '#74b9ff',
+    seasons: [
+      { season: 1, year: '2022',      eps: 10 },
+      { season: 2, year: '2023',      eps: 10 },
+      { season: 3, year: '2024',      eps: 10 },
+    ]
+  },
+  {
+    id: 'low', name: 'LOW', fullName: 'Lower Decks', color: '#55efc4',
+    seasons: [
+      { season: 1, year: '2020',      eps: 10 },
+      { season: 2, year: '2021',      eps: 10 },
+      { season: 3, year: '2022',      eps: 10 },
+      { season: 4, year: '2023',      eps: 10 },
+      { season: 5, year: '2024',      eps: 10 },
+    ]
+  },
+  {
+    id: 'pro', name: 'PRO', fullName: 'Prodigy', color: '#fd79a8',
+    seasons: [
+      { season: 1, year: '2021-2022', eps: 20 },
+      { season: 2, year: '2024',      eps: 20 },
+    ]
+  },
+];
+
+// ============================================================
+// STATE (localStorage)
+// ============================================================
+function getKey(show, seriesId, season, ep) {
+  if (show === 'xfiles') return `xf_s${season}_e${ep}`;
+  return `st_${seriesId}_s${season}_e${ep}`;
+}
+
+function isChecked(key) {
+  return localStorage.getItem(key) === '1';
+}
+
+function toggleEp(key, checked) {
+  if (checked) localStorage.setItem(key, '1');
+  else localStorage.removeItem(key);
+  updateStats();
+}
+
+// ============================================================
+// BUILD X-FILES
+// ============================================================
+function buildXFiles() {
+  const container = document.getElementById('xfiles-seasons');
+  XFILES.forEach(({ season, year, eps }) => {
+    const row = document.createElement('div');
+    row.className = 'season-row';
+    row.innerHTML = `
+      <div class="season-info">
+        <div class="season-label">SAISON ${season}</div>
+        <div class="season-year">${year}</div>
+      </div>
+      <div class="episodes-grid" id="xf-grid-${season}"></div>
+      <button class="season-check-all" onclick="checkAllSeason('xfiles','',${season},${eps})">Tout cocher</button>
+    `;
+    container.appendChild(row);
+    const grid = document.getElementById(`xf-grid-${season}`);
+    for (let e = 1; e <= eps; e++) {
+      const key = getKey('xfiles', '', season, e);
+      const checked = isChecked(key) ? 'checked' : '';
+      grid.innerHTML += `
+        <input type="checkbox" class="ep-checkbox" id="${key}" ${checked} onchange="toggleEp('${key}', this.checked)">
+        <label class="ep-label" for="${key}">${e}</label>
+      `;
+    }
+  });
+}
+
+// ============================================================
+// BUILD STAR TREK
+// ============================================================
+function buildStarTrek() {
+  const container = document.getElementById('trek-series');
+  STARTREK.forEach(series => {
+    const group = document.createElement('div');
+    group.className = 'series-group';
+    group.id = `sg-${series.id}`;
+
+    const totalEps = series.seasons.reduce((a, s) => a + s.eps, 0);
+
+    group.innerHTML = `
+      <div class="series-header" onclick="toggleGroup('${series.id}')">
+        <div class="series-color-dot" style="background:${series.color}"></div>
+        <span class="series-name">${series.name}</span>
+        <span class="series-full-name">${series.fullName}</span>
+        <span class="series-mini-progress" id="mini-${series.id}">0 / ${totalEps}</span>
+        <span class="series-chevron">▼</span>
+      </div>
+      <div class="series-body" id="sb-${series.id}"></div>
+    `;
+    container.appendChild(group);
+
+    const body = document.getElementById(`sb-${series.id}`);
+    series.seasons.forEach(({ season, year, eps }) => {
+      const row = document.createElement('div');
+      row.className = 'season-row';
+      row.innerHTML = `
+        <div class="season-info">
+          <div class="season-label">SAISON ${season}</div>
+          <div class="season-year">${year}</div>
+        </div>
+        <div class="episodes-grid" id="st-grid-${series.id}-${season}"></div>
+        <button class="season-check-all" onclick="checkAllSeason('trek','${series.id}',${season},${eps})">Tout cocher</button>
+      `;
+      body.appendChild(row);
+      const grid = document.getElementById(`st-grid-${series.id}-${season}`);
+      for (let e = 1; e <= eps; e++) {
+        const key = getKey('trek', series.id, season, e);
+        const checked = isChecked(key) ? 'checked' : '';
+        grid.innerHTML += `
+          <input type="checkbox" class="ep-checkbox" id="${key}" ${checked} onchange="toggleEp('${key}', this.checked)">
+          <label class="ep-label" for="${key}">${e}</label>
+        `;
+      }
+    });
+  });
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function checkAllSeason(show, seriesId, season, eps) {
+  for (let e = 1; e <= eps; e++) {
+    const key = getKey(show, seriesId, season, e);
+    const cb = document.getElementById(key);
+    if (cb) { cb.checked = true; localStorage.setItem(key, '1'); }
+  }
+  updateStats();
+}
+
+function toggleGroup(id) {
+  const group = document.getElementById(`sg-${id}`);
+  group.classList.toggle('collapsed');
+}
+
+function switchTab(tab) {
+  document.getElementById('panel-xfiles').classList.remove('active');
+  document.getElementById('panel-trek').classList.remove('active');
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.remove('active-x', 'active-trek');
+  });
+  if (tab === 'xfiles') {
+    document.getElementById('panel-xfiles').classList.add('active');
+    document.querySelectorAll('.tab')[0].classList.add('active-x');
+  } else {
+    document.getElementById('panel-trek').classList.add('active');
+    document.querySelectorAll('.tab')[1].classList.add('active-trek');
+  }
+}
+
+function resetShow(show) {
+  if (!confirm('Réinitialiser tout le suivi pour cette série ?')) return;
+  const prefix = show === 'xfiles' ? 'xf_' : 'st_';
+  Object.keys(localStorage).filter(k => k.startsWith(prefix)).forEach(k => localStorage.removeItem(k));
+  document.querySelectorAll(`#panel-${show === 'xfiles' ? 'xfiles' : 'trek'} .ep-checkbox`).forEach(cb => { cb.checked = false; });
+  updateStats();
+}
+
+function updateStats() {
+  // X-Files
+  let xfWatched = 0, xfTotal = 0;
+  XFILES.forEach(({ season, eps }) => {
+    xfTotal += eps;
+    for (let e = 1; e <= eps; e++) {
+      if (isChecked(getKey('xfiles', '', season, e))) xfWatched++;
+    }
+  });
+  document.getElementById('xfiles-progress').textContent = `${xfWatched} / ${xfTotal}`;
+  document.getElementById('xfiles-bar').style.width = xfTotal ? `${(xfWatched/xfTotal*100).toFixed(1)}%` : '0%';
+
+  // Star Trek
+  let stWatched = 0, stTotal = 0;
+  STARTREK.forEach(series => {
+    let sw = 0, st = 0;
+    series.seasons.forEach(({ season, eps }) => {
+      st += eps;
+      for (let e = 1; e <= eps; e++) {
+        if (isChecked(getKey('trek', series.id, season, e))) sw++;
+      }
+    });
+    stWatched += sw;
+    stTotal += st;
+    const mini = document.getElementById(`mini-${series.id}`);
+    if (mini) mini.textContent = `${sw} / ${st}`;
+  });
+  document.getElementById('trek-progress').textContent = `${stWatched} / ${stTotal}`;
+  document.getElementById('trek-bar').style.width = stTotal ? `${(stWatched/stTotal*100).toFixed(1)}%` : '0%';
+
+  // Global
+  const gw = xfWatched + stWatched;
+  const gt = xfTotal + stTotal;
+  document.getElementById('global-watched').textContent = gw;
+  document.getElementById('global-total').textContent = gt;
+  document.getElementById('global-pct').textContent = gt ? `${Math.round(gw/gt*100)}%` : '0%';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+buildXFiles();
+buildStarTrek();
+updateStats();
+</script>
+</body>
+</html>
