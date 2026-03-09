@@ -63,6 +63,15 @@ header {
 }
 .header-right { display:flex; align-items:center; gap:10px; }
 .header-right label { font-size:.78rem; color:#aaa; white-space:nowrap; }
+.hdr-data-btns { display:flex; gap:6px; }
+.hdr-btn-export, .hdr-btn-import {
+  padding:5px 10px; border-radius:6px; font-size:.75rem; font-weight:600;
+  font-family:'DM Sans',sans-serif; cursor:pointer; transition:all .15s; white-space:nowrap;
+}
+.hdr-btn-export { background:#3d3a35; border:1px solid #555; color:#aaa; }
+.hdr-btn-export:hover { background:#555; color:#f4f1eb; }
+.hdr-btn-import { background:#3d3a35; border:1px solid var(--accent); color:var(--accent); }
+.hdr-btn-import:hover { background:var(--accent); color:#fff; }
 select.hdr-sel {
   background:#3d3a35; color:#f4f1eb; border:1px solid #555; border-radius:6px;
   padding:4px 8px; font-family:'DM Sans',sans-serif; font-size:.82rem; cursor:pointer;
@@ -748,6 +757,10 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   padding: 24px;
   max-width: 1400px;
   margin: 0 auto;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .tr-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -781,9 +794,10 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 .tr-stat-num { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--accent2); }
 .tr-stat-lbl { font-size: .65rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
 
-.tr-content { display: flex; gap: 16px; }
+.tr-content { display: flex; gap: 16px; flex: 1; min-height: 0; overflow: hidden; }
 .tr-series-list {
   width: 180px; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px;
+  overflow-y: auto;
 }
 .tr-series-btn {
   padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
@@ -797,8 +811,9 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 
 .tr-seasons {
   flex: 1; display: flex; flex-direction: column; gap: 12px;
-  max-height: calc(100vh - 220px); overflow-y: auto;
-  padding-right: 4px;
+  overflow-y: auto;
+  padding-right: 6px;
+  min-height: 0;
 }
 .tr-season {
   background: var(--surface); border: 1px solid var(--border);
@@ -899,6 +914,10 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
       <option value="0">Dimanche</option>
       <option value="1">Lundi</option>
     </select>
+    <div class="hdr-data-btns">
+      <button class="hdr-btn-export" id="btnExportData">⬇ Export</button>
+      <button class="hdr-btn-import" id="btnImportData">⬆ Import</button>
+    </div>
   </div>
 </header>
 
@@ -1785,6 +1804,7 @@ function renderWvDays(dates, wk, wdata){
     taskSec.appendChild(taskHd);
 
     const taskList=document.createElement('div');
+    taskList.dataset.taskrows = dk;
     const NUM_TASK_ROWS=25;
 
     const saveTasks=()=>{ appData[dk]=entry; saveData(appData); };
@@ -2531,18 +2551,20 @@ function trSaveSched(d) {
 // ── STATE ──────────────────────────────────────────────────────────────────
 let trCurrentShow = 'startrek';
 let trCurrentSeries = 'tng';
+let trShowTitles = true;
+const trOpenSeasons = new Set(); // tracks 'seriesId_sn' keys
 
 // Pre-check already-watched episodes (TNG S3E4-6, X-Files S6E4-6)
 (function initWatched() {
   const w = trLoadWatched();
   let changed = false;
   // TNG S3 E4, E5, E6
-  ['4','5','6'].forEach(e => {
+  [4,5,6].forEach(e => {
     const k = epKey('startrek','tng',3,e);
     if (!w[k]) { w[k] = true; changed = true; }
   });
   // X-Files S6 E4, E5, E6
-  ['4','5','6'].forEach(e => {
+  [4,5,6].forEach(e => {
     const k = epKey('xfiles','xf',6,e);
     if (!w[k]) { w[k] = true; changed = true; }
   });
@@ -2562,7 +2584,10 @@ function renderTracker() {
   title.textContent = '📺 Suivi d\'épisodes';
   hdr.appendChild(title);
 
-  // Show tabs
+  // Controls row: show tabs + toggle titles
+  const ctrlRow = document.createElement('div');
+  ctrlRow.style.cssText = 'display:flex;align-items:center;gap:12px;flex-wrap:wrap;';
+
   const tabs = document.createElement('div'); tabs.className = 'tr-show-tabs';
   TRACKER_SHOWS.forEach(show => {
     const tb = document.createElement('button');
@@ -2571,7 +2596,15 @@ function renderTracker() {
     tb.addEventListener('click', () => { trCurrentShow = show.id; trCurrentSeries = show.series[0].id; renderTracker(); });
     tabs.appendChild(tb);
   });
-  hdr.appendChild(tabs);
+  ctrlRow.appendChild(tabs);
+
+  const toggleTitlesBtn = document.createElement('button');
+  toggleTitlesBtn.style.cssText = 'padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:.78rem;font-family:\'DM Sans\',sans-serif;color:var(--muted);transition:all .15s;white-space:nowrap;';
+  toggleTitlesBtn.textContent = trShowTitles ? '🙈 Masquer titres' : '👁 Afficher titres';
+  toggleTitlesBtn.addEventListener('click', () => { trShowTitles = !trShowTitles; renderTracker(); });
+  ctrlRow.appendChild(toggleTitlesBtn);
+
+  hdr.appendChild(ctrlRow);
   view.appendChild(hdr);
 
   const show = TRACKER_SHOWS.find(s => s.id === trCurrentShow);
@@ -2624,25 +2657,73 @@ function renderTracker() {
       let tot = sn.eps.length, wat = 0;
       sn.eps.forEach(ep => { if (watched[epKey(show.id, series.id, sn.n, ep.e)]) wat++; });
       const pct = Math.round(wat/tot*100);
+      const openKey = `${series.id}_${sn.n}`;
+
+      // Default open: in-progress, or S1 if nothing watched
+      if (!trOpenSeasons.has('__init_'+openKey)) {
+        if ((wat > 0 && wat < tot) || (sn.n === 1 && wat === 0)) trOpenSeasons.add(openKey);
+        trOpenSeasons.add('__init_'+openKey);
+      }
+      const isOpen = trOpenSeasons.has(openKey);
 
       const seasonDiv = document.createElement('div');
-      seasonDiv.className = 'tr-season' + (wat > 0 && wat < tot ? ' open' : wat === tot ? '' : ' open');
-      // Auto-open current or in-progress seasons
-      if (wat > 0 && wat < tot) seasonDiv.classList.add('open');
-      else if (sn.n === 1 && wat === 0) seasonDiv.classList.add('open'); // open S1 if nothing watched
+      seasonDiv.className = 'tr-season' + (isOpen ? ' open' : '');
 
       const hd = document.createElement('div'); hd.className = 'tr-season-hd';
-      hd.innerHTML = `
-        <span class="tr-season-title">Saison ${sn.n}</span>
-        <span class="tr-season-meta">
-          <span class="tr-season-prog">${wat}/${tot}</span>
-          <span class="tr-season-bar-wrap"><span class="tr-season-bar" style="width:${pct}%"></span></span>
-          <span class="tr-season-chevron">▼</span>
-        </span>`;
-      hd.addEventListener('click', () => { seasonDiv.classList.toggle('open'); });
+      const allChecked = wat === tot;
+      const titleSpan = document.createElement('span'); titleSpan.className = 'tr-season-title';
+      titleSpan.textContent = `Saison ${sn.n}`;
+
+      const checkAllBtn = document.createElement('button');
+      checkAllBtn.style.cssText = 'padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:.68rem;font-family:\'DM Sans\',sans-serif;color:var(--muted);transition:all .15s;flex-shrink:0;';
+      checkAllBtn.textContent = allChecked ? '☐ Tout décocher' : '☑ Tout cocher';
+
+      const progSpan = document.createElement('span'); progSpan.className = 'tr-season-prog';
+      progSpan.textContent = `${wat}/${tot}`;
+      const barWrap = document.createElement('span'); barWrap.className = 'tr-season-bar-wrap';
+      const bar = document.createElement('span'); bar.className = 'tr-season-bar'; bar.style.width = pct+'%';
+      barWrap.appendChild(bar);
+      const chevron = document.createElement('span'); chevron.className = 'tr-season-chevron'; chevron.textContent = '▼';
+      const metaSpan = document.createElement('span'); metaSpan.className = 'tr-season-meta';
+      metaSpan.appendChild(progSpan); metaSpan.appendChild(barWrap); metaSpan.appendChild(chevron);
+
+      hd.appendChild(titleSpan); hd.appendChild(checkAllBtn); hd.appendChild(metaSpan);
+
+      // Check-all: update in-place without re-rendering whole tracker
+      checkAllBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        const nowAllChecked = checkAllBtn.textContent.includes('décocher');
+        const w = trLoadWatched();
+        sn.eps.forEach(ep => {
+          const k = epKey(show.id, series.id, sn.n, ep.e);
+          if (nowAllChecked) delete w[k]; else w[k] = true;
+        });
+        trSaveWatched(w);
+        // Update button label
+        checkAllBtn.textContent = nowAllChecked ? '☑ Tout cocher' : '☐ Tout décocher';
+        // Update progress bar and counter in-place
+        const newWat = nowAllChecked ? 0 : tot;
+        const newPct = nowAllChecked ? 0 : 100;
+        progSpan.textContent = `${newWat}/${tot}`;
+        bar.style.width = newPct + '%';
+        // Update all episode checkboxes and styles in this season
+        grid.querySelectorAll('.tr-ep').forEach((epDiv, idx) => {
+          const cb = epDiv.querySelector('input[type=checkbox]');
+          if (cb) cb.checked = !nowAllChecked;
+          if (nowAllChecked) epDiv.classList.remove('watched');
+          else epDiv.classList.add('watched');
+        });
+      });
+
+      hd.addEventListener('click', () => {
+        seasonDiv.classList.toggle('open');
+        if (seasonDiv.classList.contains('open')) trOpenSeasons.add(openKey);
+        else trOpenSeasons.delete(openKey);
+      });
 
       const epsDiv = document.createElement('div'); epsDiv.className = 'tr-episodes';
       const grid = document.createElement('div'); grid.className = 'tr-ep-grid';
+      grid.style.gridTemplateColumns = trShowTitles ? 'repeat(auto-fill, minmax(200px, 1fr))' : 'repeat(auto-fill, minmax(58px, 1fr))';
 
       sn.eps.forEach(ep => {
         const k = epKey(show.id, series.id, sn.n, ep.e);
@@ -2653,15 +2734,26 @@ function renderTracker() {
         cb.style.accentColor = show.color;
         const num = document.createElement('span'); num.className = 'tr-ep-num';
         num.textContent = `E${String(ep.e).padStart(2,'0')}`;
-        const ttl = document.createElement('span'); ttl.className = 'tr-ep-title';
-        ttl.textContent = ep.t;
-        epDiv.appendChild(cb); epDiv.appendChild(num); epDiv.appendChild(ttl);
+        epDiv.appendChild(cb); epDiv.appendChild(num);
+        if (trShowTitles) {
+          const ttl = document.createElement('span'); ttl.className = 'tr-ep-title';
+          ttl.textContent = ep.t;
+          epDiv.appendChild(ttl);
+        }
 
         const toggle = () => {
           const w = trLoadWatched();
           if (w[k]) delete w[k]; else w[k] = true;
           trSaveWatched(w);
-          renderTracker();
+          const nowW = !!w[k];
+          cb.checked = nowW;
+          if (nowW) epDiv.classList.add('watched'); else epDiv.classList.remove('watched');
+          // Update progress in header in-place
+          const curWat = grid.querySelectorAll('.tr-ep.watched').length;
+          const curPct = Math.round(curWat/tot*100);
+          progSpan.textContent = `${curWat}/${tot}`;
+          bar.style.width = curPct + '%';
+          checkAllBtn.textContent = curWat === tot ? '☐ Tout décocher' : '☑ Tout cocher';
         };
         epDiv.addEventListener('click', toggle);
         grid.appendChild(epDiv);
@@ -2677,110 +2769,144 @@ function renderTracker() {
 }
 
 // ── WEEKLY SCHEDULE IN DAY COLUMNS ─────────────────────────────────────────
-// Find the next unwatched episode after current position for a show/series
-function trNextEps(showId, seriesId, count) {
+// Starting point: 2026-03-09 = TNG S3E4, XF S6E4
+// Each weekday advances by 3 episodes per show
+
+const SCHED_START = '2026-03-09';
+const SCHED_TREK_START = { sn: 3, en: 4 }; // TNG S3E4
+const SCHED_XF_START   = { sn: 6, en: 4 }; // XF S6E4
+
+// Count weekdays (Mon-Fri) from SCHED_START to a given dk (inclusive if same day)
+function weekdaysBetween(fromDk, toDk) {
+  const a = new Date(fromDk + 'T00:00:00');
+  const b = new Date(toDk + 'T00:00:00');
+  if (b < a) return -1; // before start
+  let count = 0;
+  const cur = new Date(a);
+  while (cur <= b) {
+    const dow = cur.getDay();
+    if (dow >= 1 && dow <= 5) count++;
+    cur.setDate(cur.getDate() + 1);
+  }
+  // We want 0-based offset for the start day itself
+  return count - 1;
+}
+
+// Get the Nth episode (0-based) in a series starting from (startSn, startEn)
+function getNthEpFrom(showId, seriesId, startSn, startEn, n) {
   const show = TRACKER_SHOWS.find(s => s.id === showId);
-  if (!show) return [];
+  if (!show) return null;
   const series = show.series.find(s => s.id === seriesId);
-  if (!series) return [];
-  const watched = trLoadWatched();
-  const result = [];
+  if (!series) return null;
+  let counting = false, idx = 0;
   for (const sn of series.seasons) {
     for (const ep of sn.eps) {
-      const k = epKey(showId, seriesId, sn.n, ep.e);
-      if (!watched[k]) {
-        result.push({ showId, seriesId, sn: sn.n, en: ep.e, title: ep.t, key: k });
-        if (result.length >= count) return result;
+      if (!counting && sn.n === startSn && ep.e === startEn) counting = true;
+      if (counting) {
+        if (idx === n) return { showId, seriesId, sn: sn.n, en: ep.e, title: ep.t, key: epKey(showId, seriesId, sn.n, ep.e) };
+        idx++;
       }
     }
+  }
+  return null;
+}
+
+// Get 3 scheduled episodes for a day (offset weekdays from start)
+function getScheduledEpsForDay(dk) {
+  const offset = weekdaysBetween(SCHED_START, dk);
+  if (offset < 0) return []; // before schedule start
+  const baseIdx = offset * 3;
+  const result = [];
+  for (let i = 0; i < 3; i++) {
+    const trek = getNthEpFrom('startrek', 'tng', SCHED_TREK_START.sn, SCHED_TREK_START.en, baseIdx + i);
+    const xf   = getNthEpFrom('xfiles',  'xf',  SCHED_XF_START.sn,   SCHED_XF_START.en,   baseIdx + i);
+    if (trek) result.push({ ...trek, label: 'TNG',    labelColor: '#2d6bbf' });
+    if (xf)   result.push({ ...xf,   label: 'X-Files', labelColor: '#7a3030' });
   }
   return result;
 }
 
-// Render schedule blocks in weekly view day columns
-function renderDaySchedule(col, dk, dow) {
-  // Only Mon-Fri (dow 1-5)
-  if (dow < 1 || dow > 5) return;
+// Render schedule episodes inside the task section of a day column, grouped by show
+function renderDayScheduleInTasks(taskListEl, dk, dow, dayColor) {
+  if (dow < 1 || dow > 5) return; // Mon-Fri only
+  const eps = getScheduledEpsForDay(dk);
+  if (!eps.length) return;
 
-  const color = window.DAY_COLORS ? DAY_COLORS[dow] : '#7cb9e8';
   const watched = trLoadWatched();
 
-  // Load or build schedule for this day
-  const sched = trLoadSched();
-  if (!sched[dk]) {
-    // Build: 3 Trek (TNG) + 3 X-Files
-    sched[dk] = {
-      trek: trNextEps('startrek', 'tng', 3).map(e => ({ showId: e.showId, sid: e.seriesId, sn: e.sn, en: e.en })),
-      xf:   trNextEps('xfiles', 'xf', 3).map(e => ({ showId: e.showId, sid: e.seriesId, sn: e.sn, en: e.en }))
-    };
-    trSaveSched(sched);
-  }
+  // Separator
+  const sep = document.createElement('div');
+  sep.style.cssText = 'padding:5px 10px 3px; font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#aaa; border-top:2px dashed #ede9e2; margin-top:4px;';
+  sep.textContent = '📺 Épisodes du jour';
+  taskListEl.appendChild(sep);
 
-  const dayEps = sched[dk];
-  if (!dayEps || (!dayEps.trek?.length && !dayEps.xf?.length)) return;
-
-  const block = document.createElement('div'); block.className = 'wv-schedule-block';
-  block.style.borderTop = `3px solid ${color}`;
-
-  const hd = document.createElement('div'); hd.className = 'wv-schedule-hd';
-  hd.innerHTML = `<span>📺 À regarder</span>`;
-  block.appendChild(hd);
-
-  const allEps = [
-    ...((dayEps.trek||[]).map(e => ({ ...e, label: 'Trek', labelColor: '#2d6bbf' }))),
-    ...((dayEps.xf||[]).map(e => ({ ...e, label: 'X-Files', labelColor: '#7a3030' })))
-  ];
-
-  allEps.forEach(ep => {
-    const k = epKey(ep.showId, ep.sid, ep.sn, ep.en);
-    // Find episode title
-    const show = TRACKER_SHOWS.find(s => s.id === ep.showId);
-    const ser = show?.series.find(s => s.id === ep.sid);
-    const season = ser?.seasons.find(s => s.n === ep.sn);
-    const epObj = season?.eps.find(e => e.e === ep.en);
-    if (!epObj) return;
-
-    const isW = !!watched[k];
-    const row = document.createElement('div'); row.className = 'wv-sched-ep';
-    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = isW;
-    cb.style.accentColor = ep.labelColor;
-    const info = document.createElement('div'); info.className = 'wv-sched-ep-info';
-    const showLbl = document.createElement('div'); showLbl.className = 'wv-sched-ep-show';
-    showLbl.style.color = ep.labelColor;
-    showLbl.textContent = `${ep.label} S${ep.sn}E${String(ep.en).padStart(2,'0')}`;
-    const epName = document.createElement('div'); epName.className = 'wv-sched-ep-name' + (isW ? ' done' : '');
-    epName.textContent = epObj.t;
-    info.appendChild(showLbl); info.appendChild(epName);
-    row.appendChild(cb); row.appendChild(info);
-
-    const toggle = () => {
-      const w = trLoadWatched();
-      if (w[k]) delete w[k]; else w[k] = true;
-      trSaveWatched(w);
-      cb.checked = !!w[k];
-      epName.className = 'wv-sched-ep-name' + (w[k] ? ' done' : '');
-    };
-    cb.addEventListener('change', toggle);
-    row.addEventListener('click', e => { if (e.target !== cb) toggle(); });
-    block.appendChild(row);
+  // Group by show label
+  const groups = {};
+  const groupOrder = [];
+  eps.forEach(ep => {
+    if (!groups[ep.label]) { groups[ep.label] = []; groupOrder.push(ep.label); }
+    groups[ep.label].push(ep);
   });
 
-  col.appendChild(block);
+  groupOrder.forEach(label => {
+    const group = groups[label];
+    const labelColor = group[0].labelColor;
+
+    // Group header
+    const ghd = document.createElement('div');
+    ghd.style.cssText = `padding:3px 10px 2px; font-size:.63rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:${labelColor}; background:${labelColor}18; border-left:3px solid ${labelColor};`;
+    ghd.textContent = label;
+    taskListEl.appendChild(ghd);
+
+    group.forEach(ep => {
+      const isW = !!watched[ep.key];
+      const row = document.createElement('div');
+      row.className = 'wv-task-row' + (isW ? ' done' : '');
+      row.style.cursor = 'pointer';
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.style.cssText = `width:14px;height:14px;cursor:pointer;flex-shrink:0;accent-color:${labelColor};`;
+      cb.checked = isW;
+
+      const info = document.createElement('div'); info.style.cssText = 'flex:1;min-width:0;';
+      const epCode = document.createElement('span');
+      epCode.style.cssText = `font-size:.64rem;font-weight:700;color:${labelColor};margin-right:5px;flex-shrink:0;`;
+      epCode.textContent = `S${ep.sn}E${String(ep.en).padStart(2,'0')}`;
+      const epTitle = document.createElement('span');
+      epTitle.style.cssText = 'font-size:.75rem;' + (isW ? 'text-decoration:line-through;color:var(--muted);' : 'color:var(--text);');
+      epTitle.textContent = ep.title;
+      info.appendChild(epCode); info.appendChild(epTitle);
+      row.appendChild(cb); row.appendChild(info);
+
+      const toggle = () => {
+        const w = trLoadWatched();
+        if (w[ep.key]) delete w[ep.key]; else w[ep.key] = true;
+        trSaveWatched(w);
+        const nowW = !!w[ep.key];
+        cb.checked = nowW;
+        row.className = 'wv-task-row' + (nowW ? ' done' : '');
+        epTitle.style.cssText = 'font-size:.75rem;' + (nowW ? 'text-decoration:line-through;color:var(--muted);' : 'color:var(--text);');
+      };
+      cb.addEventListener('change', toggle);
+      row.addEventListener('click', e => { if (e.target !== cb) toggle(); });
+      taskListEl.appendChild(row);
+    });
+  });
 }
 
 // ── HOOK INTO WEEKLY VIEW ──────────────────────────────────────────────────
-// Patch renderWvDays to add schedule blocks
 const _origRenderWvDays = renderWvDays;
 window.renderWvDays = function(dates, wk, wdata) {
   _origRenderWvDays(dates, wk, wdata);
-  // After day columns are built, add schedule blocks
   const strip = document.getElementById('wvDays');
-  const cols = strip.querySelectorAll('.wv-day-col');
-  dates.forEach((dt, di) => {
+  dates.forEach((dt) => {
     const y = dt.getFullYear(), m = dt.getMonth(), d = dt.getDate();
     const dk = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const dow = dt.getDay();
-    if (cols[di]) renderDaySchedule(cols[di], dk, dow);
+    // Find task rows container by data attribute
+    const taskRows = strip.querySelector(`[data-taskrows="${dk}"]`);
+    if (taskRows) renderDayScheduleInTasks(taskRows, dk, dow, DAY_COLORS[dow]);
   });
 };
 
@@ -2794,6 +2920,83 @@ window.switchView = function(mode) {
   const map = { annual:'btnAnnual', month:'btnMonth', weekly:'btnWeekly' };
   if (map[mode]) document.getElementById(map[mode])?.classList.add('active');
 };
+
+// ── EXPORT / IMPORT ────────────────────────────────────────────────────────
+
+function exportAllData() {
+  const data = {
+    version: 1,
+    exportDate: new Date().toISOString(),
+    appData:        localStorage.getItem('ap_data'),
+    yearKey:        localStorage.getItem('ap_year'),
+    weekStart:      localStorage.getItem('ap_ws'),
+    trackerWatched: localStorage.getItem(TR_KEY),
+    trackerSched:   localStorage.getItem(TR_SCHED_KEY),
+    globalHabits:   localStorage.getItem('ap_global_habits'),
+    weeklyData: {},
+    dayEvents: {}
+  };
+
+  // Collect all per-week keys
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('ap_w_'))    data.weeklyData[key] = localStorage.getItem(key);
+    if (key && key.startsWith('ap_de_'))   data.dayEvents[key]  = localStorage.getItem(key);
+  }
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `planner-export-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importAllData(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.version) throw new Error('Format invalide');
+
+      if (!confirm(`Importer les données du ${data.exportDate?.slice(0,10) || '?'} ?\n⚠️ Ceci remplacera toutes vos données actuelles.`)) return;
+
+      if (data.appData)        localStorage.setItem('ap_data', data.appData);
+      if (data.yearKey)        localStorage.setItem('ap_year', data.yearKey);
+      if (data.weekStart)      localStorage.setItem('ap_ws', data.weekStart);
+      if (data.trackerWatched) localStorage.setItem(TR_KEY, data.trackerWatched);
+      if (data.trackerSched)   localStorage.setItem(TR_SCHED_KEY, data.trackerSched);
+      if (data.globalHabits)   localStorage.setItem('ap_global_habits', data.globalHabits);
+
+      if (data.weeklyData) Object.entries(data.weeklyData).forEach(([k,v]) => localStorage.setItem(k,v));
+      if (data.dayEvents)  Object.entries(data.dayEvents).forEach(([k,v])  => localStorage.setItem(k,v));
+
+      alert('✅ Données importées avec succès !');
+      location.reload();
+    } catch(err) {
+      alert('❌ Erreur lors de l\'importation : ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Hidden file input for import
+(function setupImportInput() {
+  let input = document.getElementById('importFileInput');
+  if (!input) {
+    input = document.createElement('input');
+    input.type = 'file'; input.accept = '.json'; input.id = 'importFileInput';
+    input.style.display = 'none';
+    document.body.appendChild(input);
+    input.addEventListener('change', e => {
+      if (e.target.files[0]) { importAllData(e.target.files[0]); e.target.value = ''; }
+    });
+  }
+  // Wire header buttons (always visible)
+  document.getElementById('btnExportData').addEventListener('click', exportAllData);
+  document.getElementById('btnImportData').addEventListener('click', () => input.click());
+})();
 
 // Tracker button
 document.getElementById('btnTracker').addEventListener('click', () => {
