@@ -740,6 +740,140 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   font-size:.75rem; font-weight:600; color:var(--accent2); outline:none; padding:1px 2px;
 }
 
+/* ── EPISODE TRACKER ── */
+.btn-tracker { background:#1a3a5c !important; border-color:#2d6bbf !important; color:#7cb9e8 !important; }
+.btn-tracker.active { background:#2d6bbf !important; color:#fff !important; }
+
+#trackerView {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.tr-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+}
+.tr-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6rem; color: var(--text);
+}
+.tr-show-tabs {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.tr-tab {
+  padding: 6px 16px; border-radius: 20px; border: 2px solid var(--border);
+  background: var(--surface); cursor: pointer; font-size: .82rem; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; color: var(--muted); transition: all .15s;
+}
+.tr-tab:hover { border-color: var(--accent2); color: var(--accent2); }
+.tr-tab.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+.tr-tab.xfiles.active  { background: #7a3030; border-color: #7a3030; }
+.tr-tab.stargate.active { background: #2a5c2a; border-color: #2a5c2a; }
+
+.tr-stats-bar {
+  display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.tr-stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 18px; text-align: center;
+  min-width: 100px;
+}
+.tr-stat-num { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--accent2); }
+.tr-stat-lbl { font-size: .65rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+
+.tr-content { display: flex; gap: 16px; }
+.tr-series-list {
+  width: 180px; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px;
+}
+.tr-series-btn {
+  padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface); cursor: pointer; font-size: .78rem; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; text-align: left; color: var(--text);
+  transition: all .15s; display: flex; justify-content: space-between; align-items: center;
+}
+.tr-series-btn:hover { border-color: var(--accent2); }
+.tr-series-btn.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+.tr-series-btn .tr-sb-pct { font-size: .68rem; opacity: .7; }
+
+.tr-seasons {
+  flex: 1; display: flex; flex-direction: column; gap: 12px;
+  max-height: calc(100vh - 220px); overflow-y: auto;
+  padding-right: 4px;
+}
+.tr-season {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+}
+.tr-season-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; cursor: pointer; background: #f7f5f0;
+  border-bottom: 1px solid var(--border); user-select: none;
+}
+.tr-season-hd:hover { background: #f0ede6; }
+.tr-season-title {
+  font-weight: 700; font-size: .85rem; color: var(--text);
+}
+.tr-season-meta {
+  display: flex; align-items: center; gap: 12px;
+}
+.tr-season-prog {
+  font-size: .72rem; color: var(--muted);
+}
+.tr-season-bar-wrap {
+  width: 80px; height: 6px; background: #e8e4dc; border-radius: 3px; overflow: hidden;
+}
+.tr-season-bar { height: 100%; background: var(--accent2); border-radius: 3px; transition: width .3s; }
+.tr-season-chevron { font-size: .75rem; color: var(--muted); transition: transform .2s; }
+.tr-season.open .tr-season-chevron { transform: rotate(180deg); }
+
+.tr-episodes {
+  display: none; padding: 8px 12px 12px;
+}
+.tr-season.open .tr-episodes { display: block; }
+.tr-ep-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 4px;
+}
+.tr-ep {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 8px; border-radius: 6px; cursor: pointer;
+  transition: background .1s; user-select: none;
+}
+.tr-ep:hover { background: #f5f2ec; }
+.tr-ep.watched { background: #f0f7f0; }
+.tr-ep input[type=checkbox] {
+  flex-shrink: 0; width: 14px; height: 14px; cursor: pointer;
+  accent-color: var(--accent2);
+}
+.tr-ep-num { font-size: .68rem; color: var(--muted); min-width: 34px; flex-shrink: 0; font-weight: 600; }
+.tr-ep-title { font-size: .76rem; color: var(--text); line-height: 1.3; }
+.tr-ep.watched .tr-ep-title { color: var(--muted); }
+
+/* Weekly schedule block in day columns */
+.wv-schedule-block {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden; margin-bottom: 0;
+}
+.wv-schedule-hd {
+  padding: 5px 10px; font-size: .63rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  border-bottom: 1px solid var(--border); background: #f7f5f0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.wv-sched-ep {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 10px; border-bottom: 1px solid #f5f2ec;
+  cursor: pointer;
+}
+.wv-sched-ep:last-child { border-bottom: none; }
+.wv-sched-ep:hover { background: #f8f6f2; }
+.wv-sched-ep input[type=checkbox] { flex-shrink:0; width:13px; height:13px; cursor:pointer; }
+.wv-sched-ep-info { flex:1; min-width:0; }
+.wv-sched-ep-show { font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+.wv-sched-ep-name { font-size:.73rem; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.wv-sched-ep-name.done { text-decoration: line-through; color: var(--muted); }
+
 </style>
 </head>
 <body>
@@ -755,6 +889,7 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   </div>
   <div class="header-right">
     <div class="view-toggle">
+      <button class="btn-view btn-tracker" id="btnTracker">📺 Épisodes</button>
       <button class="btn-view" id="btnAnnual">Annuel</button>
       <button class="btn-view" id="btnMonth">Mois</button>
       <button class="btn-view active" id="btnWeekly">Semaine</button>
@@ -811,6 +946,9 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
     </div>
   </div>
 </div>
+
+<!-- TRACKER VIEW -->
+<div id="trackerView" style="display:none"></div>
 
 <script>
 const MONTHS_FR   = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
@@ -1746,6 +1884,929 @@ document.getElementById('overlay').addEventListener('click',e=>{ if(e.target===d
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 switchView('weekly');
+
+</script>
+<script>
+// ── EPISODE TRACKER ────────────────────────────────────────────────────────
+
+// ── SHOW DATA ──────────────────────────────────────────────────────────────
+// Format: { id, name, color, series: [{ id, name, seasons: [{ n, eps: [{e,t}] }] }] }
+
+const TRACKER_SHOWS = [
+
+  // ── X-FILES ──
+  { id:'xfiles', name:'X-Files', color:'#7a3030', tab:'xfiles',
+    series:[{ id:'xf', name:'X-Files', seasons:[
+      { n:1, eps:[
+        {e:1,t:'Pilot'},{e:2,t:'Deep Throat'},{e:3,t:'Squeeze'},{e:4,t:'Conduit'},
+        {e:5,t:'The Jersey Devil'},{e:6,t:'Shadows'},{e:7,t:'Ghost in the Machine'},
+        {e:8,t:'Ice'},{e:9,t:'Space'},{e:10,t:'Fallen Angel'},{e:11,t:'Eve'},
+        {e:12,t:'Fire'},{e:13,t:'Beyond the Sea'},{e:14,t:'Gender Bender'},
+        {e:15,t:'Lazarus'},{e:16,t:'Young at Heart'},{e:17,t:'E.B.E.'},
+        {e:18,t:'Miracle Man'},{e:19,t:'Shapes'},{e:20,t:'Darkness Falls'},
+        {e:21,t:'Tooms'},{e:22,t:'Born Again'},{e:23,t:'Roland'},{e:24,t:'The Erlenmeyer Flask'}
+      ]},
+      { n:2, eps:[
+        {e:1,t:'Little Green Men'},{e:2,t:'The Host'},{e:3,t:'Blood'},{e:4,t:'Sleepless'},
+        {e:5,t:'Duane Barry'},{e:6,t:'Ascension'},{e:7,t:'3'},{e:8,t:'One Breath'},
+        {e:9,t:'Firewalker'},{e:10,t:'Red Museum'},{e:11,t:'Excelsis Dei'},
+        {e:12,t:'Aubrey'},{e:13,t:'Irresistible'},{e:14,t:'Die Hand Die Verletzt'},
+        {e:15,t:'Fresh Bones'},{e:16,t:'Colony'},{e:17,t:'End Game'},
+        {e:18,t:'Fearful Symmetry'},{e:19,t:"Dod Kalm"},{e:20,t:'Humbug'},
+        {e:21,t:'The Calusari'},{e:22,t:'F. Emasculata'},{e:23,t:'Soft Light'},
+        {e:24,t:'Our Town'},{e:25,t:'Anasazi'}
+      ]},
+      { n:3, eps:[
+        {e:1,t:'The Blessing Way'},{e:2,t:'Paper Clip'},{e:3,t:'D.P.O.'},
+        {e:4,t:'Clyde Bruckman\'s Final Repose'},{e:5,t:'The List'},{e:6,t:'2Shy'},
+        {e:7,t:'The Walk'},{e:8,t:'Oubliette'},{e:9,t:'Nisei'},{e:10,t:'731'},
+        {e:11,t:'Revelations'},{e:12,t:'War of the Coprophages'},{e:13,t:'Syzygy'},
+        {e:14,t:'Grotesque'},{e:15,t:'Piper Maru'},{e:16,t:'Apocrypha'},
+        {e:17,t:'Pusher'},{e:18,t:'Teso Dos Bichos'},{e:19,t:"Hell Money"},
+        {e:20,t:'Jose Chung\'s From Outer Space'},{e:21,t:'Avatar'},{e:22,t:'Quagmire'},
+        {e:23,t:'Wetwired'},{e:24,t:'Talitha Cumi'}
+      ]},
+      { n:4, eps:[
+        {e:1,t:'Herrenvolk'},{e:2,t:'Home'},{e:3,t:'Teliko'},{e:4,t:'Unruhe'},
+        {e:5,t:'The Field Where I Died'},{e:6,t:'Sanguinarium'},{e:7,t:'Musings of a Cigarette Smoking Man'},
+        {e:8,t:'Tunguska'},{e:9,t:'Terma'},{e:10,t:'Paper Hearts'},
+        {e:11,t:'El Mundo Gira'},{e:12,t:'Leonard Betts'},{e:13,t:'Never Again'},
+        {e:14,t:'Memento Mori'},{e:15,t:'Kaddish'},{e:16,t:'Unrequited'},
+        {e:17,t:'Tempus Fugit'},{e:18,t:'Max'},{e:19,t:'Synchrony'},
+        {e:20,t:'Small Potatoes'},{e:21,t:'Zero Sum'},{e:22,t:'Elegy'},
+        {e:23,t:'Demons'},{e:24,t:'Gethsemane'}
+      ]},
+      { n:5, eps:[
+        {e:1,t:'Redux'},{e:2,t:'Redux II'},{e:3,t:'Unusual Suspects'},{e:4,t:'Detour'},
+        {e:5,t:'The Post-Modern Prometheus'},{e:6,t:'Christmas Carol'},{e:7,t:'Emily'},
+        {e:8,t:'Kitsunegari'},{e:9,t:'Schizogeny'},{e:10,t:'Chinga'},
+        {e:11,t:'Kill Switch'},{e:12,t:'Bad Blood'},{e:13,t:'Patient X'},
+        {e:14,t:'The Red and the Black'},{e:15,t:'Travelers'},{e:16,t:'Mind\'s Eye'},
+        {e:17,t:'All Souls'},{e:18,t:'The Pine Bluff Variant'},{e:19,t:'Folie à Deux'},
+        {e:20,t:'The End'}
+      ]},
+      { n:6, eps:[
+        {e:1,t:'The Beginning'},{e:2,t:'Drive'},{e:3,t:'Triangle'},{e:4,t:'Dreamland'},
+        {e:5,t:'Dreamland II'},{e:6,t:'How the Ghosts Stole Christmas'},{e:7,t:'Terms of Endearment'},
+        {e:8,t:'The Rain King'},{e:9,t:'S.R. 819'},{e:10,t:'Tithonus'},
+        {e:11,t:'Two Fathers'},{e:12,t:'One Son'},{e:13,t:'Agua Mala'},
+        {e:14,t:'Monday'},{e:15,t:'Arcadia'},{e:16,t:'Alpha'},
+        {e:17,t:'Trevor'},{e:18,t:'Milagro'},{e:19,t:'The Unnatural'},
+        {e:20,t:'Three of a Kind'},{e:21,t:'Field Trip'},{e:22,t:'Biogenesis'}
+      ]},
+      { n:7, eps:[
+        {e:1,t:'The Sixth Extinction'},{e:2,t:'The Sixth Extinction II: Amor Fati'},
+        {e:3,t:'Hungry'},{e:4,t:'Millennium'},{e:5,t:'Rush'},{e:6,t:'The Goldberg Variation'},
+        {e:7,t:'Orison'},{e:8,t:'The Amazing Maleeni'},{e:9,t:'Signs and Wonders'},
+        {e:10,t:'Sein und Zeit'},{e:11,t:'Closure'},{e:12,t:'X-COPS'},
+        {e:13,t:'First Person Shooter'},{e:14,t:'Theef'},{e:15,t:'En Ami'},
+        {e:16,t:'Chimera'},{e:17,t:'all things'},{e:18,t:'Brand X'},
+        {e:19,t:'Hollywood A.D.'},{e:20,t:'Fight Club'},{e:21,t:'Je Souhaite'},
+        {e:22,t:'Requiem'}
+      ]},
+      { n:8, eps:[
+        {e:1,t:'Within'},{e:2,t:'Without'},{e:3,t:'Patience'},{e:4,t:'Roadrunners'},
+        {e:5,t:'Invocation'},{e:6,t:'Redrum'},{e:7,t:'Via Negativa'},{e:8,t:'Surekill'},
+        {e:9,t:'Salvage'},{e:10,t:'Badlaa'},{e:11,t:'The Gift'},{e:12,t:'Medusa'},
+        {e:13,t:'Per Manum'},{e:14,t:'This Is Not Happening'},{e:15,t:'DeadAlive'},
+        {e:16,t:'Three Words'},{e:17,t:'Empedocles'},{e:18,t:'Vienen'},
+        {e:19,t:'Alone'},{e:20,t:'Essence'},{e:21,t:'Existence'}
+      ]},
+      { n:9, eps:[
+        {e:1,t:'Nothing Important Happened Today'},{e:2,t:'Nothing Important Happened Today II'},
+        {e:3,t:'Dæmonicus'},{e:4,t:'4-D'},{e:5,t:'Lord of the Flies'},{e:6,t:'Trust No 1'},
+        {e:7,t:'John Doe'},{e:8,t:'Hellbound'},{e:9,t:'Provenance'},{e:10,t:'Providence'},
+        {e:11,t:'Audrey Pauley'},{e:12,t:'Underneath'},{e:13,t:'Improbable'},
+        {e:14,t:'Scary Monsters'},{e:15,t:'Jump the Shark'},{e:16,t:'William'},
+        {e:17,t:'Release'},{e:18,t:'Sunshine Days'},{e:19,t:'The Truth (Part 1)'},
+        {e:20,t:'The Truth (Part 2)'}
+      ]},
+      { n:10, eps:[
+        {e:1,t:'My Struggle'},{e:2,t:'Founder\'s Mutation'},{e:3,t:'Mulder and Scully Meet the Were-Monster'},
+        {e:4,t:'Home Again'},{e:5,t:'Babylon'},{e:6,t:'My Struggle II'}
+      ]},
+      { n:11, eps:[
+        {e:1,t:'My Struggle III'},{e:2,t:'This'},{e:3,t:'Plus One'},{e:4,t:'The Lost Art of Forehead Sweat'},
+        {e:5,t:'Ghouli'},{e:6,t:'Kitten'},{e:7,t:'Rm9sbG93ZXJz'},{e:8,t:'Familiar'},
+        {e:9,t:'Nothing Lasts Forever'},{e:10,t:'My Struggle IV'}
+      ]}
+    ]}]
+  },
+
+  // ── STAR TREK ──
+  { id:'startrek', name:'Star Trek', color:'#2d6bbf', tab:'startrek',
+    series:[
+      { id:'tos', name:'TOS – The Original Series', seasons:[
+        { n:1, eps:[
+          {e:1,t:'The Man Trap'},{e:2,t:'Charlie X'},{e:3,t:'Where No Man Has Gone Before'},
+          {e:4,t:'The Naked Time'},{e:5,t:'The Enemy Within'},{e:6,t:'Mudd\'s Women'},
+          {e:7,t:'What Are Little Girls Made Of?'},{e:8,t:'Miri'},{e:9,t:'Dagger of the Mind'},
+          {e:10,t:'The Corbomite Maneuver'},{e:11,t:'The Menagerie, Part I'},
+          {e:12,t:'The Menagerie, Part II'},{e:13,t:'The Conscience of the King'},
+          {e:14,t:'Balance of Terror'},{e:15,t:'Shore Leave'},{e:16,t:'The Galileo Seven'},
+          {e:17,t:'The Squire of Gothos'},{e:18,t:'Arena'},{e:19,t:'Tomorrow Is Yesterday'},
+          {e:20,t:'Court Martial'},{e:21,t:'The Return of the Archons'},{e:22,t:'Space Seed'},
+          {e:23,t:'A Taste of Armageddon'},{e:24,t:'This Side of Paradise'},
+          {e:25,t:'The Devil in the Dark'},{e:26,t:'Errand of Mercy'},
+          {e:27,t:'The Alternative Factor'},{e:28,t:'The City on the Edge of Forever'},
+          {e:29,t:'Operation -- Annihilate!'}
+        ]},
+        { n:2, eps:[
+          {e:1,t:'Amok Time'},{e:2,t:'Who Mourns for Adonais?'},{e:3,t:'The Changeling'},
+          {e:4,t:'Mirror, Mirror'},{e:5,t:'The Apple'},{e:6,t:'The Doomsday Machine'},
+          {e:7,t:'Catspaw'},{e:8,t:'I, Mudd'},{e:9,t:'Metamorphosis'},{e:10,t:'Journey to Babel'},
+          {e:11,t:'Friday\'s Child'},{e:12,t:'The Deadly Years'},{e:13,t:'Obsession'},
+          {e:14,t:'Wolf in the Fold'},{e:15,t:'The Trouble with Tribbles'},{e:16,t:'The Gamesters of Triskelion'},
+          {e:17,t:'A Piece of the Action'},{e:18,t:'The Immunity Syndrome'},
+          {e:19,t:'A Private Little War'},{e:20,t:'Return to Tomorrow'},
+          {e:21,t:'Patterns of Force'},{e:22,t:'By Any Other Name'},{e:23,t:'The Omega Glory'},
+          {e:24,t:'The Ultimate Computer'},{e:25,t:'Bread and Circuses'},{e:26,t:'Assignment: Earth'}
+        ]},
+        { n:3, eps:[
+          {e:1,t:'Spectre of the Gun'},{e:2,t:'Elaan of Troyius'},{e:3,t:'The Paradise Syndrome'},
+          {e:4,t:'And the Children Shall Lead'},{e:5,t:'Is There in Truth No Beauty?'},
+          {e:6,t:'Spock\'s Brain'},{e:7,t:'The Enemy Within (Alt)'},{e:8,t:'For the World Is Hollow and I Have Touched the Sky'},
+          {e:9,t:'The Tholian Web'},{e:10,t:'Plato\'s Stepchildren'},{e:11,t:'Wink of an Eye'},
+          {e:12,t:'The Empath'},{e:13,t:'Elaan of Troyius'},{e:14,t:'Whom Gods Destroy'},
+          {e:15,t:'Let That Be Your Last Battlefield'},{e:16,t:'The Mark of Gideon'},
+          {e:17,t:'That Which Survives'},{e:18,t:'The Lights of Zetar'},
+          {e:19,t:'Requiem for Methuselah'},{e:20,t:'The Way to Eden'},
+          {e:21,t:'The Cloud Minders'},{e:22,t:'The Savage Curtain'},
+          {e:23,t:'All Our Yesterdays'},{e:24,t:'Turnabout Intruder'}
+        ]}
+      ]},
+      { id:'tng', name:'TNG – The Next Generation', seasons:[
+        { n:1, eps:[
+          {e:1,t:'Encounter at Farpoint (1)'},{e:2,t:'Encounter at Farpoint (2)'},{e:3,t:'The Naked Now'},
+          {e:4,t:'Code of Honor'},{e:5,t:'The Last Outpost'},{e:6,t:'Where No One Has Gone Before'},
+          {e:7,t:'Lonely Among Us'},{e:8,t:'Justice'},{e:9,t:'The Battle'},{e:10,t:'Hide and Q'},
+          {e:11,t:'Haven'},{e:12,t:'The Big Goodbye'},{e:13,t:'Datalore'},{e:14,t:'Angel One'},
+          {e:15,t:'11001001'},{e:16,t:'Too Short a Season'},{e:17,t:'When the Bough Breaks'},
+          {e:18,t:'Home Soil'},{e:19,t:'Coming of Age'},{e:20,t:'Heart of Glory'},
+          {e:21,t:'The Arsenal of Freedom'},{e:22,t:'Symbiosis'},{e:23,t:'Skin of Evil'},
+          {e:24,t:'We\'ll Always Have Paris'},{e:25,t:'Conspiracy'},{e:26,t:'The Neutral Zone'}
+        ]},
+        { n:2, eps:[
+          {e:1,t:'The Child'},{e:2,t:'Where Silence Has Lease'},{e:3,t:'Elementary, Dear Data'},
+          {e:4,t:'The Outrageous Okona'},{e:5,t:'Loud as a Whisper'},{e:6,t:'The Schizoid Man'},
+          {e:7,t:'Unnatural Selection'},{e:8,t:'A Matter of Honor'},{e:9,t:'The Measure of a Man'},
+          {e:10,t:'The Dauphin'},{e:11,t:'Contagion'},{e:12,t:'The Royale'},
+          {e:13,t:'Time Squared'},{e:14,t:'The Icarus Factor'},{e:15,t:'Pen Pals'},
+          {e:16,t:'Q Who'},{e:17,t:'Samaritan Snare'},{e:18,t:'Up the Long Ladder'},
+          {e:19,t:'Manhunt'},{e:20,t:'The Emissary'},{e:21,t:'Peak Performance'},
+          {e:22,t:'Shades of Gray'}
+        ]},
+        { n:3, eps:[
+          {e:1,t:'Evolution'},{e:2,t:'The Ensigns of Command'},{e:3,t:'The Survivors'},
+          {e:4,t:'Who Watches the Watchers'},{e:5,t:'The Bonding'},{e:6,t:'Booby Trap'},
+          {e:7,t:'The Enemy'},{e:8,t:'The Price'},{e:9,t:'The Vengeance Factor'},
+          {e:10,t:'The Defector'},{e:11,t:'The Hunted'},{e:12,t:'The High Ground'},
+          {e:13,t:'Déjà Q'},{e:14,t:'A Matter of Perspective'},{e:15,t:'Yesterday\'s Enterprise'},
+          {e:16,t:'The Offspring'},{e:17,t:'Sins of the Father'},{e:18,t:'Allegiance'},
+          {e:19,t:'Captain\'s Holiday'},{e:20,t:'Tin Man'},{e:21,t:'Hollow Pursuits'},
+          {e:22,t:'The Most Toys'},{e:23,t:'Sarek'},{e:24,t:'Ménage à Troi'},
+          {e:25,t:'Transfigurations'},{e:26,t:'The Best of Both Worlds (1)'}
+        ]},
+        { n:4, eps:[
+          {e:1,t:'The Best of Both Worlds (2)'},{e:2,t:'Family'},{e:3,t:'Brothers'},
+          {e:4,t:'Suddenly Human'},{e:5,t:'Remember Me'},{e:6,t:'Legacy'},
+          {e:7,t:'Reunion'},{e:8,t:'Future Imperfect'},{e:9,t:'Final Mission'},
+          {e:10,t:'The Loss'},{e:11,t:'Data\'s Day'},{e:12,t:'The Wounded'},
+          {e:13,t:'Devil\'s Due'},{e:14,t:'Clues'},{e:15,t:'First Contact'},
+          {e:16,t:'Galaxy\'s Child'},{e:17,t:'Night Terrors'},{e:18,t:'Identity Crisis'},
+          {e:19,t:'The Nth Degree'},{e:20,t:'Qpid'},{e:21,t:'The Drumhead'},
+          {e:22,t:'Half a Life'},{e:23,t:'The Host'},{e:24,t:'The Mind\'s Eye'},
+          {e:25,t:'In Theory'},{e:26,t:'Redemption (1)'}
+        ]},
+        { n:5, eps:[
+          {e:1,t:'Redemption (2)'},{e:2,t:'Darmok'},{e:3,t:'Ensign Ro'},{e:4,t:'Silicon Avatar'},
+          {e:5,t:'Disaster'},{e:6,t:'The Game'},{e:7,t:'Unification (1)'},{e:8,t:'Unification (2)'},
+          {e:9,t:'A Matter of Time'},{e:10,t:'New Ground'},{e:11,t:'Hero Worship'},
+          {e:12,t:'Violations'},{e:13,t:'The Masterpiece Society'},{e:14,t:'Conundrum'},
+          {e:15,t:'Power Play'},{e:16,t:'Ethics'},{e:17,t:'The Outcast'},{e:18,t:'Cause and Effect'},
+          {e:19,t:'The First Duty'},{e:20,t:'Cost of Living'},{e:21,t:'The Perfect Mate'},
+          {e:22,t:'Imaginary Friend'},{e:23,t:'I, Borg'},{e:24,t:'The Next Phase'},
+          {e:25,t:'The Inner Light'},{e:26,t:'Time\'s Arrow (1)'}
+        ]},
+        { n:6, eps:[
+          {e:1,t:'Time\'s Arrow (2)'},{e:2,t:'Realm of Fear'},{e:3,t:'Man of the People'},
+          {e:4,t:'Relics'},{e:5,t:'Schisms'},{e:6,t:'True Q'},{e:7,t:'Rascals'},
+          {e:8,t:'A Fistful of Datas'},{e:9,t:'The Quality of Life'},{e:10,t:'Chain of Command (1)'},
+          {e:11,t:'Chain of Command (2)'},{e:12,t:'Ship in a Bottle'},{e:13,t:'Aquiel'},
+          {e:14,t:'Face of the Enemy'},{e:15,t:'Tapestry'},{e:16,t:'Birthright (1)'},
+          {e:17,t:'Birthright (2)'},{e:18,t:'Starship Mine'},{e:19,t:'Lessons'},
+          {e:20,t:'The Chase'},{e:21,t:'Frame of Mind'},{e:22,t:'Suspicions'},
+          {e:23,t:'Rightful Heir'},{e:24,t:'Second Chances'},{e:25,t:'Timescape'},
+          {e:26,t:'Descent (1)'}
+        ]},
+        { n:7, eps:[
+          {e:1,t:'Descent (2)'},{e:2,t:'Liaisons'},{e:3,t:'Interface'},{e:4,t:'Gambit (1)'},
+          {e:5,t:'Gambit (2)'},{e:6,t:'Phantasms'},{e:7,t:'Dark Page'},{e:8,t:'Attached'},
+          {e:9,t:'Force of Nature'},{e:10,t:'Inheritance'},{e:11,t:'Parallels'},
+          {e:12,t:'The Pegasus'},{e:13,t:'Homeward'},{e:14,t:'Sub Rosa'},
+          {e:15,t:'Lower Decks'},{e:16,t:'Thine Own Self'},{e:17,t:'Masks'},
+          {e:18,t:'Eye of the Beholder'},{e:19,t:'Genesis'},{e:20,t:'Journey\'s End'},
+          {e:21,t:'Firstborn'},{e:22,t:'Bloodlines'},{e:23,t:'Emergence'},
+          {e:24,t:'Preemptive Strike'},{e:25,t:'All Good Things... (1)'},{e:26,t:'All Good Things... (2)'}
+        ]}
+      ]},
+      { id:'ds9', name:'DS9 – Deep Space Nine', seasons:[
+        { n:1, eps:[
+          {e:1,t:'Emissary (1)'},{e:2,t:'Emissary (2)'},{e:3,t:'Past Prologue'},{e:4,t:'A Man Alone'},
+          {e:5,t:'Babel'},{e:6,t:'Captive Pursuit'},{e:7,t:'Q-Less'},{e:8,t:'Dax'},
+          {e:9,t:'The Passenger'},{e:10,t:'Move Along Home'},{e:11,t:'The Nagus'},
+          {e:12,t:'Vortex'},{e:13,t:'Battle Lines'},{e:14,t:'The Storyteller'},
+          {e:15,t:'Progress'},{e:16,t:'If Wishes Were Horses'},{e:17,t:'The Forsaken'},
+          {e:18,t:'Dramatis Personae'},{e:19,t:'Duet'},{e:20,t:'In the Hands of the Prophets'}
+        ]},
+        { n:2, eps:[
+          {e:1,t:'The Homecoming'},{e:2,t:'The Circle'},{e:3,t:'The Siege'},{e:4,t:'Invasive Procedures'},
+          {e:5,t:'Cardassians'},{e:6,t:'Melora'},{e:7,t:'Rules of Acquisition'},{e:8,t:'Necessary Evil'},
+          {e:9,t:'Second Sight'},{e:10,t:'Sanctuary'},{e:11,t:'Rivals'},{e:12,t:'The Alternate'},
+          {e:13,t:'Armageddon Game'},{e:14,t:'Whispers'},{e:15,t:'Paradise'},{e:16,t:'Shadowplay'},
+          {e:17,t:'Playing God'},{e:18,t:'Profit and Loss'},{e:19,t:'Blood Oath'},
+          {e:20,t:'The Maquis (1)'},{e:21,t:'The Maquis (2)'},{e:22,t:'The Wire'},
+          {e:23,t:'Crossover'},{e:24,t:'The Collaborator'},{e:25,t:'Tribunal'},{e:26,t:'The Jem\'Hadar'}
+        ]},
+        { n:3, eps:[
+          {e:1,t:'The Search (1)'},{e:2,t:'The Search (2)'},{e:3,t:'The House of Quark'},{e:4,t:'Equilibrium'},
+          {e:5,t:'Second Skin'},{e:6,t:'The Abandoned'},{e:7,t:'Civil Defense'},{e:8,t:'Meridian'},
+          {e:9,t:'Defiant'},{e:10,t:'Fascination'},{e:11,t:'Past Tense (1)'},{e:12,t:'Past Tense (2)'},
+          {e:13,t:'Life Support'},{e:14,t:'Heart of Stone'},{e:15,t:'Destiny'},{e:16,t:'Prophet Motive'},
+          {e:17,t:'Visionary'},{e:18,t:'Distant Voices'},{e:19,t:'Through the Looking Glass'},
+          {e:20,t:'Improbable Cause'},{e:21,t:'The Die is Cast'},{e:22,t:'Explorers'},
+          {e:23,t:'Family Business'},{e:24,t:'Shakaar'},{e:25,t:'Facets'},{e:26,t:'The Adversary'}
+        ]},
+        { n:4, eps:[
+          {e:1,t:'The Way of the Warrior (1)'},{e:2,t:'The Way of the Warrior (2)'},
+          {e:3,t:'The Visitor'},{e:4,t:'Hippocratic Oath'},{e:5,t:'Indiscretion'},
+          {e:6,t:'Rejoined'},{e:7,t:'Starship Down'},{e:8,t:'Little Green Men'},
+          {e:9,t:'The Sword of Kahless'},{e:10,t:'Our Man Bashir'},{e:11,t:'Homefront'},
+          {e:12,t:'Paradise Lost'},{e:13,t:'Crossfire'},{e:14,t:'Return to Grace'},
+          {e:15,t:'Sons of Mogh'},{e:16,t:'Bar Association'},{e:17,t:'Accession'},
+          {e:18,t:'Rules of Engagement'},{e:19,t:'Hard Time'},{e:20,t:'Shattered Mirror'},
+          {e:21,t:'The Muse'},{e:22,t:'For the Cause'},{e:23,t:'To the Death'},
+          {e:24,t:'The Quickening'},{e:25,t:'Body Parts'},{e:26,t:'Broken Link'}
+        ]},
+        { n:5, eps:[
+          {e:1,t:'Apocalypse Rising'},{e:2,t:'The Ship'},{e:3,t:'Looking for par\'Mach in All the Wrong Places'},
+          {e:4,t:'Nor the Battle to the Strong'},{e:5,t:'The Assignment'},{e:6,t:'Trials and Tribble-ations'},
+          {e:7,t:'Let He Who Is Without Sin...'},{e:8,t:'Things Past'},{e:9,t:'The Ascent'},
+          {e:10,t:'Rapture'},{e:11,t:'The Darkness and the Light'},{e:12,t:'The Begotten'},
+          {e:13,t:'For the Uniform'},{e:14,t:'In Purgatory\'s Shadow'},{e:15,t:'By Inferno\'s Light'},
+          {e:16,t:'Doctor Bashir, I Presume'},{e:17,t:'A Simple Investigation'},
+          {e:18,t:'Business as Usual'},{e:19,t:'Ties of Blood and Water'},{e:20,t:'Ferengi Love Songs'},
+          {e:21,t:'Soldiers of the Empire'},{e:22,t:'Children of Time'},{e:23,t:'Blaze of Glory'},
+          {e:24,t:'Empok Nor'},{e:25,t:'In the Cards'},{e:26,t:'Call to Arms'}
+        ]},
+        { n:6, eps:[
+          {e:1,t:'A Time to Stand'},{e:2,t:'Rocks and Shoals'},{e:3,t:'Sons and Daughters'},
+          {e:4,t:'Behind the Lines'},{e:5,t:'Favor the Bold'},{e:6,t:'Sacrifice of Angels'},
+          {e:7,t:'You Are Cordially Invited'},{e:8,t:'Resurrection'},{e:9,t:'Statistical Probabilities'},
+          {e:10,t:'The Magnificent Ferengi'},{e:11,t:'Waltz'},{e:12,t:'Who Mourns for Morn?'},
+          {e:13,t:'Far Beyond the Stars'},{e:14,t:'One Little Ship'},{e:15,t:'Honor Among Thieves'},
+          {e:16,t:'Change of Heart'},{e:17,t:'Wrongs Darker Than Death or Night'},
+          {e:18,t:'Inquisition'},{e:19,t:'In the Pale Moonlight'},{e:20,t:'His Way'},
+          {e:21,t:'The Reckoning'},{e:22,t:'Valiant'},{e:23,t:'Profit and Lace'},
+          {e:24,t:'Time\'s Orphan'},{e:25,t:'The Sound of Her Voice'},{e:26,t:'Tears of the Prophets'}
+        ]},
+        { n:7, eps:[
+          {e:1,t:'Image in the Sand'},{e:2,t:'Shadows and Symbols'},{e:3,t:'Afterimage'},
+          {e:4,t:'Take Me Out to the Holosuite'},{e:5,t:'Chrysalis'},{e:6,t:'Treachery, Faith, and the Great River'},
+          {e:7,t:'Once More Unto the Breach'},{e:8,t:'The Siege of AR-558'},
+          {e:9,t:'Covenant'},{e:10,t:'It\'s Only a Paper Moon'},{e:11,t:'Prodigal Daughter'},
+          {e:12,t:'The Emperor\'s New Cloak'},{e:13,t:'Field of Fire'},{e:14,t:'Chimera'},
+          {e:15,t:'Badda-Bing, Badda-Bang'},{e:16,t:'Inter Arma Enim Silent Leges'},
+          {e:17,t:'Penumbra'},{e:18,t:'\'Til Death Do Us Part'},{e:19,t:'Strange Bedfellows'},
+          {e:20,t:'The Changing Face of Evil'},{e:21,t:'When It Rains...'},{e:22,t:'Tacking into the Wind'},
+          {e:23,t:'Extreme Measures'},{e:24,t:'The Dogs of War'},{e:25,t:'What You Leave Behind (1)'},
+          {e:26,t:'What You Leave Behind (2)'}
+        ]}
+      ]},
+      { id:'voy', name:'VOY – Voyager', seasons:[
+        { n:1, eps:[
+          {e:1,t:'Caretaker (1)'},{e:2,t:'Caretaker (2)'},{e:3,t:'Parallax'},{e:4,t:'Time and Again'},
+          {e:5,t:'Phage'},{e:6,t:'The Cloud'},{e:7,t:'Eye of the Needle'},{e:8,t:'Ex Post Facto'},
+          {e:9,t:'Emanations'},{e:10,t:'Prime Factors'},{e:11,t:'State of Flux'},
+          {e:12,t:'Heroes and Demons'},{e:13,t:'Cathexis'},{e:14,t:'Faces'},{e:15,t:'Jetrel'},
+          {e:16,t:'Learning Curve'}
+        ]},
+        { n:2, eps:[
+          {e:1,t:'The 37\'s'},{e:2,t:'Initiations'},{e:3,t:'Projections'},{e:4,t:'Elogium'},
+          {e:5,t:'Non Sequitur'},{e:6,t:'Twisted'},{e:7,t:'Parturition'},{e:8,t:'Persistence of Vision'},
+          {e:9,t:'Tattoo'},{e:10,t:'Cold Fire'},{e:11,t:'Maneuvers'},{e:12,t:'Resistance'},
+          {e:13,t:'Prototype'},{e:14,t:'Alliances'},{e:15,t:'Threshold'},{e:16,t:'Meld'},
+          {e:17,t:'Dreadnought'},{e:18,t:'Death Wish'},{e:19,t:'Lifesigns'},{e:20,t:'Investigations'},
+          {e:21,t:'Deadlock'},{e:22,t:'Innocence'},{e:23,t:'The Thaw'},{e:24,t:'Tuvix'},
+          {e:25,t:'Resolutions'},{e:26,t:'Basics (1)'}
+        ]},
+        { n:3, eps:[
+          {e:1,t:'Basics (2)'},{e:2,t:'Flashback'},{e:3,t:'The Chute'},{e:4,t:'The Swarm'},
+          {e:5,t:'False Profits'},{e:6,t:'Remember'},{e:7,t:'Sacred Ground'},{e:8,t:'Future\'s End (1)'},
+          {e:9,t:'Future\'s End (2)'},{e:10,t:'Warlord'},{e:11,t:'The Q and the Grey'},
+          {e:12,t:'Macrocosm'},{e:13,t:'Fair Trade'},{e:14,t:'Alter Ego'},{e:15,t:'Coda'},
+          {e:16,t:'Blood Fever'},{e:17,t:'Unity'},{e:18,t:'Darkling'},{e:19,t:'Rise'},
+          {e:20,t:'Favorite Son'},{e:21,t:'Before and After'},{e:22,t:'Real Life'},
+          {e:23,t:'Distant Origin'},{e:24,t:'Displaced'},{e:25,t:'Worst Case Scenario'},
+          {e:26,t:'Scorpion (1)'}
+        ]},
+        { n:4, eps:[
+          {e:1,t:'Scorpion (2)'},{e:2,t:'The Gift'},{e:3,t:'Day of Honor'},{e:4,t:'Nemesis'},
+          {e:5,t:'Revulsion'},{e:6,t:'The Raven'},{e:7,t:'Scientific Method'},{e:8,t:'Year of Hell (1)'},
+          {e:9,t:'Year of Hell (2)'},{e:10,t:'Random Thoughts'},{e:11,t:'Concerning Flight'},
+          {e:12,t:'Mortal Coil'},{e:13,t:'Waking Moments'},{e:14,t:'Message in a Bottle'},
+          {e:15,t:'Hunters'},{e:16,t:'Prey'},{e:17,t:'Retrospect'},{e:18,t:'The Killing Game (1)'},
+          {e:19,t:'The Killing Game (2)'},{e:20,t:'Vis à Vis'},{e:21,t:'The Omega Directive'},
+          {e:22,t:'Unforgettable'},{e:23,t:'Living Witness'},{e:24,t:'Demon'},
+          {e:25,t:'One'},{e:26,t:'Hope and Fear'}
+        ]},
+        { n:5, eps:[
+          {e:1,t:'Night'},{e:2,t:'Drone'},{e:3,t:'Extreme Risk'},{e:4,t:'In the Flesh'},
+          {e:5,t:'Once Upon a Time'},{e:6,t:'Timeless'},{e:7,t:'Infinite Regress'},
+          {e:8,t:'Nothing Human'},{e:9,t:'Thirty Days'},{e:10,t:'Counterpoint'},
+          {e:11,t:'Latent Image'},{e:12,t:'Bride of Chaotica!'},{e:13,t:'Gravity'},
+          {e:14,t:'Bliss'},{e:15,t:'Dark Frontier (1)'},{e:16,t:'Dark Frontier (2)'},
+          {e:17,t:'The Disease'},{e:18,t:'Course: Oblivion'},{e:19,t:'The Fight'},
+          {e:20,t:'Think Tank'},{e:21,t:'Juggernaut'},{e:22,t:'Someone to Watch Over Me'},
+          {e:23,t:'11:59'},{e:24,t:'Relativity'},{e:25,t:'Warhead'},{e:26,t:'Equinox (1)'}
+        ]},
+        { n:6, eps:[
+          {e:1,t:'Equinox (2)'},{e:2,t:'Survival Instinct'},{e:3,t:'Barge of the Dead'},
+          {e:4,t:'Tinker, Tenor, Doctor, Spy'},{e:5,t:'Alice'},{e:6,t:'Riddles'},
+          {e:7,t:'Dragon\'s Teeth'},{e:8,t:'One Small Step'},{e:9,t:'The Voyager Conspiracy'},
+          {e:10,t:'Pathfinder'},{e:11,t:'Fair Haven'},{e:12,t:'Blink of an Eye'},
+          {e:13,t:'Virtuoso'},{e:14,t:'Memorial'},{e:15,t:'Tsunkatse'},{e:16,t:'Collective'},
+          {e:17,t:'Spirit Folk'},{e:18,t:'Ashes to Ashes'},{e:19,t:'Child\'s Play'},
+          {e:20,t:'Good Shepherd'},{e:21,t:'Live Fast and Prosper'},{e:22,t:'Muse'},
+          {e:23,t:'Fury'},{e:24,t:'Life Line'},{e:25,t:'The Haunting of Deck Twelve'},
+          {e:26,t:'Unimatrix Zero (1)'}
+        ]},
+        { n:7, eps:[
+          {e:1,t:'Unimatrix Zero (2)'},{e:2,t:'Imperfection'},{e:3,t:'Drive'},{e:4,t:'Repression'},
+          {e:5,t:'Critical Care'},{e:6,t:'Inside Man'},{e:7,t:'Body and Soul'},{e:8,t:'Nightingale'},
+          {e:9,t:'Flesh and Blood (1)'},{e:10,t:'Flesh and Blood (2)'},{e:11,t:'Shattered'},
+          {e:12,t:'Lineage'},{e:13,t:'Repentance'},{e:14,t:'Prophecy'},{e:15,t:'The Void'},
+          {e:16,t:'Workforce (1)'},{e:17,t:'Workforce (2)'},{e:18,t:'Human Error'},
+          {e:19,t:'Q2'},{e:20,t:'Author, Author'},{e:21,t:'Friendship One'},
+          {e:22,t:'Natural Law'},{e:23,t:'Homestead'},{e:24,t:'Renaissance Man'},
+          {e:25,t:'Endgame (1)'},{e:26,t:'Endgame (2)'}
+        ]}
+      ]},
+      { id:'ent', name:'ENT – Enterprise', seasons:[
+        { n:1, eps:[
+          {e:1,t:'Broken Bow (1)'},{e:2,t:'Broken Bow (2)'},{e:3,t:'Fight or Flight'},{e:4,t:'Strange New World'},
+          {e:5,t:'Unexpected'},{e:6,t:'Terra Nova'},{e:7,t:'The Andorian Incident'},{e:8,t:'Breaking the Ice'},
+          {e:9,t:'Civilization'},{e:10,t:'Fortunate Son'},{e:11,t:'Cold Front'},{e:12,t:'Silent Enemy'},
+          {e:13,t:'Dear Doctor'},{e:14,t:'Sleeping Dogs'},{e:15,t:'Shadows of P\'Jem'},
+          {e:16,t:'Shuttlepod One'},{e:17,t:'Fusion'},{e:18,t:'Rogue Planet'},{e:19,t:'Acquisition'},
+          {e:20,t:'Oasis'},{e:21,t:'Detained'},{e:22,t:'Vox Sola'},{e:23,t:'Fallen Hero'},
+          {e:24,t:'Desert Crossing'},{e:25,t:'Two Days and Two Nights'},{e:26,t:'Shockwave (1)'}
+        ]},
+        { n:2, eps:[
+          {e:1,t:'Shockwave (2)'},{e:2,t:'Carbon Creek'},{e:3,t:'Minefield'},{e:4,t:'Dead Stop'},
+          {e:5,t:'A Night in Sickbay'},{e:6,t:'Marauders'},{e:7,t:'The Seventh'},{e:8,t:'The Communicator'},
+          {e:9,t:'Singularity'},{e:10,t:'Vanishing Point'},{e:11,t:'Precious Cargo'},{e:12,t:'The Catwalk'},
+          {e:13,t:'Dawn'},{e:14,t:'Stigma'},{e:15,t:'Cease Fire'},{e:16,t:'Future Tense'},
+          {e:17,t:'Canamar'},{e:18,t:'The Crossing'},{e:19,t:'Judgment'},{e:20,t:'Horizon'},
+          {e:21,t:'The Breach'},{e:22,t:'Cogenitor'},{e:23,t:'Regeneration'},{e:24,t:'First Flight'},
+          {e:25,t:'Bounty'},{e:26,t:'The Expanse'}
+        ]},
+        { n:3, eps:[
+          {e:1,t:'The Xindi'},{e:2,t:'Anomaly'},{e:3,t:'Extinction'},{e:4,t:'Rajiin'},
+          {e:5,t:'Impulse'},{e:6,t:'Exile'},{e:7,t:'The Shipment'},{e:8,t:'Twilight'},
+          {e:9,t:'North Star'},{e:10,t:'Similitude'},{e:11,t:'Carpenter Street'},{e:12,t:'Chosen Realm'},
+          {e:13,t:'Proving Ground'},{e:14,t:'Stratagem'},{e:15,t:'Harbinger'},{e:16,t:'Doctor\'s Orders'},
+          {e:17,t:'Hatchery'},{e:18,t:'Azati Prime'},{e:19,t:'Damage'},{e:20,t:'The Forgotten'},
+          {e:21,t:'E²'},{e:22,t:'The Council'},{e:23,t:'Countdown'},{e:24,t:'Zero Hour'}
+        ]},
+        { n:4, eps:[
+          {e:1,t:'Storm Front (1)'},{e:2,t:'Storm Front (2)'},{e:3,t:'Home'},{e:4,t:'Borderland'},
+          {e:5,t:'Cold Station 12'},{e:6,t:'The Augments'},{e:7,t:'The Forge'},{e:8,t:'Awakening'},
+          {e:9,t:'Kir\'Shara'},{e:10,t:'Daedalus'},{e:11,t:'Observer Effect'},{e:12,t:'Babel One'},
+          {e:13,t:'United'},{e:14,t:'The Aenar'},{e:15,t:'Affliction'},{e:16,t:'Divergence'},
+          {e:17,t:'Bound'},{e:18,t:'In a Mirror, Darkly (1)'},{e:19,t:'In a Mirror, Darkly (2)'},
+          {e:20,t:'Demons'},{e:21,t:'Terra Prime'},{e:22,t:'These Are the Voyages...'}
+        ]}
+      ]},
+      { id:'dis', name:'DIS – Discovery', seasons:[
+        { n:1, eps:[
+          {e:1,t:'The Vulcan Hello'},{e:2,t:'Battle at the Binary Stars'},{e:3,t:'Context Is for Kings'},
+          {e:4,t:'The Butcher\'s Knife Cares Not for the Lamb\'s Cry'},{e:5,t:'Choose Your Pain'},
+          {e:6,t:'Lethe'},{e:7,t:'Magic to Make the Sanest Man Go Mad'},{e:8,t:'Si Vis Pacem, Para Bellum'},
+          {e:9,t:'Into the Forest I Go'},{e:10,t:'Despite Yourself'},{e:11,t:'The Wolf Inside'},
+          {e:12,t:'Vaulting Ambition'},{e:13,t:'What\'s Past Is Prologue'},{e:14,t:'The War Without, The War Within'},
+          {e:15,t:'Will You Take My Hand?'}
+        ]},
+        { n:2, eps:[
+          {e:1,t:'Brother'},{e:2,t:'New Eden'},{e:3,t:'Point of Light'},{e:4,t:'An Obol for Charon'},
+          {e:5,t:'Saints of Imperfection'},{e:6,t:'The Sounds of Thunder'},{e:7,t:'Light and Shadows'},
+          {e:8,t:'If Memory Serves'},{e:9,t:'Project Daedalus'},{e:10,t:'The Red Angel'},
+          {e:11,t:'Perpetual Infinity'},{e:12,t:'Through the Valley of Shadows'},{e:13,t:'Such Sweet Sorrow (1)'},
+          {e:14,t:'Such Sweet Sorrow (2)'}
+        ]},
+        { n:3, eps:[
+          {e:1,t:'That Hope Is You (1)'},{e:2,t:'Far From Home'},{e:3,t:'People of Earth'},
+          {e:4,t:'Forget Me Not'},{e:5,t:'Die Trying'},{e:6,t:'Scavengers'},{e:7,t:'Unification III'},
+          {e:8,t:'The Sanctuary'},{e:9,t:'Terra Firma (1)'},{e:10,t:'Terra Firma (2)'},
+          {e:11,t:'Su\'Kal'},{e:12,t:'There Is a Tide...'},{e:13,t:'That Hope Is You (2)'}
+        ]},
+        { n:4, eps:[
+          {e:1,t:'Kobayashi Maru'},{e:2,t:'Anomaly'},{e:3,t:'Choose to Live'},{e:4,t:'All Is Possible'},
+          {e:5,t:'The Examples'},{e:6,t:'Stormy Weather'},{e:7,t:'...But to Connect'},
+          {e:8,t:'All In'},{e:9,t:'Rubicon'},{e:10,t:'The Galactic Barrier'},{e:11,t:'Rosetta'},
+          {e:12,t:'Species Ten-C'},{e:13,t:'Coming Home'}
+        ]},
+        { n:5, eps:[
+          {e:1,t:'Red Directive'},{e:2,t:'Under the Twin Moons'},{e:3,t:'Jinaal'},
+          {e:4,t:'Face the Strange'},{e:5,t:'Mirrors'},{e:6,t:'Whistlespeak'},
+          {e:7,t:'Erigah'},{e:8,t:'Labyrinths'},{e:9,t:'Lagrange Point'},{e:10,t:'Life, Itself'}
+        ]}
+      ]},
+      { id:'pic', name:'PIC – Picard', seasons:[
+        { n:1, eps:[
+          {e:1,t:'Remembrance'},{e:2,t:'Maps and Legends'},{e:3,t:'The End Is the Beginning'},
+          {e:4,t:'Absolute Candor'},{e:5,t:'Stardust City Rag'},{e:6,t:'The Impossible Box'},
+          {e:7,t:'Nepenthe'},{e:8,t:'Broken Pieces'},{e:9,t:'Et in Arcadia Ego (1)'},
+          {e:10,t:'Et in Arcadia Ego (2)'}
+        ]},
+        { n:2, eps:[
+          {e:1,t:'The Star Gazer'},{e:2,t:'Penance'},{e:3,t:'Assimilation'},{e:4,t:'Watcher'},
+          {e:5,t:'Fly Me to the Moon'},{e:6,t:'Two of One'},{e:7,t:'Monsters'},{e:8,t:'Mercy'},
+          {e:9,t:'Hide and Seek'},{e:10,t:'Farewell'}
+        ]},
+        { n:3, eps:[
+          {e:1,t:'The Next Generation'},{e:2,t:'Disengage'},{e:3,t:'Seventeen Seconds'},
+          {e:4,t:'No Win Scenario'},{e:5,t:'Imposters'},{e:6,t:'The Bounty'},
+          {e:7,t:'Dominion'},{e:8,t:'Surrender'},{e:9,t:'Vox'},{e:10,t:'The Last Generation'}
+        ]}
+      ]},
+      { id:'snw', name:'SNW – Strange New Worlds', seasons:[
+        { n:1, eps:[
+          {e:1,t:'Strange New Worlds'},{e:2,t:'Children of the Comet'},{e:3,t:'Ghosts of Illyria'},
+          {e:4,t:'Memento Mori'},{e:5,t:'Spock Amok'},{e:6,t:'Lift Us Where Suffering Cannot Reach'},
+          {e:7,t:'The Serene Squall'},{e:8,t:'The Elysian Kingdom'},{e:9,t:'All Those Who Wander'},
+          {e:10,t:'A Quality of Mercy'}
+        ]},
+        { n:2, eps:[
+          {e:1,t:'The Broken Circle'},{e:2,t:'Ad Astra per Aspera'},{e:3,t:'Tomorrow and Tomorrow and Tomorrow'},
+          {e:4,t:'Among the Lotus Eaters'},{e:5,t:'Charades'},{e:6,t:'Lost in Translation'},
+          {e:7,t:'Those Old Scientists'},{e:8,t:'Under the Cloak of War'},{e:9,t:'Subspace Rhapsody'},
+          {e:10,t:'Hegemony'}
+        ]},
+        { n:3, eps:[
+          {e:1,t:'Counting Stars'},{e:2,t:'Two Rogues Walk Into a Bar'},{e:3,t:'Polymer'},
+          {e:4,t:'The Courage of Compassion'},{e:5,t:'Memento Mori (Redux)'},
+          {e:6,t:'The Librarian'},{e:7,t:'Subspace Rhapsody II'},{e:8,t:'The Precipice'},
+          {e:9,t:'A Mirror in the Stars'},{e:10,t:'Hegemony Rises'}
+        ]}
+      ]}
+    ]
+  },
+
+  // ── STARGATE ──
+  { id:'stargate', name:'Stargate', color:'#2a5c2a', tab:'stargate',
+    series:[
+      { id:'sg1', name:'SG-1', seasons:[
+        { n:1, eps:[
+          {e:1,t:'Children of the Gods (1)'},{e:2,t:'Children of the Gods (2)'},{e:3,t:'The Enemy Within'},
+          {e:4,t:'Emancipation'},{e:5,t:'The Broca Divide'},{e:6,t:'The First Commandment'},
+          {e:7,t:'Cold Lazarus'},{e:8,t:'The Nox'},{e:9,t:'Brief Candle'},{e:10,t:'Thor\'s Hammer'},
+          {e:11,t:'The Torment of Tantalus'},{e:12,t:'Bloodlines'},{e:13,t:'Fire and Water'},
+          {e:14,t:'Hathor'},{e:15,t:'Singularity'},{e:16,t:'Cor-ai'},{e:17,t:'Enigma'},
+          {e:18,t:'Solitudes'},{e:19,t:'Tin Man'},{e:20,t:'There But for the Grace of God'},
+          {e:21,t:'Politics'},{e:22,t:'Within the Serpent\'s Grasp'}
+        ]},
+        { n:2, eps:[
+          {e:1,t:'The Serpent\'s Lair'},{e:2,t:'In the Line of Duty'},{e:3,t:'Prisoners'},
+          {e:4,t:'The Gamekeeper'},{e:5,t:'Need'},{e:6,t:'Thor\'s Chariot'},{e:7,t:'Message in a Bottle'},
+          {e:8,t:'Family'},{e:9,t:'Secrets'},{e:10,t:'Bane'},{e:11,t:'The Tok\'ra (1)'},
+          {e:12,t:'The Tok\'ra (2)'},{e:13,t:'Spirits'},{e:14,t:'Touchstone'},{e:15,t:'The Fifth Race'},
+          {e:16,t:'A Matter of Time'},{e:17,t:'Holiday'},{e:18,t:'Serpent\'s Song'},
+          {e:19,t:'One False Step'},{e:20,t:'Show and Tell'},{e:21,t:'1969'},{e:22,t:'Out of Mind'}
+        ]},
+        { n:3, eps:[
+          {e:1,t:'Into the Fire'},{e:2,t:'Seth'},{e:3,t:'Fair Game'},{e:4,t:'Legacy'},
+          {e:5,t:'Learning Curve'},{e:6,t:'Point of View'},{e:7,t:'Deadman Switch'},
+          {e:8,t:'Demons'},{e:9,t:'Rules of Engagement'},{e:10,t:'Forever in a Day'},
+          {e:11,t:'Past and Present'},{e:12,t:'Jolinar\'s Memories'},{e:13,t:'The Devil You Know'},
+          {e:14,t:'Foothold'},{e:15,t:'Pretense'},{e:16,t:'Urgo'},{e:17,t:'A Hundred Days'},
+          {e:18,t:'Shades of Grey'},{e:19,t:'New Ground'},{e:20,t:'Maternal Instinct'},
+          {e:21,t:'Crystal Skull'},{e:22,t:'Nemesis'}
+        ]},
+        { n:4, eps:[
+          {e:1,t:'Small Victories'},{e:2,t:'The Other Side'},{e:3,t:'Upgrades'},{e:4,t:'Crossroads'},
+          {e:5,t:'Divide and Conquer'},{e:6,t:'Window of Opportunity'},{e:7,t:'Watergate'},
+          {e:8,t:'The First Ones'},{e:9,t:'Scorched Earth'},{e:10,t:'Beneath the Surface'},
+          {e:11,t:'Point of No Return'},{e:12,t:'Tangent'},{e:13,t:'The Curse'},{e:14,t:'The Serpent\'s Venom'},
+          {e:15,t:'Chain Reaction'},{e:16,t:'2010'},{e:17,t:'Absolute Power'},{e:18,t:'The Light'},
+          {e:19,t:'Prodigy'},{e:20,t:'Entity'},{e:21,t:'Double Jeopardy'},{e:22,t:'Exodus'}
+        ]},
+        { n:5, eps:[
+          {e:1,t:'Enemies'},{e:2,t:'Threshold'},{e:3,t:'Ascension'},{e:4,t:'The Fifth Man'},
+          {e:5,t:'Red Sky'},{e:6,t:'Rite of Passage'},{e:7,t:'Beast of Burden'},{e:8,t:'The Tomb'},
+          {e:9,t:'Between Two Fires'},{e:10,t:'2001'},{e:11,t:'Desperate Measures'},
+          {e:12,t:'Wormhole X-Treme!'},{e:13,t:'Proving Ground'},{e:14,t:'48 Hours'},
+          {e:15,t:'Summit'},{e:16,t:'Last Stand'},{e:17,t:'Fail Safe'},{e:18,t:'The Warrior'},
+          {e:19,t:'Menace'},{e:20,t:'The Sentinel'},{e:21,t:'Meridian'},{e:22,t:'Revelations'}
+        ]},
+        { n:6, eps:[
+          {e:1,t:'Redemption (1)'},{e:2,t:'Redemption (2)'},{e:3,t:'Descent'},{e:4,t:'Frozen'},
+          {e:5,t:'Nightwalkers'},{e:6,t:'Abyss'},{e:7,t:'Shadow Play'},{e:8,t:'The Other Guys'},
+          {e:9,t:'Allegiance'},{e:10,t:'Cure'},{e:11,t:'Prometheus'},{e:12,t:'Unnatural Selection'},
+          {e:13,t:'Sight Unseen'},{e:14,t:'Smoke and Mirrors'},{e:15,t:'Paradise Lost'},
+          {e:16,t:'Metamorphosis'},{e:17,t:'Disclosure'},{e:18,t:'Forsaken'},{e:19,t:'The Changeling'},
+          {e:20,t:'Memento'},{e:21,t:'Prophecy'},{e:22,t:'Full Circle'}
+        ]},
+        { n:7, eps:[
+          {e:1,t:'Fallen'},{e:2,t:'Homecoming'},{e:3,t:'Fragile Balance'},{e:4,t:'Orpheus'},
+          {e:5,t:'Revisions'},{e:6,t:'Lifeboat'},{e:7,t:'Enemy Mine'},{e:8,t:'Space Race'},
+          {e:9,t:'Avenger 2.0'},{e:10,t:'Birthright'},{e:11,t:'Evolution (1)'},{e:12,t:'Evolution (2)'},
+          {e:13,t:'Grace'},{e:14,t:'Fallout'},{e:15,t:'Chimera'},{e:16,t:'Death Knell'},
+          {e:17,t:'Heroes (1)'},{e:18,t:'Heroes (2)'},{e:19,t:'Resurrection'},{e:20,t:'Inauguration'},
+          {e:21,t:'The Lost City (1)'},{e:22,t:'The Lost City (2)'}
+        ]},
+        { n:8, eps:[
+          {e:1,t:'New Order (1)'},{e:2,t:'New Order (2)'},{e:3,t:'Lockdown'},{e:4,t:'Zero Hour'},
+          {e:5,t:'Icon'},{e:6,t:'Avatar'},{e:7,t:'Affinity'},{e:8,t:'Covenant'},{e:9,t:'Sacrifices'},
+          {e:10,t:'Endgame'},{e:11,t:'Gemini'},{e:12,t:'Prometheus Unbound'},{e:13,t:'It\'s Good to Be King'},
+          {e:14,t:'Full Alert'},{e:15,t:'Citizen Joe'},{e:16,t:'Reckoning (1)'},{e:17,t:'Reckoning (2)'},
+          {e:18,t:'Threads'},{e:19,t:'Moebius (1)'},{e:20,t:'Moebius (2)'}
+        ]},
+        { n:9, eps:[
+          {e:1,t:'Avalon (1)'},{e:2,t:'Avalon (2)'},{e:3,t:'Origin'},{e:4,t:'The Ties That Bind'},
+          {e:5,t:'The Powers That Be'},{e:6,t:'Beachhead'},{e:7,t:'Ex Deus Machina'},
+          {e:8,t:'Babylon'},{e:9,t:'Prototype'},{e:10,t:'The Fourth Horseman (1)'},
+          {e:11,t:'The Fourth Horseman (2)'},{e:12,t:'Collateral Damage'},{e:13,t:'Ripple Effect'},
+          {e:14,t:'Stronghold'},{e:15,t:'Ethon'},{e:16,t:'Off the Grid'},{e:17,t:'The Scourge'},
+          {e:18,t:'Arthur\'s Mantle'},{e:19,t:'Crusade'},{e:20,t:'Camelot'}
+        ]},
+        { n:10, eps:[
+          {e:1,t:'Flesh and Blood'},{e:2,t:'Morpheus'},{e:3,t:'The Pegasus Project'},{e:4,t:'Insiders'},
+          {e:5,t:'Uninvited'},{e:6,t:'200'},{e:7,t:'Counterstrike'},{e:8,t:'Memento Mori'},
+          {e:9,t:'Company of Thieves'},{e:10,t:'The Quest (1)'},{e:11,t:'The Quest (2)'},
+          {e:12,t:'Line in the Sand'},{e:13,t:'The Road Not Taken'},{e:14,t:'The Shroud'},
+          {e:15,t:'Bounty'},{e:16,t:'Bad Guys'},{e:17,t:'Talion'},{e:18,t:'Family Ties'},
+          {e:19,t:'Dominion'},{e:20,t:'Unending'}
+        ]}
+      ]},
+      { id:'sga', name:'Atlantis (SGA)', seasons:[
+        { n:1, eps:[
+          {e:1,t:'Rising (1)'},{e:2,t:'Rising (2)'},{e:3,t:'Hide and Seek'},{e:4,t:'Thirty-Eight Minutes'},
+          {e:5,t:'Suspicion'},{e:6,t:'Childhood\'s End'},{e:7,t:'Poisoning the Well'},
+          {e:8,t:'Underground'},{e:9,t:'Home'},{e:10,t:'The Storm'},{e:11,t:'The Eye'},
+          {e:12,t:'The Defiant One'},{e:13,t:'Hot Zone'},{e:14,t:'Sanctuary'},{e:15,t:'Before I Sleep'},
+          {e:16,t:'The Brotherhood'},{e:17,t:'Letters from Pegasus'},{e:18,t:'The Gift'},
+          {e:19,t:'The Siege (1)'},{e:20,t:'The Siege (2)'}
+        ]},
+        { n:2, eps:[
+          {e:1,t:'The Siege (3)'},{e:2,t:'The Intruder'},{e:3,t:'Runner'},{e:4,t:'Duet'},
+          {e:5,t:'Condemned'},{e:6,t:'Trinity'},{e:7,t:'Instinct'},{e:8,t:'Conversion'},
+          {e:9,t:'Aurora'},{e:10,t:'The Lost Boys'},{e:11,t:'The Hive'},{e:12,t:'Epiphany'},
+          {e:13,t:'Critical Mass'},{e:14,t:'Grace Under Pressure'},{e:15,t:'The Tower'},
+          {e:16,t:'The Long Goodbye'},{e:17,t:'Coup D\'etat'},{e:18,t:'Michael'},{e:19,t:'Inferno'},
+          {e:20,t:'Allies'}
+        ]},
+        { n:3, eps:[
+          {e:1,t:'No Man\'s Land'},{e:2,t:'Misbegotten'},{e:3,t:'Irresistible'},{e:4,t:'Sateda'},
+          {e:5,t:'Progeny'},{e:6,t:'The Real World'},{e:7,t:'Common Ground'},{e:8,t:'McKay and Mrs. Miller'},
+          {e:9,t:'Phantoms'},{e:10,t:'The Return (1)'},{e:11,t:'The Return (2)'},
+          {e:12,t:'Echoes'},{e:13,t:'Irresponsible'},{e:14,t:'Tao of Rodney'},{e:15,t:'The Game'},
+          {e:16,t:'The Ark'},{e:17,t:'Sunday'},{e:18,t:'Submersion'},{e:19,t:'Vengeance'},{e:20,t:'First Strike'}
+        ]},
+        { n:4, eps:[
+          {e:1,t:'Adrift'},{e:2,t:'Lifeline'},{e:3,t:'Reunion'},{e:4,t:'Doppelganger'},{e:5,t:'Travelers'},
+          {e:6,t:'Tabula Rasa'},{e:7,t:'Missing'},{e:8,t:'The Seer'},{e:9,t:'Miller\'s Crossing'},
+          {e:10,t:'This Mortal Coil'},{e:11,t:'Be All My Sins Remember\'d'},{e:12,t:'Spoils of War'},
+          {e:13,t:'Quarantine'},{e:14,t:'Harmony'},{e:15,t:'Outcast'},{e:16,t:'Trio'},
+          {e:17,t:'Midway'},{e:18,t:'The Kindred (1)'},{e:19,t:'The Kindred (2)'},{e:20,t:'The Last Man'}
+        ]},
+        { n:5, eps:[
+          {e:1,t:'Search and Rescue'},{e:2,t:'The Seed'},{e:3,t:'Broken Ties'},{e:4,t:'The Daedalus Variations'},
+          {e:5,t:'Ghost in the Machine'},{e:6,t:'The Shrine'},{e:7,t:'Whispers'},{e:8,t:'The Queen'},
+          {e:9,t:'Tracker'},{e:10,t:'First Contact'},{e:11,t:'The Lost Tribe'},{e:12,t:'Outsiders'},
+          {e:13,t:'Inquisition'},{e:14,t:'The Prodigal'},{e:15,t:'Remnants'},{e:16,t:'Brain Storm'},
+          {e:17,t:'Infection'},{e:18,t:'Identity'},{e:19,t:'Vegas'},{e:20,t:'Enemy at the Gate'}
+        ]}
+      ]},
+      { id:'sgu', name:'Universe (SGU)', seasons:[
+        { n:1, eps:[
+          {e:1,t:'Air (1)'},{e:2,t:'Air (2)'},{e:3,t:'Air (3)'},{e:4,t:'Darkness'},{e:5,t:'Light'},
+          {e:6,t:'Water'},{e:7,t:'Earth'},{e:8,t:'Time'},{e:9,t:'Life'},{e:10,t:'Justice'},
+          {e:11,t:'Space'},{e:12,t:'Divided'},{e:13,t:'Faith'},{e:14,t:'Human'},{e:15,t:'Lost'},
+          {e:16,t:'Sabotage'},{e:17,t:'Pain'},{e:18,t:'Subversion'},{e:19,t:'Incursion (1)'},
+          {e:20,t:'Incursion (2)'}
+        ]},
+        { n:2, eps:[
+          {e:1,t:'Intervention'},{e:2,t:'Aftermath'},{e:3,t:'Awakening'},{e:4,t:'Pathogen'},
+          {e:5,t:'Cloverdale'},{e:6,t:'Trial and Error'},{e:7,t:'The Greater Good'},{e:8,t:'Malice'},
+          {e:9,t:'Visitation'},{e:10,t:'Resurgence'},{e:11,t:'Deliverance'},{e:12,t:'Twin Destinies'},
+          {e:13,t:'Alliances'},{e:14,t:'Hope'},{e:15,t:'Seizure'},{e:16,t:'The Hunt'},
+          {e:17,t:'Common Descent'},{e:18,t:'Epilogue'},{e:19,t:'Blockade'},{e:20,t:'Gauntlet'}
+        ]}
+      ]}
+    ]
+  }
+];
+
+// ── STORAGE ────────────────────────────────────────────────────────────────
+const TR_KEY = 'ap_tracker_watched'; // { [showId_seriesId_s_e]: true }
+const TR_SCHED_KEY = 'ap_tracker_sched'; // { [YYYY-MM-DD]: { trek: [{sid,sn,en}], xf: [{sn,en}] } }
+
+function trLoadWatched() {
+  return JSON.parse(localStorage.getItem(TR_KEY) || '{}');
+}
+function trSaveWatched(d) {
+  localStorage.setItem(TR_KEY, JSON.stringify(d));
+}
+function epKey(showId, seriesId, sn, en) {
+  return `${showId}_${seriesId}_s${sn}e${en}`;
+}
+function trLoadSched() {
+  return JSON.parse(localStorage.getItem(TR_SCHED_KEY) || '{}');
+}
+function trSaveSched(d) {
+  localStorage.setItem(TR_SCHED_KEY, JSON.stringify(d));
+}
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let trCurrentShow = 'startrek';
+let trCurrentSeries = 'tng';
+
+// Pre-check already-watched episodes (TNG S3E4-6, X-Files S6E4-6)
+(function initWatched() {
+  const w = trLoadWatched();
+  let changed = false;
+  // TNG S3 E4, E5, E6
+  ['4','5','6'].forEach(e => {
+    const k = epKey('startrek','tng',3,e);
+    if (!w[k]) { w[k] = true; changed = true; }
+  });
+  // X-Files S6 E4, E5, E6
+  ['4','5','6'].forEach(e => {
+    const k = epKey('xfiles','xf',6,e);
+    if (!w[k]) { w[k] = true; changed = true; }
+  });
+  if (changed) trSaveWatched(w);
+})();
+
+// ── RENDER TRACKER VIEW ────────────────────────────────────────────────────
+function renderTracker() {
+  const view = document.getElementById('trackerView');
+  view.innerHTML = '';
+
+  const watched = trLoadWatched();
+
+  // Header
+  const hdr = document.createElement('div'); hdr.className = 'tr-header';
+  const title = document.createElement('div'); title.className = 'tr-title';
+  title.textContent = '📺 Suivi d\'épisodes';
+  hdr.appendChild(title);
+
+  // Show tabs
+  const tabs = document.createElement('div'); tabs.className = 'tr-show-tabs';
+  TRACKER_SHOWS.forEach(show => {
+    const tb = document.createElement('button');
+    tb.className = 'tr-tab ' + show.tab + (trCurrentShow === show.id ? ' active' : '');
+    tb.textContent = show.name;
+    tb.addEventListener('click', () => { trCurrentShow = show.id; trCurrentSeries = show.series[0].id; renderTracker(); });
+    tabs.appendChild(tb);
+  });
+  hdr.appendChild(tabs);
+  view.appendChild(hdr);
+
+  const show = TRACKER_SHOWS.find(s => s.id === trCurrentShow);
+  if (!show) return;
+
+  // Stats bar
+  const statsBar = document.createElement('div'); statsBar.className = 'tr-stats-bar';
+  let totalAll = 0, watchedAll = 0;
+  show.series.forEach(ser => {
+    let tot = 0, wat = 0;
+    ser.seasons.forEach(sn => sn.eps.forEach(ep => {
+      tot++; totalAll++;
+      if (watched[epKey(show.id, ser.id, sn.n, ep.e)]) { wat++; watchedAll++; }
+    }));
+    const pct = tot ? Math.round(wat/tot*100) : 0;
+    const st = document.createElement('div'); st.className = 'tr-stat';
+    st.innerHTML = `<div class="tr-stat-num">${wat}/${tot}</div><div class="tr-stat-lbl">${ser.name} (${pct}%)</div>`;
+    statsBar.appendChild(st);
+  });
+  const stTotal = document.createElement('div'); stTotal.className = 'tr-stat';
+  stTotal.innerHTML = `<div class="tr-stat-num" style="color:var(--accent)">${watchedAll}/${totalAll}</div><div class="tr-stat-lbl">Total (${totalAll ? Math.round(watchedAll/totalAll*100) : 0}%)</div>`;
+  statsBar.appendChild(stTotal);
+  view.appendChild(statsBar);
+
+  // Content
+  const content = document.createElement('div'); content.className = 'tr-content';
+
+  // Series list (left sidebar)
+  const serList = document.createElement('div'); serList.className = 'tr-series-list';
+  show.series.forEach(ser => {
+    let tot = 0, wat = 0;
+    ser.seasons.forEach(sn => sn.eps.forEach(ep => {
+      tot++;
+      if (watched[epKey(show.id, ser.id, sn.n, ep.e)]) wat++;
+    }));
+    const pct = tot ? Math.round(wat/tot*100) : 0;
+    const btn = document.createElement('button');
+    btn.className = 'tr-series-btn' + (trCurrentSeries === ser.id ? ' active' : '');
+    btn.innerHTML = `<span>${ser.name}</span><span class="tr-sb-pct">${pct}%</span>`;
+    btn.addEventListener('click', () => { trCurrentSeries = ser.id; renderTracker(); });
+    serList.appendChild(btn);
+  });
+  content.appendChild(serList);
+
+  // Seasons + episodes
+  const seasonsDiv = document.createElement('div'); seasonsDiv.className = 'tr-seasons';
+  const series = show.series.find(s => s.id === trCurrentSeries);
+  if (series) {
+    series.seasons.forEach(sn => {
+      let tot = sn.eps.length, wat = 0;
+      sn.eps.forEach(ep => { if (watched[epKey(show.id, series.id, sn.n, ep.e)]) wat++; });
+      const pct = Math.round(wat/tot*100);
+
+      const seasonDiv = document.createElement('div');
+      seasonDiv.className = 'tr-season' + (wat > 0 && wat < tot ? ' open' : wat === tot ? '' : ' open');
+      // Auto-open current or in-progress seasons
+      if (wat > 0 && wat < tot) seasonDiv.classList.add('open');
+      else if (sn.n === 1 && wat === 0) seasonDiv.classList.add('open'); // open S1 if nothing watched
+
+      const hd = document.createElement('div'); hd.className = 'tr-season-hd';
+      hd.innerHTML = `
+        <span class="tr-season-title">Saison ${sn.n}</span>
+        <span class="tr-season-meta">
+          <span class="tr-season-prog">${wat}/${tot}</span>
+          <span class="tr-season-bar-wrap"><span class="tr-season-bar" style="width:${pct}%"></span></span>
+          <span class="tr-season-chevron">▼</span>
+        </span>`;
+      hd.addEventListener('click', () => { seasonDiv.classList.toggle('open'); });
+
+      const epsDiv = document.createElement('div'); epsDiv.className = 'tr-episodes';
+      const grid = document.createElement('div'); grid.className = 'tr-ep-grid';
+
+      sn.eps.forEach(ep => {
+        const k = epKey(show.id, series.id, sn.n, ep.e);
+        const isW = !!watched[k];
+        const epDiv = document.createElement('div');
+        epDiv.className = 'tr-ep' + (isW ? ' watched' : '');
+        const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = isW;
+        cb.style.accentColor = show.color;
+        const num = document.createElement('span'); num.className = 'tr-ep-num';
+        num.textContent = `E${String(ep.e).padStart(2,'0')}`;
+        const ttl = document.createElement('span'); ttl.className = 'tr-ep-title';
+        ttl.textContent = ep.t;
+        epDiv.appendChild(cb); epDiv.appendChild(num); epDiv.appendChild(ttl);
+
+        const toggle = () => {
+          const w = trLoadWatched();
+          if (w[k]) delete w[k]; else w[k] = true;
+          trSaveWatched(w);
+          renderTracker();
+        };
+        epDiv.addEventListener('click', toggle);
+        grid.appendChild(epDiv);
+      });
+
+      epsDiv.appendChild(grid);
+      seasonDiv.appendChild(hd); seasonDiv.appendChild(epsDiv);
+      seasonsDiv.appendChild(seasonDiv);
+    });
+  }
+  content.appendChild(seasonsDiv);
+  view.appendChild(content);
+}
+
+// ── WEEKLY SCHEDULE IN DAY COLUMNS ─────────────────────────────────────────
+// Find the next unwatched episode after current position for a show/series
+function trNextEps(showId, seriesId, count) {
+  const show = TRACKER_SHOWS.find(s => s.id === showId);
+  if (!show) return [];
+  const series = show.series.find(s => s.id === seriesId);
+  if (!series) return [];
+  const watched = trLoadWatched();
+  const result = [];
+  for (const sn of series.seasons) {
+    for (const ep of sn.eps) {
+      const k = epKey(showId, seriesId, sn.n, ep.e);
+      if (!watched[k]) {
+        result.push({ showId, seriesId, sn: sn.n, en: ep.e, title: ep.t, key: k });
+        if (result.length >= count) return result;
+      }
+    }
+  }
+  return result;
+}
+
+// Render schedule blocks in weekly view day columns
+function renderDaySchedule(col, dk, dow) {
+  // Only Mon-Fri (dow 1-5)
+  if (dow < 1 || dow > 5) return;
+
+  const color = window.DAY_COLORS ? DAY_COLORS[dow] : '#7cb9e8';
+  const watched = trLoadWatched();
+
+  // Load or build schedule for this day
+  const sched = trLoadSched();
+  if (!sched[dk]) {
+    // Build: 3 Trek (TNG) + 3 X-Files
+    sched[dk] = {
+      trek: trNextEps('startrek', 'tng', 3).map(e => ({ showId: e.showId, sid: e.seriesId, sn: e.sn, en: e.en })),
+      xf:   trNextEps('xfiles', 'xf', 3).map(e => ({ showId: e.showId, sid: e.seriesId, sn: e.sn, en: e.en }))
+    };
+    trSaveSched(sched);
+  }
+
+  const dayEps = sched[dk];
+  if (!dayEps || (!dayEps.trek?.length && !dayEps.xf?.length)) return;
+
+  const block = document.createElement('div'); block.className = 'wv-schedule-block';
+  block.style.borderTop = `3px solid ${color}`;
+
+  const hd = document.createElement('div'); hd.className = 'wv-schedule-hd';
+  hd.innerHTML = `<span>📺 À regarder</span>`;
+  block.appendChild(hd);
+
+  const allEps = [
+    ...((dayEps.trek||[]).map(e => ({ ...e, label: 'Trek', labelColor: '#2d6bbf' }))),
+    ...((dayEps.xf||[]).map(e => ({ ...e, label: 'X-Files', labelColor: '#7a3030' })))
+  ];
+
+  allEps.forEach(ep => {
+    const k = epKey(ep.showId, ep.sid, ep.sn, ep.en);
+    // Find episode title
+    const show = TRACKER_SHOWS.find(s => s.id === ep.showId);
+    const ser = show?.series.find(s => s.id === ep.sid);
+    const season = ser?.seasons.find(s => s.n === ep.sn);
+    const epObj = season?.eps.find(e => e.e === ep.en);
+    if (!epObj) return;
+
+    const isW = !!watched[k];
+    const row = document.createElement('div'); row.className = 'wv-sched-ep';
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = isW;
+    cb.style.accentColor = ep.labelColor;
+    const info = document.createElement('div'); info.className = 'wv-sched-ep-info';
+    const showLbl = document.createElement('div'); showLbl.className = 'wv-sched-ep-show';
+    showLbl.style.color = ep.labelColor;
+    showLbl.textContent = `${ep.label} S${ep.sn}E${String(ep.en).padStart(2,'0')}`;
+    const epName = document.createElement('div'); epName.className = 'wv-sched-ep-name' + (isW ? ' done' : '');
+    epName.textContent = epObj.t;
+    info.appendChild(showLbl); info.appendChild(epName);
+    row.appendChild(cb); row.appendChild(info);
+
+    const toggle = () => {
+      const w = trLoadWatched();
+      if (w[k]) delete w[k]; else w[k] = true;
+      trSaveWatched(w);
+      cb.checked = !!w[k];
+      epName.className = 'wv-sched-ep-name' + (w[k] ? ' done' : '');
+    };
+    cb.addEventListener('change', toggle);
+    row.addEventListener('click', e => { if (e.target !== cb) toggle(); });
+    block.appendChild(row);
+  });
+
+  col.appendChild(block);
+}
+
+// ── HOOK INTO WEEKLY VIEW ──────────────────────────────────────────────────
+// Patch renderWvDays to add schedule blocks
+const _origRenderWvDays = renderWvDays;
+window.renderWvDays = function(dates, wk, wdata) {
+  _origRenderWvDays(dates, wk, wdata);
+  // After day columns are built, add schedule blocks
+  const strip = document.getElementById('wvDays');
+  const cols = strip.querySelectorAll('.wv-day-col');
+  dates.forEach((dt, di) => {
+    const y = dt.getFullYear(), m = dt.getMonth(), d = dt.getDate();
+    const dk = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dow = dt.getDay();
+    if (cols[di]) renderDaySchedule(cols[di], dk, dow);
+  });
+};
+
+// ── SWITCH VIEW INTEGRATION ────────────────────────────────────────────────
+const _origSwitchView = switchView;
+window.switchView = function(mode) {
+  _origSwitchView(mode);
+  const tv = document.getElementById('trackerView');
+  if (tv) tv.style.display = 'none';
+  document.querySelectorAll('.btn-view').forEach(b => b.classList.remove('active'));
+  const map = { annual:'btnAnnual', month:'btnMonth', weekly:'btnWeekly' };
+  if (map[mode]) document.getElementById(map[mode])?.classList.add('active');
+};
+
+// Tracker button
+document.getElementById('btnTracker').addEventListener('click', () => {
+  // Hide all views
+  document.getElementById('trackerView').style.display = 'block';
+  document.querySelector('.strip-wrapper').style.display = 'none';
+  document.getElementById('scrollArea').style.display = 'none';
+  document.getElementById('monthView').style.display = 'none';
+  document.getElementById('weeklyView').style.display = 'none';
+  document.querySelectorAll('.btn-view').forEach(b => b.classList.remove('active'));
+  document.getElementById('btnTracker').classList.add('active');
+  renderTracker();
+});
 
 </script>
 </body>
