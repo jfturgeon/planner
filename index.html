@@ -468,7 +468,7 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 
 .wv-days-strip {
   display: grid;
-  grid-template-columns: repeat(7, minmax(200px, 1fr));
+  grid-template-columns: repeat(7, minmax(280px, 1fr));
   gap: 8px;
   min-width: max-content;
   width: 100%;
@@ -550,6 +550,9 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   border: 2px solid white; border-top:none; border-left:none;
   transform: rotate(45deg);
 }
+/* Habits body padding */
+.wv-habits-body { padding: 8px 14px 12px; }
+
 .wv-habits-header-row {
   display:grid;
   grid-template-columns: 1fr repeat(7, 24px) 20px;
@@ -561,7 +564,6 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 }
 .wv-habits-header-row span { text-align:center; }
 .wv-habits-header-row .col-name { text-align:left; font-size:.65rem; }
-.wv-habits-body { padding:10px 14px 12px; }
 .wv-habit-row {
   display:grid;
   grid-template-columns: 1fr repeat(7, 24px) 20px;
@@ -717,7 +719,7 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   min-height:30px; cursor:text; transition:background .1s;
 }
 .wv-event-row:hover, .wv-task-row:hover { background:#f8f6f2; }
-.wv-row-time { font-size:.7rem; font-weight:600; color:var(--accent2); min-width:42px; flex-shrink:0; cursor:pointer; }
+.wv-row-time { font-size:.75rem; font-weight:600; color:var(--accent2); min-width:58px; flex-shrink:0; cursor:pointer; }
 .wv-row-time.empty { color:#ddd; font-weight:400; cursor:text; }
 .wv-row-label { flex:1; font-size:.77rem; color:var(--text); min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .wv-row-label.empty { color:#d0ccc6; font-style:italic; }
@@ -733,10 +735,11 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   font-size:.77rem; color:var(--text); outline:none; padding:1px 2px;
 }
 .wv-row-time-edit {
-  width:46px; flex-shrink:0; border:none; border-bottom:2px solid var(--accent2);
+  width:90px; flex-shrink:0; border:none; border-bottom:2px solid var(--accent2);
   background:transparent; font-family:'DM Sans',sans-serif;
-  font-size:.7rem; font-weight:600; color:var(--accent2); outline:none; padding:1px 2px;
+  font-size:.75rem; font-weight:600; color:var(--accent2); outline:none; padding:1px 2px;
 }
+
 </style>
 </head>
 <body>
@@ -752,8 +755,6 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   </div>
   <div class="header-right">
     <div class="view-toggle">
-      <a class="btn-view" href="episode-tracker.html">Episode Tracker</a>
-
       <button class="btn-view" id="btnAnnual">Annuel</button>
       <button class="btn-view" id="btnMonth">Mois</button>
       <button class="btn-view active" id="btnWeekly">Semaine</button>
@@ -1745,6 +1746,7 @@ document.getElementById('overlay').addEventListener('click',e=>{ if(e.target===d
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 switchView('weekly');
+
 </script>
 </body>
 </html>
