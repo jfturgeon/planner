@@ -3490,21 +3490,23 @@ function getNthEpFrom(showId, seriesId, startSn, startEn, n) {
 }
 
 // Get 3 scheduled episodes for a day (offset weekdays from start)
+// Returns grouped by show: all TNG first, then all X-Files
 function getScheduledEpsForDay(dk) {
   const offset = weekdaysBetween(SCHED_START, dk);
-  if (offset < 0) return []; // before schedule start
+  if (offset < 0) return [];
   const baseIdx = offset * 3;
-  const result = [];
+  const trekEps = [], xfEps = [];
   for (let i = 0; i < 3; i++) {
     const trek = getNthEpFrom('startrek', 'tng', SCHED_TREK_START.sn, SCHED_TREK_START.en, baseIdx + i);
     const xf   = getNthEpFrom('xfiles',  'xf',  SCHED_XF_START.sn,   SCHED_XF_START.en,   baseIdx + i);
-    if (trek) result.push({ ...trek, label: 'TNG',    labelColor: '#2d6bbf' });
-    if (xf)   result.push({ ...xf,   label: 'X-Files', labelColor: '#7a3030' });
+    if (trek) trekEps.push({ ...trek, label: 'TNG',    labelColor: '#2d6bbf' });
+    if (xf)   xfEps.push({  ...xf,   label: 'X-Files', labelColor: '#7a3030' });
   }
-  return result;
+  return [...trekEps, ...xfEps];
 }
 
-// Render schedule episodes inside the task section of a day column, grouped by show
+// Inject episodes as real task rows at the TOP of the task list
+// Format: SHOW - SxxExx - Episode Title  (colored per show, with checkbox)
 function renderDayScheduleInTasks(taskListEl, dk, dow, dayColor) {
   if (dow < 1 || dow > 5) return; // Mon-Fri only
   const eps = getScheduledEpsForDay(dk);
@@ -3512,81 +3514,92 @@ function renderDayScheduleInTasks(taskListEl, dk, dow, dayColor) {
 
   const watched = trLoadWatched();
 
-  // Separator
-  const sep = document.createElement('div');
-  sep.style.cssText = 'padding:5px 10px 3px; font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#aaa; border-top:2px dashed #ede9e2; margin-top:4px;';
-  sep.textContent = '📺 Épisodes du jour';
-  taskListEl.appendChild(sep);
-
-  // Group by show label
-  const groups = {};
-  const groupOrder = [];
+  // Build episode rows in reverse order so prepending keeps original order
+  const rows = [];
   eps.forEach(ep => {
-    if (!groups[ep.label]) { groups[ep.label] = []; groupOrder.push(ep.label); }
-    groups[ep.label].push(ep);
+    const isW = !!watched[ep.key];
+    const row = document.createElement('div');
+    row.className = 'wv-task-row' + (isW ? ' done' : '');
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.className = 'wv-row-cb';
+    cb.style.cssText = `width:14px;height:14px;cursor:pointer;flex-shrink:0;accent-color:${ep.labelColor};`;
+    cb.checked = isW;
+
+    const label = document.createElement('span');
+    label.className = 'wv-row-label';
+    // Format: SHOW - SxxExx - Title
+    const showCode = ep.label.toUpperCase().replace('-','').replace(' ','');
+    const epNum = `S${String(ep.sn).padStart(2,'0')}E${String(ep.en).padStart(2,'0')}`;
+    label.innerHTML =
+      `<span style="font-weight:700;color:${ep.labelColor};letter-spacing:.02em;">${ep.label}</span>` +
+      `<span style="color:${ep.labelColor};opacity:.75;margin:0 3px;">—</span>` +
+      `<span style="font-weight:600;color:${ep.labelColor};">${epNum}</span>` +
+      `<span style="color:${ep.labelColor};opacity:.75;margin:0 3px;">—</span>` +
+      `<span style="${isW ? 'text-decoration:line-through;color:var(--muted);' : `color:${ep.labelColor};opacity:.9;`}">${ep.title}</span>`;
+
+    row.appendChild(cb);
+    row.appendChild(label);
+
+    const toggle = () => {
+      const w = trLoadWatched();
+      if (w[ep.key]) delete w[ep.key]; else w[ep.key] = true;
+      trSaveWatched(w);
+      const nowW = !!w[ep.key];
+      cb.checked = nowW;
+      row.classList.toggle('done', nowW);
+      const titleSpan = label.querySelector('span:last-child');
+      if (titleSpan) titleSpan.style.cssText = nowW
+        ? 'text-decoration:line-through;color:var(--muted);'
+        : `color:${ep.labelColor};opacity:.9;`;
+    };
+    cb.addEventListener('change', toggle);
+    row.addEventListener('click', e => { if (e.target !== cb) toggle(); });
+
+    rows.push(row);
   });
 
-  groupOrder.forEach(label => {
-    const group = groups[label];
-    const labelColor = group[0].labelColor;
-
-    // Group header
-    const ghd = document.createElement('div');
-    ghd.style.cssText = `padding:3px 10px 2px; font-size:.63rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:${labelColor}; background:${labelColor}18; border-left:3px solid ${labelColor};`;
-    ghd.textContent = label;
-    taskListEl.appendChild(ghd);
-
-    group.forEach(ep => {
-      const isW = !!watched[ep.key];
-      const row = document.createElement('div');
-      row.className = 'wv-task-row' + (isW ? ' done' : '');
-      row.style.cursor = 'pointer';
-
-      const cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.style.cssText = `width:14px;height:14px;cursor:pointer;flex-shrink:0;accent-color:${labelColor};`;
-      cb.checked = isW;
-
-      const info = document.createElement('div'); info.style.cssText = 'flex:1;min-width:0;';
-      const epCode = document.createElement('span');
-      epCode.style.cssText = `font-size:.64rem;font-weight:700;color:${labelColor};margin-right:5px;flex-shrink:0;`;
-      epCode.textContent = `S${ep.sn}E${String(ep.en).padStart(2,'0')}`;
-      const epTitle = document.createElement('span');
-      epTitle.style.cssText = 'font-size:.75rem;' + (isW ? 'text-decoration:line-through;color:var(--muted);' : 'color:var(--text);');
-      epTitle.textContent = ep.title;
-      info.appendChild(epCode); info.appendChild(epTitle);
-      row.appendChild(cb); row.appendChild(info);
-
-      const toggle = () => {
-        const w = trLoadWatched();
-        if (w[ep.key]) delete w[ep.key]; else w[ep.key] = true;
-        trSaveWatched(w);
-        const nowW = !!w[ep.key];
-        cb.checked = nowW;
-        row.className = 'wv-task-row' + (nowW ? ' done' : '');
-        epTitle.style.cssText = 'font-size:.75rem;' + (nowW ? 'text-decoration:line-through;color:var(--muted);' : 'color:var(--text);');
-      };
-      cb.addEventListener('change', toggle);
-      row.addEventListener('click', e => { if (e.target !== cb) toggle(); });
-      taskListEl.appendChild(row);
-    });
-  });
+  // Prepend all episode rows before existing content (at top of task list)
+  const firstChild = taskListEl.firstChild;
+  rows.forEach(r => taskListEl.insertBefore(r, firstChild));
 }
 
 // ── HOOK INTO WEEKLY VIEW ──────────────────────────────────────────────────
 const _origRenderWvDays = renderWvDays;
 window.renderWvDays = function(dates, wk, wdata) {
   _origRenderWvDays(dates, wk, wdata);
+  _kbInjectEpisodes(dates);
+};
+
+function _kbInjectEpisodes(dates) {
   const strip = document.getElementById('wvDays');
+  if (!strip) return;
   dates.forEach((dt) => {
     const y = dt.getFullYear(), m = dt.getMonth(), d = dt.getDate();
     const dk = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const dow = dt.getDay();
-    // Find task rows container by data attribute
     const taskRows = strip.querySelector(`[data-taskrows="${dk}"]`);
     if (taskRows) renderDayScheduleInTasks(taskRows, dk, dow, DAY_COLORS[dow]);
   });
-};
+}
+
+// Inject into the already-rendered weekly view on page load
+// (renderWvDays runs before this script is parsed, so we patch retroactively)
+(function injectOnLoad() {
+  const strip = document.getElementById('wvDays');
+  if (!strip) return;
+  // Collect dates from already-rendered columns via their data-taskrows attributes
+  const taskRowEls = strip.querySelectorAll('[data-taskrows]');
+  taskRowEls.forEach(el => {
+    const dk = el.dataset.taskrows;
+    if (!dk) return;
+    const parts = dk.split('-');
+    const dt = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    const dow = dt.getDay();
+    renderDayScheduleInTasks(el, dk, dow, DAY_COLORS[dow]);
+  });
+})();
 
 // ── SWITCH VIEW INTEGRATION ────────────────────────────────────────────────
 const _origSwitchView = switchView;
