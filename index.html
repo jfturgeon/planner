@@ -2640,6 +2640,8 @@ function renderWvDays(dates, wk, wdata){
 
         taskList.appendChild(row);
       }
+      // Re-inject episode rows after every task render
+      if (window.renderDayScheduleInTasks) renderDayScheduleInTasks(taskList, dk, dow, dayColor);
     };
     renderTaskRows();
     taskSec.appendChild(taskList);
@@ -3589,6 +3591,8 @@ function getScheduledEpsForDay(dk) {
 // Format: SHOW - SxxExx - Episode Title  (colored per show, with checkbox)
 function renderDayScheduleInTasks(taskListEl, dk, dow, dayColor) {
   if (dow < 1 || dow > 5) return; // Mon-Fri only
+  // Remove any already-injected episode rows to avoid duplicates
+  taskListEl.querySelectorAll('.wv-ep-row').forEach(r => r.remove());
   const eps = getScheduledEpsForDay(dk);
   if (!eps.length) return;
 
@@ -3599,7 +3603,7 @@ function renderDayScheduleInTasks(taskListEl, dk, dow, dayColor) {
   eps.forEach(ep => {
     const isW = !!watched[ep.key];
     const row = document.createElement('div');
-    row.className = 'wv-task-row' + (isW ? ' done' : '');
+    row.className = 'wv-task-row wv-ep-row' + (isW ? ' done' : '');
 
     const cb = document.createElement('input');
     cb.type = 'checkbox';
