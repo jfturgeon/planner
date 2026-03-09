@@ -889,6 +889,680 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 .wv-sched-ep-name { font-size:.73rem; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .wv-sched-ep-name.done { text-decoration: line-through; color: var(--muted); }
 
+/* ── KANBAN BOARD ── */
+.btn-kanban { background:#2a3a1a !important; border-color:#4a7a2a !important; color:#8dd4a0 !important; }
+.btn-kanban.active { background:#4a7a2a !important; color:#fff !important; }
+
+#kanbanView {
+  display: none;
+  flex-direction: column;
+  padding: 20px 24px;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+  gap: 14px;
+}
+
+/* Header */
+.kb-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; flex-shrink:0; }
+.kb-header-left { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.kb-header-right { display:flex; align-items:center; gap:8px; }
+.kb-title { font-family:'DM Serif Display',serif; font-size:1.5rem; color:var(--text); }
+.kb-year-nav { display:flex; align-items:center; gap:6px; }
+.kb-year-btn {
+  width:28px; height:28px; border-radius:6px; border:1px solid var(--border);
+  background:var(--surface); cursor:pointer; font-size:1rem; display:flex;
+  align-items:center; justify-content:center; color:var(--text); transition:all .15s;
+}
+.kb-year-btn:hover { background:var(--text); color:var(--surface); }
+.kb-year-lbl { font-family:'DM Serif Display',serif; font-size:1.1rem; color:var(--text); min-width:44px; text-align:center; }
+.kb-pill-btn {
+  padding:5px 14px; border-radius:20px; border:1px solid var(--border);
+  background:var(--surface); cursor:pointer; font-size:.75rem; font-weight:600;
+  font-family:'DM Sans',sans-serif; color:var(--muted); transition:all .15s;
+}
+.kb-pill-btn:hover { border-color:var(--accent2); color:var(--accent2); }
+.kb-pill-btn.active { background:var(--accent2); border-color:var(--accent2); color:#fff; }
+.kb-add-obj-btn {
+  padding:7px 16px; border-radius:8px; border:none; background:var(--accent);
+  color:#fff; cursor:pointer; font-size:.82rem; font-weight:600;
+  font-family:'DM Sans',sans-serif; transition:all .15s;
+}
+.kb-add-obj-btn:hover { background:#a84a2a; }
+.kb-manage-btn {
+  padding:7px 14px; border-radius:8px; border:1px solid var(--border);
+  background:var(--surface); cursor:pointer; font-size:.78rem;
+  font-family:'DM Sans',sans-serif; color:var(--muted); transition:all .15s;
+}
+.kb-manage-btn:hover { border-color:var(--text); color:var(--text); }
+
+/* Stats bar */
+.kb-stats-bar { display:flex; gap:12px; flex-wrap:wrap; flex-shrink:0; }
+.kb-stat {
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  padding:8px 16px; display:flex; align-items:center; gap:8px; min-width:100px;
+}
+.kb-stat-num { font-family:'DM Serif Display',serif; font-size:1.2rem; }
+.kb-stat-lbl { font-size:.68rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); }
+.kb-stat-prog { flex:1; min-width:200px; flex-wrap:wrap; }
+.kb-global-bar-wrap { width:100%; height:4px; background:#e8e4dc; border-radius:2px; overflow:hidden; margin-top:4px; }
+.kb-global-bar { height:100%; border-radius:2px; transition:width .4s; }
+
+/* Board */
+.kb-board {
+  display:flex; gap:14px; flex:1; min-height:0;
+  overflow-x:auto; align-items:flex-start;
+  padding-bottom:8px;
+}
+.kb-col {
+  min-width:260px; max-width:320px; flex:1;
+  display:flex; flex-direction:column; gap:0;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; overflow:hidden;
+  max-height:100%;
+}
+
+/* Column header */
+.kb-col-hdr {
+  display:flex; align-items:center; gap:7px;
+  padding:11px 14px 8px;
+  background:#f7f5f0; border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.kb-col-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.kb-col-title { flex:1; font-size:.8rem; font-weight:700; color:var(--text); }
+.kb-col-count {
+  font-size:.68rem; font-weight:700; padding:2px 7px; border-radius:10px;
+  flex-shrink:0;
+}
+.kb-col-add {
+  background:none; border:none; cursor:pointer; font-size:1.1rem; line-height:1;
+  color:var(--muted); transition:color .15s; padding:0 2px; flex-shrink:0;
+}
+.kb-col-add:hover { color:var(--accent); }
+.kb-col-bar { height:3px; background:#f0ede6; flex-shrink:0; }
+.kb-col-bar-fill { height:100%; border-radius:0; transition:width .4s; }
+
+/* Cards */
+.kb-cards {
+  flex:1; overflow-y:auto; padding:10px 10px 12px;
+  display:flex; flex-direction:column; gap:8px;
+  min-height:60px;
+}
+.kb-cards.kb-drag-over { background:#f0f4ff; }
+.kb-drag-ghost {
+  height:4px; background:var(--accent2); border-radius:2px;
+  margin:0 2px; opacity:.7;
+}
+.kb-empty { font-size:.75rem; color:#ccc; font-style:italic; text-align:center; padding:16px 0; }
+
+/* Card */
+.kb-card {
+  background:#fff; border:1px solid var(--border); border-radius:8px;
+  padding:10px 12px; cursor:pointer; transition:all .15s;
+  border-left:3px solid var(--card-accent, var(--accent2));
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+  user-select:none;
+}
+.kb-card:hover { box-shadow:0 3px 12px rgba(0,0,0,.1); transform:translateY(-1px); }
+.kb-card.kb-dragging { opacity:.4; }
+.kb-card-year {
+  display:inline-block; font-size:.62rem; font-weight:700; padding:1px 7px;
+  border-radius:10px; margin-bottom:6px; letter-spacing:.04em;
+}
+.kb-card-title { font-size:.84rem; font-weight:600; color:var(--text); line-height:1.35; margin-bottom:4px; }
+.kb-card-desc { font-size:.74rem; color:var(--muted); line-height:1.4; margin-bottom:6px; }
+.kb-card-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:6px; padding-top:6px; border-top:1px solid #f5f2ec;
+}
+.kb-card-moves { display:flex; gap:4px; }
+.kb-move-btn {
+  padding:2px 7px; border-radius:4px; border:1px solid var(--border);
+  background:#f7f5f0; cursor:pointer; font-size:.72rem; color:var(--muted);
+  transition:all .12s;
+}
+.kb-move-btn:hover { background:var(--accent2); color:#fff; border-color:var(--accent2); }
+.kb-card-actions { display:flex; gap:4px; opacity:0; transition:opacity .15s; }
+.kb-card:hover .kb-card-actions { opacity:1; }
+.kb-card-btn {
+  background:none; border:none; cursor:pointer; font-size:.8rem;
+  color:var(--muted); padding:2px 5px; border-radius:4px; transition:all .12s;
+}
+.kb-card-btn:hover { background:#f5f2ec; color:var(--text); }
+.kb-card-del:hover { background:#ffeaea; color:var(--accent); }
+
+/* Modals */
+.kb-modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:9000;
+  display:flex; align-items:center; justify-content:center;
+}
+.kb-modal {
+  background:#fff; border-radius:14px; width:90%; max-width:480px;
+  box-shadow:0 20px 60px rgba(0,0,0,.2); overflow:hidden;
+  display:flex; flex-direction:column;
+}
+.kb-modal-hd {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 20px; background:#f7f5f0; border-bottom:1px solid var(--border);
+  font-weight:700; font-size:.9rem; color:var(--text);
+}
+.kb-modal-close {
+  background:none; border:none; cursor:pointer; font-size:1rem; color:var(--muted);
+  transition:color .15s;
+}
+.kb-modal-close:hover { color:var(--accent); }
+.kb-modal-bd { padding:18px 20px; display:flex; flex-direction:column; gap:10px; max-height:70vh; overflow-y:auto; }
+.kb-modal-lbl { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); }
+.kb-modal-input {
+  width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:7px;
+  font-family:'DM Sans',sans-serif; font-size:.84rem; color:var(--text);
+  background:#fff; transition:border .15s;
+}
+.kb-modal-input:focus { outline:none; border-color:var(--accent2); }
+.kb-modal-input-sm { width:100px; }
+.kb-modal-textarea {
+  width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:7px;
+  font-family:'DM Sans',sans-serif; font-size:.82rem; color:var(--text);
+  resize:vertical; background:#fff;
+}
+.kb-modal-textarea:focus { outline:none; border-color:var(--accent2); }
+.kb-modal-select {
+  width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:7px;
+  font-family:'DM Sans',sans-serif; font-size:.84rem; background:#fff; color:var(--text);
+}
+.kb-modal-row { display:flex; gap:14px; }
+.kb-modal-group { display:flex; flex-direction:column; gap:6px; flex:1; }
+.kb-modal-hint { font-size:.75rem; color:var(--muted); font-style:italic; }
+.kb-modal-ft {
+  display:flex; justify-content:flex-end; gap:8px;
+  padding:14px 20px; border-top:1px solid var(--border); background:#fafaf8;
+}
+.kb-modal-cancel {
+  padding:8px 18px; border-radius:7px; border:1px solid var(--border);
+  background:transparent; cursor:pointer; font-family:'DM Sans',sans-serif;
+  font-size:.82rem; color:var(--muted);
+}
+.kb-modal-save {
+  padding:8px 20px; border-radius:7px; border:none; background:var(--accent);
+  color:#fff; cursor:pointer; font-family:'DM Sans',sans-serif;
+  font-size:.82rem; font-weight:600; transition:background .15s;
+}
+.kb-modal-save:hover { background:#a84a2a; }
+
+/* Column list in manage modal */
+.kb-col-list { display:flex; flex-direction:column; gap:6px; }
+.kb-col-row {
+  display:flex; align-items:center; gap:8px; padding:6px 8px;
+  border:1px solid var(--border); border-radius:7px; background:#fafaf8;
+  cursor:grab;
+}
+.kb-col-row:active { cursor:grabbing; }
+.kb-col-row.kb-dragging { opacity:.5; }
+.kb-col-grip { color:#ccc; font-size:1rem; cursor:grab; flex-shrink:0; }
+.kb-col-color-pick { width:28px; height:28px; border-radius:4px; border:none; cursor:pointer; flex-shrink:0; padding:0; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   KANBAN — Objectifs annuels
+═══════════════════════════════════════════════════════════════════ */
+
+#kanbanView {
+  display: none;
+  flex-direction: column;
+  height: calc(100vh - 56px);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* Toolbar */
+.kb-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 20px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.kb-year-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.kb-year-btn {
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+}
+.kb-year-btn:hover { border-color: var(--accent); color: var(--accent); }
+.kb-year-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.kb-year-add {
+  padding: 4px 10px;
+  font-size: .9rem;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.kb-manage-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .8rem;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.kb-manage-btn:hover { border-color: #999; color: var(--text); }
+
+/* Board */
+.kb-board {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  padding: 18px 20px 24px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex: 1;
+  min-height: 0;
+  align-items: flex-start;
+}
+
+/* Column */
+.kb-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 290px;
+  max-width: 290px;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  flex-shrink: 0;
+  height: 100%;
+  max-height: 100%;
+}
+
+.kb-col-hd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.kb-col-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.kb-col-label {
+  flex: 1;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: .02em;
+}
+
+.kb-col-count {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .72rem;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  padding: 0 6px;
+}
+
+/* List */
+.kb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 10px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 60px;
+}
+
+/* Ghost drop indicator */
+.kb-ghost {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--accent);
+  opacity: .6;
+  margin: 2px 0;
+  pointer-events: none;
+}
+
+/* Card */
+.kb-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: grab;
+  transition: box-shadow .15s, transform .1s, opacity .15s;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  user-select: none;
+}
+.kb-card:hover {
+  box-shadow: 0 3px 10px rgba(0,0,0,.08);
+  border-color: #ccc;
+}
+.kb-card.dragging {
+  opacity: .35;
+  transform: scale(.97);
+  cursor: grabbing;
+}
+
+.kb-card-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .84rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.kb-card-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .76rem;
+  color: var(--muted);
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.kb-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.kb-card-year {
+  font-size: .68rem;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--muted);
+  background: var(--border);
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+
+.kb-card-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.kb-card:hover .kb-card-actions { opacity: 1; }
+
+.kb-card-btn {
+  width: 24px; height: 24px;
+  border-radius: 5px;
+  border: none;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: .75rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .12s;
+}
+.kb-card-btn:hover { background: var(--border); color: var(--text); }
+.kb-card-btn-del:hover { background: #fde8e8; color: #c0392b; }
+
+/* Add card button */
+.kb-add-card-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: 1px dashed var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .78rem;
+  cursor: pointer;
+  width: 100%;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.kb-add-card-btn:hover {
+  background: var(--surface);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Modals ── */
+.kb-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.kb-modal-overlay.visible { opacity: 1; }
+
+.kb-modal {
+  background: var(--bg);
+  border-radius: 14px;
+  padding: 0;
+  width: 90%;
+  max-width: 520px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  transform: translateY(8px);
+  transition: transform .2s;
+  overflow: hidden;
+}
+.kb-modal-overlay.visible .kb-modal { transform: translateY(0); }
+
+.kb-modal-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.kb-modal-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+.kb-modal-close {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  border: none;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: .85rem;
+  transition: all .12s;
+}
+.kb-modal-close:hover { background: var(--border); color: var(--text); }
+
+.kb-modal-bd {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  flex: 1;
+}
+.kb-modal-ft {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.kb-field-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.kb-field-input, .kb-field-select, .kb-field-textarea {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .85rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.kb-field-input:focus, .kb-field-select:focus, .kb-field-textarea:focus {
+  border-color: var(--accent);
+}
+.kb-field-textarea { resize: vertical; min-height: 70px; }
+
+.kb-btn-cancel {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .84rem;
+  cursor: pointer;
+  transition: all .15s;
+}
+.kb-btn-cancel:hover { border-color: #999; color: var(--text); }
+
+.kb-btn-save {
+  padding: 8px 22px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+}
+.kb-btn-save:hover { filter: brightness(1.1); }
+
+/* Manage columns list */
+.kb-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kb-status-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: grab;
+  transition: background .1s;
+}
+.kb-status-row.drag-over { background: #e8f0ff; border-color: var(--accent); }
+.kb-status-row.dragging  { opacity: .4; }
+
+.kb-status-handle {
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.kb-status-color-btn {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,.15);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform .12s;
+  position: relative;
+}
+.kb-status-color-btn:hover { transform: scale(1.15); }
+
+.kb-status-name-input {
+  flex: 1;
+  padding: 5px 9px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .83rem;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+}
+.kb-status-name-input:focus { border-color: var(--accent); }
+
+.kb-status-del-btn {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: .8rem;
+  flex-shrink: 0;
+  transition: all .12s;
+}
+.kb-status-del-btn:hover { background: #fde8e8; color: #c0392b; }
+.kb-status-del-btn:disabled { opacity: .3; cursor: not-allowed; }
+
+.kb-status-add-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .8rem;
+  cursor: pointer;
+  width: 100%;
+  transition: all .15s;
+  margin-top: 4px;
+}
+.kb-status-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+
 </style>
 </head>
 <body>
@@ -904,7 +1578,8 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   </div>
   <div class="header-right">
     <div class="view-toggle">
-      <button class="btn-view btn-tracker" id="btnTracker">📺 Épisodes !</button>
+      <button class="btn-view btn-tracker" id="btnTracker">📺 Épisodes</button>
+      <button class="btn-view btn-kanban" id="btnKanban">🎯 Objectifs</button>
       <button class="btn-view" id="btnAnnual">Annuel</button>
       <button class="btn-view" id="btnMonth">Mois</button>
       <button class="btn-view active" id="btnWeekly">Semaine</button>
@@ -968,6 +1643,9 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 
 <!-- TRACKER VIEW -->
 <div id="trackerView" style="display:none"></div>
+
+<!-- KANBAN VIEW -->
+<div id="kanbanView" style="display:none"></div>
 
 <script>
 const MONTHS_FR   = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
@@ -3067,6 +3745,484 @@ document.getElementById('btnTracker').addEventListener('click', () => {
   document.getElementById('btnTracker').classList.add('active');
   renderTracker();
 });
+
+</script>
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// KANBAN — Objectifs annuels
+// localStorage keys:
+//   ap_kb_statuses  → [{id, label, color}]
+//   ap_kb_cards     → [{id, title, desc, year, statusId, order, createdAt}]
+// ═══════════════════════════════════════════════════════════════════════════
+
+const KB_STATUSES_KEY = 'ap_kb_statuses';
+const KB_CARDS_KEY    = 'ap_kb_cards';
+
+const KB_DEFAULT_STATUSES = [
+  { id: 'todo',  label: 'À faire',  color: '#8b7355' },
+  { id: 'doing', label: 'En cours', color: '#2d6bbf' },
+  { id: 'done',  label: 'Complété', color: '#2a7a4b' },
+];
+
+let kbDragCard   = null;
+let kbActiveYear = new Date().getFullYear();
+
+// ── PERSISTENCE ──────────────────────────────────────────────────────────────
+function kbLoadStatuses() {
+  try { return JSON.parse(localStorage.getItem(KB_STATUSES_KEY)) || [...KB_DEFAULT_STATUSES]; }
+  catch { return [...KB_DEFAULT_STATUSES]; }
+}
+function kbSaveStatuses(s) { localStorage.setItem(KB_STATUSES_KEY, JSON.stringify(s)); }
+
+function kbLoadCards() {
+  try { return JSON.parse(localStorage.getItem(KB_CARDS_KEY)) || []; }
+  catch { return []; }
+}
+function kbSaveCards(c) { localStorage.setItem(KB_CARDS_KEY, JSON.stringify(c)); }
+
+function kbUid() { return 'kb_' + Date.now() + '_' + Math.random().toString(36).slice(2,7); }
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+function renderKanban() {
+  const view = document.getElementById('kanbanView');
+  view.innerHTML = '';
+
+  const statuses = kbLoadStatuses();
+  const allCards = kbLoadCards();
+  const allYears = Array.from(new Set([
+    ...allCards.map(c => c.year),
+    kbActiveYear,
+    new Date().getFullYear()
+  ])).sort((a,b)=>a-b);
+
+  // ── Toolbar ──
+  const toolbar = document.createElement('div');
+  toolbar.className = 'kb-toolbar';
+
+  // Year pills
+  const yearWrap = document.createElement('div');
+  yearWrap.className = 'kb-year-wrap';
+  const yearIcon = document.createElement('span');
+  yearIcon.textContent = '📅';
+  yearIcon.style.fontSize = '.95rem';
+  yearWrap.appendChild(yearIcon);
+
+  allYears.forEach(yr => {
+    const ybtn = document.createElement('button');
+    ybtn.className = 'kb-year-btn' + (yr === kbActiveYear ? ' active' : '');
+    ybtn.textContent = yr;
+    ybtn.addEventListener('click', () => { kbActiveYear = yr; renderKanban(); });
+    yearWrap.appendChild(ybtn);
+  });
+
+  const addYrBtn = document.createElement('button');
+  addYrBtn.className = 'kb-year-btn kb-year-add';
+  addYrBtn.textContent = '＋';
+  addYrBtn.title = 'Ajouter une année';
+  addYrBtn.addEventListener('click', () => {
+    const yr = parseInt(prompt('Année :', new Date().getFullYear() + 1));
+    if (yr && yr > 2000 && yr < 2100) { kbActiveYear = yr; renderKanban(); }
+  });
+  yearWrap.appendChild(addYrBtn);
+  toolbar.appendChild(yearWrap);
+
+  const spacer = document.createElement('div'); spacer.style.flex='1';
+  toolbar.appendChild(spacer);
+
+  const manageBtn = document.createElement('button');
+  manageBtn.className = 'kb-manage-btn';
+  manageBtn.textContent = '⚙ Colonnes';
+  manageBtn.addEventListener('click', kbShowManageModal);
+  toolbar.appendChild(manageBtn);
+
+  view.appendChild(toolbar);
+
+  // ── Board ──
+  const board = document.createElement('div');
+  board.className = 'kb-board';
+
+  const cards = allCards.filter(c => c.year === kbActiveYear);
+
+  statuses.forEach(status => {
+    board.appendChild(kbBuildColumn(status, cards));
+  });
+
+  view.appendChild(board);
+}
+
+// ── COLUMN ───────────────────────────────────────────────────────────────────
+function kbBuildColumn(status, cards) {
+  const colCards = cards
+    .filter(c => c.statusId === status.id)
+    .sort((a,b) => (a.order||0) - (b.order||0));
+
+  const col = document.createElement('div');
+  col.className = 'kb-col';
+
+  const hd = document.createElement('div');
+  hd.className = 'kb-col-hd';
+
+  const dot = document.createElement('span');
+  dot.className = 'kb-col-dot';
+  dot.style.background = status.color;
+
+  const lbl = document.createElement('span');
+  lbl.className = 'kb-col-label';
+  lbl.textContent = status.label;
+
+  const cnt = document.createElement('span');
+  cnt.className = 'kb-col-count';
+  cnt.style.background = status.color + '33';
+  cnt.style.color = status.color;
+  cnt.textContent = colCards.length;
+
+  hd.appendChild(dot); hd.appendChild(lbl); hd.appendChild(cnt);
+  col.appendChild(hd);
+
+  const list = document.createElement('div');
+  list.className = 'kb-list';
+  list.dataset.statusId = status.id;
+
+  // Drag events on list
+  list.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const after = kbDragAfterElement(list, e.clientY);
+    let ghost = list.querySelector('.kb-ghost');
+    if (!ghost) { ghost = document.createElement('div'); ghost.className = 'kb-ghost'; }
+    if (after) list.insertBefore(ghost, after);
+    else {
+      // insert before the add-button if it's there
+      const addBtn = list.querySelector('.kb-add-card-btn');
+      if (addBtn) list.insertBefore(ghost, addBtn);
+      else list.appendChild(ghost);
+    }
+  });
+
+  list.addEventListener('dragleave', e => {
+    if (!list.contains(e.relatedTarget)) {
+      const g = list.querySelector('.kb-ghost'); if (g) g.remove();
+    }
+  });
+
+  list.addEventListener('drop', e => {
+    e.preventDefault();
+    const ghost = list.querySelector('.kb-ghost');
+    const afterEl = ghost ? ghost.nextSibling : null;
+    if (ghost) ghost.remove();
+    kbDropCard(status.id, afterEl?.dataset?.cardId || null);
+  });
+
+  colCards.forEach(card => list.appendChild(kbBuildCard(card)));
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'kb-add-card-btn';
+  addBtn.innerHTML = '<span style="font-size:1rem;line-height:1">＋</span> Ajouter un objectif';
+  addBtn.addEventListener('click', () => kbShowCardModal(null, status.id));
+  list.appendChild(addBtn);
+
+  col.appendChild(list);
+  return col;
+}
+
+// ── CARD ─────────────────────────────────────────────────────────────────────
+function kbBuildCard(card) {
+  const el = document.createElement('div');
+  el.className = 'kb-card';
+  el.dataset.cardId = card.id;
+  el.draggable = true;
+
+  el.addEventListener('dragstart', e => {
+    kbDragCard = card.id;
+    setTimeout(() => el.classList.add('dragging'), 0);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', card.id);
+  });
+  el.addEventListener('dragend', () => {
+    kbDragCard = null;
+    el.classList.remove('dragging');
+    document.querySelectorAll('.kb-ghost').forEach(g => g.remove());
+  });
+
+  const title = document.createElement('div');
+  title.className = 'kb-card-title';
+  title.textContent = card.title;
+  el.appendChild(title);
+
+  if (card.desc) {
+    const desc = document.createElement('div');
+    desc.className = 'kb-card-desc';
+    desc.textContent = card.desc;
+    el.appendChild(desc);
+  }
+
+  const footer = document.createElement('div');
+  footer.className = 'kb-card-footer';
+
+  const yearBadge = document.createElement('span');
+  yearBadge.className = 'kb-card-year';
+  yearBadge.textContent = card.year;
+
+  const actions = document.createElement('div');
+  actions.className = 'kb-card-actions';
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'kb-card-btn';
+  editBtn.title = 'Modifier'; editBtn.textContent = '✏';
+  editBtn.addEventListener('click', e => { e.stopPropagation(); kbShowCardModal(card); });
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'kb-card-btn kb-card-btn-del';
+  delBtn.title = 'Supprimer'; delBtn.textContent = '✕';
+  delBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (confirm(`Supprimer l'objectif "${card.title}" ?`)) {
+      kbSaveCards(kbLoadCards().filter(c => c.id !== card.id));
+      renderKanban();
+    }
+  });
+
+  actions.appendChild(editBtn); actions.appendChild(delBtn);
+  footer.appendChild(yearBadge); footer.appendChild(actions);
+  el.appendChild(footer);
+  return el;
+}
+
+function kbDragAfterElement(container, y) {
+  const els = [...container.querySelectorAll('.kb-card:not(.dragging)')];
+  return els.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) return { offset, element: child };
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function kbDropCard(targetStatusId, beforeCardId) {
+  if (!kbDragCard) return;
+  const cards = kbLoadCards();
+  const card  = cards.find(c => c.id === kbDragCard);
+  if (!card) return;
+
+  card.statusId = targetStatusId;
+
+  const colCards = cards
+    .filter(c => c.statusId === targetStatusId && c.id !== kbDragCard)
+    .sort((a,b) => (a.order||0) - (b.order||0));
+
+  const insertIdx = beforeCardId
+    ? colCards.findIndex(c => c.id === beforeCardId)
+    : colCards.length;
+
+  colCards.splice(insertIdx < 0 ? colCards.length : insertIdx, 0, card);
+  colCards.forEach((c,i) => { c.order = i; });
+
+  kbSaveCards(cards);
+  renderKanban();
+}
+
+// ── CARD MODAL ───────────────────────────────────────────────────────────────
+function kbShowCardModal(card = null, defaultStatusId = null) {
+  kbRemoveModal();
+  const statuses = kbLoadStatuses();
+  const isEdit   = !!card;
+
+  const overlay = kbMakeOverlay();
+  const modal   = document.createElement('div'); modal.className = 'kb-modal';
+
+  // Header
+  const mhd = document.createElement('div'); mhd.className = 'kb-modal-hd';
+  const mtitle = document.createElement('div'); mtitle.className = 'kb-modal-title';
+  mtitle.textContent = isEdit ? '✏ Modifier l\'objectif' : '＋ Nouvel objectif';
+  const mclose = kbCloseBtn(); mhd.appendChild(mtitle); mhd.appendChild(mclose);
+
+  // Body
+  const mbd = document.createElement('div'); mbd.className = 'kb-modal-bd';
+
+  const mkField = (lbl, el) => {
+    const wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+    const label = document.createElement('label'); label.className = 'kb-field-label'; label.textContent = lbl;
+    wrap.appendChild(label); wrap.appendChild(el); return wrap;
+  };
+
+  const titleInput = document.createElement('input'); titleInput.className = 'kb-field-input';
+  titleInput.placeholder = 'Nom de l\'objectif…'; titleInput.value = card?.title || '';
+
+  const descInput = document.createElement('textarea'); descInput.className = 'kb-field-textarea';
+  descInput.placeholder = 'Détails, notes…'; descInput.value = card?.desc || ''; descInput.rows = 3;
+
+  const yearInput = document.createElement('input'); yearInput.className = 'kb-field-input';
+  yearInput.type = 'number'; yearInput.min = 2020; yearInput.max = 2099;
+  yearInput.value = card?.year || kbActiveYear;
+
+  const statusSel = document.createElement('select'); statusSel.className = 'kb-field-select';
+  statuses.forEach(s => {
+    const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.label;
+    if ((card?.statusId || defaultStatusId) === s.id) opt.selected = true;
+    statusSel.appendChild(opt);
+  });
+
+  mbd.appendChild(mkField('Objectif *', titleInput));
+  mbd.appendChild(mkField('Description', descInput));
+  mbd.appendChild(mkField('Année', yearInput));
+  mbd.appendChild(mkField('Statut', statusSel));
+
+  // Footer
+  const mft = document.createElement('div'); mft.className = 'kb-modal-ft';
+  const cancelBtn = document.createElement('button'); cancelBtn.className = 'kb-btn-cancel'; cancelBtn.textContent = 'Annuler';
+  cancelBtn.addEventListener('click', kbRemoveModal);
+  const saveBtn = document.createElement('button'); saveBtn.className = 'kb-btn-save';
+  saveBtn.textContent = isEdit ? 'Enregistrer' : 'Créer';
+
+  saveBtn.addEventListener('click', () => {
+    const title = titleInput.value.trim();
+    if (!title) { titleInput.style.borderColor='#e05'; titleInput.focus(); return; }
+    const cards = kbLoadCards();
+    const yr    = parseInt(yearInput.value) || kbActiveYear;
+    const stId  = statusSel.value;
+
+    if (isEdit) {
+      const idx = cards.findIndex(c => c.id === card.id);
+      if (idx >= 0) Object.assign(cards[idx], { title, desc: descInput.value.trim(), year: yr, statusId: stId });
+    } else {
+      const colCards = cards.filter(c => c.statusId === stId && c.year === yr);
+      const maxOrder = colCards.length ? Math.max(...colCards.map(c=>c.order||0)) + 1 : 0;
+      cards.push({ id: kbUid(), title, desc: descInput.value.trim(), year: yr, statusId: stId, order: maxOrder, createdAt: new Date().toISOString() });
+    }
+
+    kbSaveCards(cards);
+    if (yr !== kbActiveYear) kbActiveYear = yr;
+    kbRemoveModal();
+    renderKanban();
+  });
+
+  mft.appendChild(cancelBtn); mft.appendChild(saveBtn);
+  modal.appendChild(mhd); modal.appendChild(mbd); modal.appendChild(mft);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+  titleInput.focus();
+  titleInput.addEventListener('keydown', e => { if (e.key==='Enter') saveBtn.click(); });
+}
+
+// ── MANAGE COLUMNS MODAL ─────────────────────────────────────────────────────
+function kbShowManageModal() {
+  kbRemoveModal();
+  let statuses = kbLoadStatuses().map(s => ({...s})); // work on copies
+
+  const overlay = kbMakeOverlay();
+  const modal   = document.createElement('div'); modal.className = 'kb-modal'; modal.style.maxWidth='480px';
+
+  const mhd = document.createElement('div'); mhd.className = 'kb-modal-hd';
+  const mtitle = document.createElement('div'); mtitle.className = 'kb-modal-title'; mtitle.textContent = '⚙ Gérer les colonnes';
+  const mclose = kbCloseBtn(); mhd.appendChild(mtitle); mhd.appendChild(mclose);
+
+  const mbd = document.createElement('div'); mbd.className = 'kb-modal-bd';
+  const hint = document.createElement('p');
+  hint.style.cssText = 'font-size:.78rem;color:var(--muted);margin:0 0 14px;';
+  hint.textContent = 'Glissez ⠿ pour réordonner. Cliquez sur la pastille pour changer la couleur.';
+  mbd.appendChild(hint);
+
+  let dragSrc = null;
+
+  const buildList = () => {
+    const old = mbd.querySelector('.kb-status-list'); if (old) old.remove();
+    const list = document.createElement('div'); list.className = 'kb-status-list';
+
+    statuses.forEach((s, idx) => {
+      const row = document.createElement('div'); row.className = 'kb-status-row'; row.draggable = true;
+
+      row.addEventListener('dragstart', e => { dragSrc = idx; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+      row.addEventListener('dragend',   () => { row.classList.remove('dragging'); list.querySelectorAll('.kb-status-row').forEach(r=>r.classList.remove('drag-over')); });
+      row.addEventListener('dragover',  e => { e.preventDefault(); row.classList.add('drag-over'); });
+      row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+      row.addEventListener('drop', e => {
+        e.preventDefault(); row.classList.remove('drag-over');
+        if (dragSrc === null || dragSrc === idx) return;
+        const [moved] = statuses.splice(dragSrc, 1);
+        statuses.splice(idx, 0, moved);
+        dragSrc = null; buildList();
+      });
+
+      const handle = document.createElement('span'); handle.className = 'kb-status-handle'; handle.textContent = '⠿';
+
+      // Color picker
+      const colorWrap = document.createElement('span'); colorWrap.style.cssText='position:relative;display:inline-flex;';
+      const colorDot = document.createElement('button'); colorDot.className='kb-status-color-btn';
+      colorDot.style.background = s.color; colorDot.title = 'Changer la couleur';
+      const colorPicker = document.createElement('input'); colorPicker.type='color'; colorPicker.value=s.color;
+      colorPicker.style.cssText='position:absolute;opacity:0;width:0;height:0;top:0;left:0;';
+      colorPicker.addEventListener('input', e => { s.color=e.target.value; colorDot.style.background=e.target.value; });
+      colorDot.addEventListener('click', ()=>colorPicker.click());
+      colorWrap.appendChild(colorDot); colorWrap.appendChild(colorPicker);
+
+      const nameInput = document.createElement('input'); nameInput.className='kb-status-name-input';
+      nameInput.value = s.label;
+      nameInput.addEventListener('input', e => { s.label = e.target.value; });
+
+      const delBtn = document.createElement('button'); delBtn.className='kb-status-del-btn'; delBtn.textContent='✕';
+      delBtn.disabled = statuses.length <= 1;
+      delBtn.addEventListener('click', () => {
+        if (statuses.length <= 1) return;
+        if (confirm(`Supprimer la colonne "${s.label}" ?`)) { statuses.splice(idx,1); buildList(); }
+      });
+
+      row.appendChild(handle); row.appendChild(colorWrap); row.appendChild(nameInput); row.appendChild(delBtn);
+      list.appendChild(row);
+    });
+
+    const addBtn = document.createElement('button'); addBtn.className='kb-status-add-btn'; addBtn.textContent='＋ Ajouter un statut';
+    addBtn.addEventListener('click', () => { statuses.push({id:kbUid(),label:'Nouveau',color:'#888888'}); buildList(); });
+    list.appendChild(addBtn);
+    mbd.appendChild(list);
+  };
+
+  buildList();
+
+  const mft = document.createElement('div'); mft.className = 'kb-modal-ft';
+  const cancelBtn = document.createElement('button'); cancelBtn.className='kb-btn-cancel'; cancelBtn.textContent='Annuler';
+  cancelBtn.addEventListener('click', kbRemoveModal);
+  const saveBtn = document.createElement('button'); saveBtn.className='kb-btn-save'; saveBtn.textContent='Enregistrer';
+  saveBtn.addEventListener('click', () => { kbSaveStatuses(statuses); kbRemoveModal(); renderKanban(); });
+
+  mft.appendChild(cancelBtn); mft.appendChild(saveBtn);
+  modal.appendChild(mhd); modal.appendChild(mbd); modal.appendChild(mft);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function kbMakeOverlay() {
+  const o = document.createElement('div'); o.className='kb-modal-overlay'; o.id='kbModalOverlay';
+  o.addEventListener('click', e => { if (e.target===o) kbRemoveModal(); });
+  return o;
+}
+function kbCloseBtn() {
+  const b = document.createElement('button'); b.className='kb-modal-close'; b.textContent='✕';
+  b.addEventListener('click', kbRemoveModal); return b;
+}
+function kbRemoveModal() { const m=document.getElementById('kbModalOverlay'); if(m) m.remove(); }
+
+// ── HOOK INTO HEADER BUTTON ───────────────────────────────────────────────────
+document.getElementById('btnKanban').addEventListener('click', () => {
+  // Hide all other views
+  ['trackerView','kanbanView','scrollArea','monthView','weeklyView'].forEach(id => {
+    const el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  const sw = document.querySelector('.strip-wrapper'); if(sw) sw.style.display='none';
+  document.querySelectorAll('.btn-view').forEach(b => b.classList.remove('active'));
+  document.getElementById('btnKanban').classList.add('active');
+  document.getElementById('kanbanView').style.display = 'flex';
+  renderKanban();
+});
+
+// Patch switchView so kanban is hidden when switching to other views
+const _kbOrigSwitchView = window.switchView;
+window.switchView = function(mode) {
+  const kv=document.getElementById('kanbanView'); if(kv) kv.style.display='none';
+  _kbOrigSwitchView(mode);
+};
 
 </script>
 </body>
