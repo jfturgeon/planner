@@ -1563,6 +1563,43 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 }
 .kb-status-add-btn:hover { border-color: var(--accent); color: var(--accent); }
 
+.hdr-btn-contacts {
+  padding:5px 10px; border-radius:6px; font-size:.75rem; font-weight:600;
+  font-family:'DM Sans',sans-serif; cursor:pointer; transition:all .15s; white-space:nowrap;
+  background:#3d3a35; border:1px solid #7a5c3a; color:#c89060;
+}
+.hdr-btn-contacts:hover { background:#7a5c3a; color:#fff; }
+
+/* Birthday rows in event list */
+.ct-bday-row { cursor:default !important; }
+.ct-bday-row .wv-row-label { font-style:normal; }
+
+/* ── EVENT LIST SCROLLABLE ── */
+.wv-ev-scroll {
+  max-height: calc(6 * 30px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.wv-ev-scroll::-webkit-scrollbar { width:4px; }
+.wv-ev-scroll::-webkit-scrollbar-thumb { background:#d4cfc8; border-radius:2px; }
+
+/* ── TASK LIST SCROLLABLE ── */
+.wv-task-scroll {
+  max-height: calc(25 * 30px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.wv-task-scroll::-webkit-scrollbar { width:4px; }
+.wv-task-scroll::-webkit-scrollbar-thumb { background:#d4cfc8; border-radius:2px; }
+
+/* ── ALL-DAY TOGGLE IN EVENT EDIT ── */
+.wv-row-time-edit[style*="display: none"],
+.wv-row-time-edit[style*="display:none"] { display:none !important; }
+
+/* ── TOGGLE LEFT PANEL BUTTON ── */
+.wv-toggle-left-btn { font-size:.75rem; color:var(--muted); }
+.wv-toggle-left-btn.active { background:var(--text); color:#f4f1eb; }
+
 </style>
 </head>
 <body>
@@ -1592,6 +1629,7 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
     <div class="hdr-data-btns">
       <button class="hdr-btn-export" id="btnExportData">⬇ Export</button>
       <button class="hdr-btn-import" id="btnImportData">⬆ Import</button>
+      <button class="hdr-btn-contacts" id="btnImportContacts">👥 Contacts</button>
     </div>
   </div>
 </header>
@@ -2063,6 +2101,7 @@ function renderWeeklyView(){
   <div class="wv-week-nav">
     <div class="wv-week-label">${weekLabel}</div>
     <div class="wv-nav-btns">
+      <button class="wv-nav-btn wv-toggle-left-btn" id="wvToggleLeft" title="Afficher / masquer le panneau">◀ Panneau</button>
       <button class="wv-nav-btn" id="wvPrev">‹ Semaine préc.</button>
       <button class="wv-nav-btn today-btn" id="wvToday">Aujourd'hui</button>
       <button class="wv-nav-btn" id="wvNext">Semaine suiv. ›</button>
@@ -2077,6 +2116,17 @@ function renderWeeklyView(){
   document.getElementById('wvPrev').onclick=()=>{ weekOffset--; calOffset=0; renderWeeklyView(); };
   document.getElementById('wvNext').onclick=()=>{ weekOffset++; calOffset=0; renderWeeklyView(); };
   document.getElementById('wvToday').onclick=()=>{ weekOffset=0; calOffset=0; renderWeeklyView(); };
+  let leftVisible = localStorage.getItem('ap_left_panel')!=='0';
+  const wvLeft=document.getElementById('wvLeft');
+  const toggleBtn=document.getElementById('wvToggleLeft');
+  const applyLeftState=()=>{
+    wvLeft.style.display=leftVisible?'':'none';
+    toggleBtn.textContent=leftVisible?'◀ Panneau':'▶ Panneau';
+    toggleBtn.classList.toggle('active', !leftVisible);
+    document.querySelector('.wv-layout').style.gridTemplateColumns=leftVisible?'auto 1fr':'1fr';
+  };
+  toggleBtn.addEventListener('click',()=>{ leftVisible=!leftVisible; localStorage.setItem('ap_left_panel',leftVisible?'1':'0'); applyLeftState(); });
+  applyLeftState();
 
   renderWvLeft(dates, wk, wdata);
   renderWvDays(dates, wk, wdata);
@@ -2394,22 +2444,31 @@ function renderWvDays(dates, wk, wdata){
     evSec.appendChild(evHd);
 
     const evList=document.createElement('div');
+    evList.dataset.evlist = dk;
+    evList.className='wv-ev-scroll';
     const NUM_EV_ROWS=6;
 
     const saveEvents=()=>{ localStorage.setItem('ap_de_'+dk,JSON.stringify(dayExtra)); };
 
     const renderEvRows=()=>{
       evList.innerHTML='';
-      // Show real events + empty rows to fill up to NUM_EV_ROWS
-      const sorted=[...dayExtra.events].sort((a,b)=>a.time.localeCompare(b.time));
+      // Re-inject birthdays after clearing (contacts.js will handle this)
+      const sorted=[...dayExtra.events].sort((a,b)=>{
+        const aAll=a.allDay||!a.time; const bAll=b.allDay||!b.time;
+        if(aAll&&!bAll) return -1; if(!aAll&&bAll) return 1;
+        return (a.time||'').localeCompare(b.time||'');
+      });
       const total=Math.max(NUM_EV_ROWS, sorted.length);
       for(let ri=0;ri<total;ri++){
         const ev=sorted[ri]||null;
         const row=document.createElement('div'); row.className='wv-event-row';
+        const isAllDay=ev&&(ev.allDay||!ev.time);
 
         const timeSpan=document.createElement('span');
         timeSpan.className='wv-row-time'+(ev?'':' empty');
-        timeSpan.textContent=ev?ev.time:'--:--';
+        if(!ev) timeSpan.textContent='--:--';
+        else if(isAllDay){ timeSpan.textContent='Jour'; timeSpan.style.cssText='color:#aaa;font-size:.65rem;font-weight:600;min-width:58px;flex-shrink:0;'; }
+        else timeSpan.textContent=ev.time;
 
         const labelSpan=document.createElement('span');
         labelSpan.className='wv-row-label'+(ev?'':' empty');
@@ -2420,38 +2479,54 @@ function renderWvDays(dates, wk, wdata){
 
         row.appendChild(timeSpan); row.appendChild(labelSpan); row.appendChild(delBtn);
 
-        // Click row to edit inline — time or label independently
         const startEdit=(focusTime=false)=>{
           row.innerHTML='';
+
+          // All-day toggle checkbox
+          const allDayWrap=document.createElement('label');
+          allDayWrap.style.cssText='display:flex;align-items:center;gap:3px;flex-shrink:0;cursor:pointer;font-size:.65rem;color:var(--muted);white-space:nowrap;';
+          const allDayCb=document.createElement('input'); allDayCb.type='checkbox';
+          allDayCb.style.cssText='width:11px;height:11px;cursor:pointer;accent-color:var(--accent2);';
+          allDayCb.checked=ev?!!(ev.allDay||!ev.time):false;
+          const allDayLbl=document.createElement('span'); allDayLbl.textContent='Jour';
+          allDayWrap.appendChild(allDayCb); allDayWrap.appendChild(allDayLbl);
+
           const timeIn=document.createElement('input');
           timeIn.type='time'; timeIn.className='wv-row-time-edit';
-          timeIn.value=ev?ev.time:'';
+          timeIn.value=(ev&&!ev.allDay&&ev.time)?ev.time:'';
+          timeIn.style.display=allDayCb.checked?'none':'';
+
           const labelIn=document.createElement('input');
           labelIn.type='text'; labelIn.className='wv-row-edit-input';
           labelIn.placeholder='Titre de l\'événement…';
           labelIn.value=ev?ev.title:'';
-          row.appendChild(timeIn); row.appendChild(labelIn);
 
-          if(focusTime) timeIn.focus(); else { labelIn.focus(); labelIn.select(); }
+          allDayCb.addEventListener('change',()=>{ timeIn.style.display=allDayCb.checked?'none':''; if(!allDayCb.checked) timeIn.focus(); });
+
+          row.appendChild(allDayWrap); row.appendChild(timeIn); row.appendChild(labelIn);
+          if(focusTime&&!allDayCb.checked) timeIn.focus(); else { labelIn.focus(); labelIn.select(); }
 
           let committed=false;
           const commit=()=>{
             if(committed) return; committed=true;
             const t=labelIn.value.trim();
-            const tm=timeIn.value||'00:00';
+            const isAD=allDayCb.checked;
+            const tm=isAD?'':timeIn.value||'00:00';
             if(ev){
               const idx=dayExtra.events.indexOf(ev);
-              if(t){ if(idx>-1){ dayExtra.events[idx].title=t; dayExtra.events[idx].time=tm; } }
+              if(t){ if(idx>-1){ dayExtra.events[idx].title=t; dayExtra.events[idx].time=tm; dayExtra.events[idx].allDay=isAD; } }
               else { if(idx>-1) dayExtra.events.splice(idx,1); }
-            } else if(t){ dayExtra.events.push({time:tm,title:t}); }
+            } else if(t){ dayExtra.events.push({time:tm,title:t,allDay:isAD}); }
             saveEvents(); renderEvRows();
+            // Re-inject birthdays
+            if(window.ctInjectAllBirthdays) ctInjectAllBirthdays();
           };
-          // Commit when both inputs lose focus (with small delay to allow switching between them)
           const blurHandler=()=>{ setTimeout(()=>{ if(!row.contains(document.activeElement)) commit(); }, 150); };
           timeIn.addEventListener('blur', blurHandler);
           labelIn.addEventListener('blur', blurHandler);
-          labelIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ labelIn.blur(); } if(e.key==='Escape'){ committed=true; renderEvRows(); } });
-          timeIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ labelIn.focus(); } if(e.key==='Escape'){ committed=true; renderEvRows(); } });
+          allDayCb.addEventListener('blur', blurHandler);
+          labelIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ labelIn.blur(); } if(e.key==='Escape'){ committed=true; renderEvRows(); if(window.ctInjectAllBirthdays) ctInjectAllBirthdays(); } });
+          timeIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ labelIn.focus(); } if(e.key==='Escape'){ committed=true; renderEvRows(); if(window.ctInjectAllBirthdays) ctInjectAllBirthdays(); } });
         };
 
         timeSpan.addEventListener('click',e=>{ e.stopPropagation(); startEdit(true); });
@@ -2464,6 +2539,7 @@ function renderWvDays(dates, wk, wdata){
             const idx=dayExtra.events.indexOf(ev);
             if(idx>-1) dayExtra.events.splice(idx,1);
             saveEvents(); renderEvRows();
+            if(window.ctInjectAllBirthdays) ctInjectAllBirthdays();
           });
         }
 
@@ -2482,6 +2558,7 @@ function renderWvDays(dates, wk, wdata){
     taskSec.appendChild(taskHd);
 
     const taskList=document.createElement('div');
+    taskList.className='wv-task-scroll';
     taskList.dataset.taskrows = dk;
     const NUM_TASK_ROWS=25;
 
@@ -2491,7 +2568,10 @@ function renderWvDays(dates, wk, wdata){
       taskList.innerHTML='';
       if(!entry.tasks) entry.tasks=[];
       const tasks=entry.tasks;
-      const total=Math.max(NUM_TASK_ROWS, tasks.length);
+      // Episodes will be prepended by tracker.js; reserve space for them
+      const epCount=(dow>=1&&dow<=5)?6:0; // 6 episodes Mon-Fri
+      const taskSlots=Math.max(0, NUM_TASK_ROWS - epCount);
+      const total=Math.max(taskSlots, tasks.length);
       for(let ri=0;ri<total;ri++){
         const t=tasks[ri]||null;
         const row=document.createElement('div');
@@ -4236,6 +4316,213 @@ window.switchView = function(mode) {
   const kv=document.getElementById('kanbanView'); if(kv) kv.style.display='none';
   _kbOrigSwitchView(mode);
 };
+
+</script>
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// CONTACTS — Anniversaires & événements dans la vue Semaine
+// localStorage key: ap_contacts → [{fn, ln, by, bm, bd, dy, dm, dd}]
+// ═══════════════════════════════════════════════════════════════════════════
+
+const CONTACTS_KEY = 'ap_contacts';
+
+// Contacts pré-chargés depuis le CSV importé
+const CONTACTS_PRELOADED = [{"fn": "Adam", "ln": "Savage", "by": 1967, "bm": 7, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Al", "ln": "Pacino", "by": 1940, "bm": 4, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Alain", "ln": "Bélanger", "by": 1977, "bm": 10, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Alain", "ln": "Firgon", "by": 1975, "bm": 8, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Alec", "ln": "Baldwin", "by": 1958, "bm": 4, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Alejandro", "ln": "Iñárritu", "by": 1963, "bm": 8, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Alexandre", "ln": "Bérubé", "by": 1982, "bm": 11, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Alexandre", "ln": "Bouchard", "by": 1989, "bm": 6, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Alexis", "ln": "Lévesque", "by": 2008, "bm": 4, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Alfonso", "ln": "Cuarón", "by": 1961, "bm": 11, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Alfred", "ln": "Hitchcock", "by": 1899, "bm": 8, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Amélie", "ln": "Morrin", "by": 1980, "bm": 8, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Amy", "ln": "Adams", "by": 1974, "bm": 8, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Anabelle", "ln": "Vachon", "by": 2009, "bm": 6, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Anaïs", "ln": "Turgeon", "by": 2007, "bm": 5, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "André", "ln": "Carrier", "by": 1938, "bm": 1, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Angelina", "ln": "Jolie", "by": 1975, "bm": 6, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Anna", "ln": "Paquin", "by": 1982, "bm": 7, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Anne", "ln": "Hathaway", "by": 1982, "bm": 11, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Anthony", "ln": "Hopkins", "by": 1937, "bm": 12, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Anthony", "ln": "Laplante", "by": 1989, "bm": 2, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Antonio", "ln": "Carrier", "by": 1939, "bm": 6, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Arnold", "ln": "Schwarzenegger", "by": 1930, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Audrey", "ln": "Gingras", "by": 2007, "bm": 3, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Audrey", "ln": "Laplante", "by": 1986, "bm": 6, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Barbra", "ln": "Streisand", "by": 1942, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Ben", "ln": "Kingsley", "by": 1943, "bm": 12, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Benedict", "ln": "Cumberbatch", "by": 1976, "bm": 7, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Benicio", "ln": "Del Toro", "by": 1967, "bm": 2, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Benoit", "ln": "Mercier", "by": 1981, "bm": 1, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Bernard", "ln": "Derome", "by": 1944, "bm": 1, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Bernard", "ln": "Fortin", "by": 1957, "bm": 1, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Bill", "ln": "Murray", "by": 1950, "bm": 9, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Billy", "ln": "Thornton", "by": 1955, "bm": 8, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Brad", "ln": "Pitt", "by": 1963, "bm": 12, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Bradley", "ln": "Cooper", "by": 1975, "bm": 1, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Brigitte", "ln": "Morneau", "by": 1953, "bm": 10, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Bruce", "ln": "Campbell", "by": 1958, "bm": 6, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Bruno", "ln": "Côté", "by": 1961, "bm": 9, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Bruno", "ln": "Ratia", "by": 1982, "bm": 11, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Burt", "ln": "Reynolds", "by": 1936, "bm": 2, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Carmel", "ln": "Carrier", "by": 1935, "bm": 6, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Caroline", "ln": "Garand", "by": 1983, "bm": 8, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Carrie-Ann", "ln": "Moss", "by": 1967, "bm": 8, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Cate", "ln": "Blanchett", "by": 1969, "bm": 5, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Catherine", "ln": "Roy", "by": 1979, "bm": 4, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Catherine", "ln": "Zeta-Jones", "by": 1969, "bm": 9, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Cédric", "ln": "Vachon", "by": 2006, "bm": 9, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Chantal", "ln": "Bouchard", "by": 1965, "bm": 3, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Chantal Guillemette", "ln": "", "by": 1959, "bm": 7, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Charles", "ln": "Audet", "by": 1980, "bm": 5, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Charles", "ln": "Chaplin", "by": 1889, "bm": 4, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Charles", "ln": "Dodier", "by": 1974, "bm": 2, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Charlize", "ln": "Theron", "by": 1975, "bm": 8, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Cher", "ln": "", "by": 1946, "bm": 5, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Chris", "ln": "Cooper", "by": 1951, "bm": 7, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Chris", "ln": "O'Donnell", "by": 1970, "bm": 6, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Chris", "ln": "Pratt", "by": 1979, "bm": 6, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Christian", "ln": "Bale", "by": 1974, "bm": 1, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Christian", "ln": "Turgeon", "by": 1953, "bm": 7, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Christine", "ln": "Boyer", "by": 1983, "bm": 6, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Christine", "ln": "Carrier", "by": 1968, "bm": 1, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Christoph", "ln": "Waltz", "by": 1956, "bm": 10, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Christopher", "ln": "Nolan", "by": 1970, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Christopher", "ln": "Plummer", "by": 1929, "bm": 12, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Christopher", "ln": "Walken", "by": 1943, "bm": 3, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Chuck", "ln": "Norris", "by": 1960, "bm": 3, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Clara", "ln": "Carrier", "by": 2012, "bm": 3, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Claude", "ln": "Bérubé", "by": 1952, "bm": 9, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Claude", "ln": "Frigon", "by": 1952, "bm": 1, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Claudia", "ln": "Bérubé", "by": 1984, "bm": 7, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Clint", "ln": "Eastwood", "by": 1930, "bm": 5, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Clive", "ln": "Owen", "by": 1964, "bm": 10, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Colin", "ln": "Firth", "by": 1960, "bm": 9, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Cuba", "ln": "Gooding", "by": 1968, "bm": 1, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Daniel", "ln": "Craig", "by": 1968, "bm": 3, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Daniel", "ln": "Day-Lewis", "by": 1957, "bm": 4, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Daniel", "ln": "Laplante", "by": 1955, "bm": 9, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Daniel", "ln": "Radcliffe", "by": 1989, "bm": 7, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Danny", "ln": "Boyle", "by": 1956, "bm": 10, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Danny", "ln": "Glover", "by": 1946, "bm": 7, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "David", "ln": "Fincher", "by": 1962, "bm": 8, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "David", "ln": "Hasselhoff", "by": 1952, "bm": 7, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "David", "ln": "Lynch", "by": 1946, "bm": 1, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "David", "ln": "Turgeon", "by": 1983, "bm": 8, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Denis", "ln": "Carrier", "by": 1950, "bm": 3, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Denis", "ln": "Turgeon", "by": 1959, "bm": 3, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Denise", "ln": "Bombardier", "by": 1941, "bm": 1, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Denise", "ln": "Carrier", "by": 1941, "bm": 2, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Denise", "ln": "Turgeon", "by": 1959, "bm": 3, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Dennis", "ln": "Hopper", "by": 1936, "bm": 5, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Denzel", "ln": "Washington", "by": 1954, "bm": 12, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Diane", "ln": "Keaton", "by": 1946, "bm": 1, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Dianne", "ln": "Wiest", "by": 1948, "bm": 3, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Donald", "ln": "Sutherland", "by": 1935, "bm": 7, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Dorothée", "ln": "Turgeon", "by": 1956, "bm": 3, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Drew", "ln": "Barrymore", "by": 1975, "bm": 2, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Dustin", "ln": "Hoffman", "by": 1937, "bm": 8, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Ed", "ln": "Harris", "by": 1950, "bm": 11, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Eddie", "ln": "Murphy", "by": 1961, "bm": 4, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Eddie", "ln": "Redmayne", "by": 1982, "bm": 1, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Edward", "ln": "Norton", "by": 1997, "bm": 3, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Elisabeth", "ln": "Shue", "by": 1963, "bm": 10, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Elizabeth", "ln": "Taylor", "by": 1932, "bm": 2, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Ellen", "ln": "Page", "by": 1987, "bm": 2, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Emily", "ln": "Watson", "by": 1967, "bm": 1, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Emma", "ln": "Stone", "by": 1988, "bm": 11, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Emma", "ln": "Thompson", "by": 1959, "bm": 4, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Eric", "ln": "Bissonnette", "by": 1994, "bm": 4, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Éric", "ln": "Carrier", "by": 1977, "bm": 3, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Ethan", "ln": "Hawke", "by": 1970, "bm": 11, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Étienne", "ln": "Carrier", "by": 1983, "bm": 10, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Étienne", "ln": "Turgeon", "by": 1984, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Faye", "ln": "Dunaway", "by": 1941, "bm": 1, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Felicity", "ln": "Jones", "by": 1983, "bm": 10, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Florence", "ln": "Bégin", "by": 1954, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Forest", "ln": "Whitaker", "by": 1961, "bm": 7, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "France", "ln": "Carrier", "by": 1957, "bm": 9, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "France", "ln": "Morneau", "by": 1953, "bm": 4, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Francine", "ln": "Hamond", "by": 1950, "bm": 9, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Francis", "ln": "Coppola", "by": 1939, "bm": 4, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Francis", "ln": "Garand", "by": 1981, "bm": 8, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "François", "ln": "Morency", "by": 1966, "bm": 6, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "François", "ln": "Morneau", "by": 1979, "bm": 2, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Frédéric", "ln": "Marsolais", "by": 1979, "bm": 5, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Frédérick", "ln": "Turgeon", "by": 1983, "bm": 4, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Gaétan", "ln": "Turgeon", "by": 1950, "bm": 8, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Gaétane", "ln": "Turgeon", "by": 1950, "bm": 8, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Gary", "ln": "Oldman", "by": 1958, "bm": 3, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Geena", "ln": "Davis", "by": 1956, "bm": 1, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Gene", "ln": "Hackman", "by": 1930, "bm": 1, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Geneviève", "ln": "Bérubé", "by": 1981, "bm": 4, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Geneviève", "ln": "Breton", "by": 1983, "bm": 4, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Geoffrey", "ln": "Rush", "by": 1951, "bm": 7, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "George", "ln": "Clooney", "by": 1961, "bm": 5, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "George", "ln": "Lucas", "by": 1944, "bm": 5, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Georges", "ln": "Bouchard", "by": 1927, "bm": 12, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Gérard", "ln": "Depardieu", "by": 1948, "bm": 12, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Gilberte", "ln": "Labrecque", "by": 1925, "bm": 4, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Gillian", "ln": "Anderson", "by": 1968, "bm": 9, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Ginette", "ln": "Douville", "by": 1960, "bm": 10, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Gisèle", "ln": "Leclerc", "by": 1950, "bm": 10, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Glenn", "ln": "Close", "by": 1947, "bm": 3, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Goldie", "ln": "Hawn", "by": 1945, "bm": 11, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Graig", "ln": "Turgeon", "by": 1980, "bm": 12, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Guylaine", "ln": "Gosselin", "by": 1965, "bm": 4, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Gwyneth", "ln": "Paltrow", "by": 1972, "bm": 9, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Halle", "ln": "Berry", "by": 1966, "bm": 8, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Harrison", "ln": "Ford", "by": 1942, "bm": 7, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Heath", "ln": "Ledger", "by": 1979, "bm": 4, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Helen", "ln": "Hunt", "by": 1963, "bm": 6, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Hilary", "ln": "Swank", "by": 1974, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Holly", "ln": "Hunter", "by": 1958, "bm": 3, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Hugh", "ln": "Jackman", "by": 1968, "bm": 10, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Ian", "ln": "McKellen", "by": 1939, "bm": 5, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Irma", "ln": "Roy", "by": 1920, "bm": 6, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "J.", "ln": "Simmons", "by": 1955, "bm": 1, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Jack", "ln": "Nicholson", "by": 1937, "bm": 4, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Jacques", "ln": "Lapointe", "by": 1952, "bm": 12, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Jacques", "ln": "Turgeon", "by": 1949, "bm": 9, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Jake", "ln": "Gyllenhaal", "by": 1980, "bm": 12, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "James", "ln": "Cameron", "by": 1954, "bm": 8, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "James", "ln": "Franco", "by": 1978, "bm": 4, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Jamie", "ln": "Foxx", "by": 1967, "bm": 12, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Jane", "ln": "Fonda", "by": 1937, "bm": 12, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Jared", "ln": "Leto", "by": 1971, "bm": 12, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Jason", "ln": "Statham", "by": 1967, "bm": 7, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Javier", "ln": "Bardem", "by": 1969, "bm": 3, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Jean", "ln": "Reno", "by": 1948, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Jean", "ln": "Morneau", "by": 1950, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Jean-Claude", "ln": "de la Ronde", "by": 1977, "bm": 9, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Jean-Marc", "ln": "Leclerc", "by": 1979, "bm": 4, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Jean-Yves", "ln": "Turgeon", "by": 1951, "bm": 7, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Jeff", "ln": "Bridges", "by": 1949, "bm": 12, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Jennifer", "ln": "Aniston", "by": 1969, "bm": 2, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Jennifer", "ln": "Connelly", "by": 1970, "bm": 12, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Jennifer", "ln": "Lawrence", "by": 1990, "bm": 8, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Jeremy", "ln": "Irons", "by": 1948, "bm": 9, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Jeremy", "ln": "Renner", "by": 1971, "bm": 1, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Jérôme", "ln": "Turgeon", "by": 1979, "bm": 12, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Jesse", "ln": "Eisenberg", "by": 1983, "bm": 10, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Jessica", "ln": "Coté", "by": 1987, "bm": 2, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Jessica", "ln": "Lange", "by": 1949, "bm": 4, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Jim", "ln": "Carrey", "by": 1962, "bm": 1, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Jimmy", "ln": "Pilote", "by": 1970, "bm": 2, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Joaquin", "ln": "Phoenix", "by": 1974, "bm": 10, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Jodie", "ln": "Foster", "by": 1962, "bm": 11, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Joe", "ln": "Pesci", "by": 1943, "bm": 2, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "John", "ln": "Cusack", "by": 1966, "bm": 6, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "John", "ln": "Lithgow", "by": 1945, "bm": 10, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "John", "ln": "Travolta", "by": 1954, "bm": 2, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Johnny", "ln": "Depp", "by": 1963, "bm": 6, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Jon", "ln": "Voight", "by": 1938, "bm": 12, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Josh", "ln": "Brolin", "by": 1968, "bm": 2, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Josianne", "ln": "Turgeon", "by": 1986, "bm": 5, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Jude", "ln": "Law", "by": 1972, "bm": 12, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Julia", "ln": "Roberts", "by": 1967, "bm": 10, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Julianne", "ln": "Moore", "by": 1960, "bm": 12, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Julie", "ln": "Carrier", "by": 1977, "bm": 12, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Juliette", "ln": "Binoche", "by": 1964, "bm": 3, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Juliette", "ln": "Lewis", "by": 1973, "bm": 6, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Karine", "ln": "Lagacé", "by": 1981, "bm": 10, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Karine", "ln": "Turgeon", "by": 1988, "bm": 10, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Kate", "ln": "Winslet", "by": 1975, "bm": 10, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Kathy", "ln": "Bates", "by": 1948, "bm": 6, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Kevin", "ln": "Bacon", "by": 1958, "bm": 7, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Kevin", "ln": "Costner", "by": 1955, "bm": 1, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Kevin", "ln": "Kline", "by": 1947, "bm": 10, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Kevin", "ln": "Spacey", "by": 1959, "bm": 7, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Kim", "ln": "Basinger", "by": 1953, "bm": 12, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Lana", "ln": "Wachowski", "by": 1965, "bm": 6, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Laura", "ln": "Dern", "by": 1967, "bm": 2, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Laurence", "ln": "Fishburne", "by": 1961, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Leonardo", "ln": "DiCaprio", "by": 1974, "bm": 11, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Liam", "ln": "Neeson", "by": 1952, "bm": 6, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Liette", "ln": "Lapointe", "by": 1956, "bm": 7, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Line", "ln": "Carrier", "by": 1964, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Livia", "ln": "Poulin", "by": 2011, "bm": 12, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Loïc", "ln": "Turgeon", "by": 2009, "bm": 8, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Louis", "ln": "Gossett", "by": 1936, "bm": 5, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Luc", "ln": "Bissonnette", "by": 1965, "bm": 3, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Lupita", "ln": "Nyong'o", "by": 1983, "bm": 3, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Maggie", "ln": "Gyllenhaal", "by": 1977, "bm": 11, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Mahée", "ln": "Paiement", "by": 1976, "bm": 1, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Marc-André", "ln": "Bouchard", "by": 1992, "bm": 11, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Marcel", "ln": "Audet", "by": 1952, "bm": 4, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Marcia", "ln": "Harden", "by": 1959, "bm": 8, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Marie-Jeanne", "ln": "Ferron", "by": 1928, "bm": 3, "bd": 20, "dy": 2011, "dm": 5, "dd": 24}, {"fn": "Marie-Josée", "ln": "Damico", "by": 1984, "bm": 7, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Marie-Lune", "ln": "", "by": 1983, "bm": 7, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Marie-Noëlle", "ln": "Turgeon", "by": 1983, "bm": 7, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Marilou", "ln": "Morneau", "by": 1995, "bm": 7, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Mariloup", "ln": "Wolfe", "by": 1978, "bm": 1, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Marina", "ln": "Orsini", "by": 1967, "bm": 1, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Marion", "ln": "Cotillard", "by": 1975, "bm": 9, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Marjorie", "ln": "Delisle", "by": 1979, "bm": 4, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Mark", "ln": "Ruffalo", "by": 1967, "bm": 11, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Mark", "ln": "Wahlberg", "by": 1971, "bm": 6, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Marthe", "ln": "Morneau", "by": 1954, "bm": 4, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Martin", "ln": "Landau", "by": 1928, "bm": 6, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Martin", "ln": "Scorsese", "by": 1942, "bm": 11, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Martine", "ln": "Turgeon", "by": 1963, "bm": 12, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Mathieu", "ln": "Morneau", "by": 1989, "bm": 8, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Matrix 4", "ln": "Resurection", "by": 2021, "bm": 12, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Matt", "ln": "Damon", "by": 1970, "bm": 10, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Matthew", "ln": "McConaughey", "by": 1969, "bm": 11, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Maxance", "ln": "Turgeon", "by": 1991, "bm": 8, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Maxime", "ln": "Bissonnette", "by": 1992, "bm": 2, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Mel", "ln": "Gibson", "by": 1956, "bm": 1, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Melanie", "ln": "Griffith", "by": 1957, "bm": 8, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Melissa", "ln": "McCarthy", "by": 1970, "bm": 8, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Caine", "by": 1933, "bm": 3, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Douglas", "by": 1944, "bm": 9, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Fassbender", "by": 1977, "bm": 4, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Keaton", "by": 1951, "bm": 9, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Mann", "by": 1943, "bm": 2, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Turgeon", "by": 1984, "bm": 10, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Michel", "ln": "Turgeon", "by": 1955, "bm": 9, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Michelle", "ln": "Pfeiffer", "by": 1958, "bm": 4, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Mickey", "ln": "Rourke", "by": 1952, "bm": 9, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Mira", "ln": "Sorvino", "by": 1967, "bm": 9, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Mireille", "ln": "Morneau", "by": 1958, "bm": 12, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Mireille", "ln": "Trempe", "by": 1984, "bm": 9, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Morgan", "ln": "Freeman", "by": 1937, "bm": 6, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Myriam", "ln": "Audet", "by": 1984, "bm": 11, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Nadia", "ln": "Carrier", "by": 1974, "bm": 10, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Nancy", "ln": "Carrier", "by": 1974, "bm": 5, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Naomi", "ln": "Watts", "by": 1968, "bm": 9, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Natalie", "ln": "Portman", "by": 1981, "bm": 6, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Nathalie", "ln": "Bouchard", "by": 1967, "bm": 10, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Nick", "ln": "Nolte", "by": 1941, "bm": 2, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Nicolas", "ln": "Cage", "by": 1964, "bm": 1, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Nicolas", "ln": "Côté", "by": 1988, "bm": 9, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Nicole", "ln": "Forgues", "by": 1946, "bm": 3, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Nicole", "ln": "Kidman", "by": 1967, "bm": 6, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Normand", "ln": "Carrier", "by": 1955, "bm": 2, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Normand", "ln": "Roy", "by": 1953, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Odile", "ln": "Carrier", "by": 1970, "bm": 1, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Odile", "ln": "Turgeon", "by": 1982, "bm": 8, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Oliver", "ln": "Stone", "by": 1946, "bm": 9, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Olivier", "ln": "Carrier", "by": 1988, "bm": 8, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Orson", "ln": "Welles", "by": 1985, "bm": 10, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Patric", "ln": "Vachon", "by": 1978, "bm": 10, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Patrice", "ln": "Morneau", "by": 1977, "bm": 2, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Patricia", "ln": "Arquette", "by": 1968, "bm": 4, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Patrick", "ln": "Gingras", "by": 1981, "bm": 1, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Patrick", "ln": "Huard", "by": 1969, "bm": 1, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Patrick", "ln": "Stewart", "by": 1940, "bm": 7, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Paul", "ln": "Newman", "by": 1925, "bm": 1, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Penélope", "ln": "Cruz", "by": 1974, "bm": 4, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Peter", "ln": "Jackson", "by": 1961, "bm": 10, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Peter", "ln": "O'Toole", "by": 1932, "bm": 8, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Philip", "ln": "Hoffman", "by": 1967, "bm": 7, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Philippe", "ln": "Asselin", "by": 2012, "bm": 6, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Quentin", "ln": "Tarantino", "by": 1963, "bm": 3, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Rachel", "ln": "Weisz", "by": 1970, "bm": 3, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Ralph", "ln": "Fiennes", "by": 1962, "bm": 12, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Raymonde", "ln": "", "by": 1944, "bm": 6, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Reese", "ln": "Witherspoon", "by": 1976, "bm": 3, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Réjean", "ln": "Ratia", "by": 1946, "bm": 1, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Réjeanne", "ln": "Carbonneau", "by": 1958, "bm": 7, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "René", "ln": "Angelil", "by": 1942, "bm": 1, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "René", "ln": "Carrier", "by": 1948, "bm": 2, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Renée", "ln": "Zellweger", "by": 1969, "bm": 4, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Attenborough", "by": 1923, "bm": 8, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Carrier", "by": 1964, "bm": 9, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Dreyfuss", "by": 1947, "bm": 10, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Grenier", "by": 1978, "bm": 6, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Levesque", "by": 1979, "bm": 10, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Thibodeau", "by": 1964, "bm": 8, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Turgeon", "by": 1961, "bm": 1, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Ridley", "ln": "Scott", "by": 1937, "bm": 11, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "De Niro", "by": 1943, "bm": 8, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Downey", "by": 1965, "bm": 4, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Duvall", "by": 1931, "bm": 1, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Gosselin", "by": 1930, "bm": 9, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Redford", "by": 1936, "bm": 8, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Rodriguez", "by": 1968, "bm": 6, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Zemeckis", "by": 1951, "bm": 5, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Robin", "ln": "Borgias", "by": 1968, "bm": 2, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Robin", "ln": "Williams", "by": 1951, "bm": 7, "bd": 21, "dy": 2014, "dm": 8, "dd": 11}, {"fn": "Roman", "ln": "Polanski", "by": 1933, "bm": 8, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Ron", "ln": "Howard", "by": 1954, "bm": 3, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Rosaire", "ln": "Carrier", "by": 1936, "bm": 9, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Rosalie", "ln": "Turgeon", "by": 2005, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Russell", "ln": "Crowe", "by": 1964, "bm": 4, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Ryan", "ln": "Gosling", "by": 1980, "bm": 11, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Sally", "ln": "Field", "by": 1946, "bm": 11, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Salma", "ln": "Hayek", "by": 1966, "bm": 9, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Sam", "ln": "Mendes", "by": 1965, "bm": 8, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Samuel", "ln": "Jackson", "by": 1948, "bm": 12, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Samuel", "ln": "Turgeon", "by": 1991, "bm": 12, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Sandra", "ln": "Bullock", "by": 1964, "bm": 7, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Sean", "ln": "Connery", "by": 1930, "bm": 8, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Sean", "ln": "Penn", "by": 1960, "bm": 8, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Sébastien", "ln": "Carrier", "by": 1976, "bm": 6, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Serge", "ln": "Carrier", "by": 1972, "bm": 7, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Sharon", "ln": "Stone", "by": 1958, "bm": 3, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Sidney", "ln": "Poitier", "by": 1927, "bm": 2, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Sigourney", "ln": "Weaver", "by": 1949, "bm": 10, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Simon", "ln": "Carrier", "by": 1944, "bm": 7, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Simon", "ln": "Pegg", "by": 1970, "bm": 2, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Sonia", "ln": "Carrier", "by": 1969, "bm": 10, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Sophia", "ln": "Turgeon", "by": 1968, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Sophie", "ln": "Carrier", "by": 1971, "bm": 9, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Stanley", "ln": "Kubrick", "by": 1928, "bm": 7, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Stéphanie", "ln": "Bélanger", "by": 1993, "bm": 6, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Stéphanie", "ln": "Turgeon", "by": 1988, "bm": 5, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Steve", "ln": "Carell", "by": 1962, "bm": 8, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Steven", "ln": "Soderbergh", "by": 1963, "bm": 1, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Steven", "ln": "Spielberg", "by": 1946, "bm": 12, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Susan", "ln": "Sarandon", "by": 1946, "bm": 10, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Sylvain", "ln": "Carrier", "by": 1965, "bm": 11, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Sylvester", "ln": "Stallone", "by": 1946, "bm": 7, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Sylvie", "ln": "Carrier", "by": 1963, "bm": 7, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Thierry", "ln": "Bélanger", "by": 1991, "bm": 2, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Tim", "ln": "Robbins", "by": 1958, "bm": 10, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Tobey", "ln": "Maguire", "by": 1975, "bm": 6, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Tom", "ln": "Berenger", "by": 1949, "bm": 5, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Tom", "ln": "Cruise", "by": 1962, "bm": 7, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Tom", "ln": "Hanks", "by": 1956, "bm": 7, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Tommy", "ln": "Côté", "by": 1993, "bm": 4, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Tommy", "ln": "Jones", "by": 1946, "bm": 9, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Uma", "ln": "Thurman", "by": 1970, "bm": 4, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Valérie", "ln": "Carrier", "by": 1979, "bm": 4, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Véronique", "ln": "Genest", "by": 1979, "bm": 9, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Véronique", "ln": "Roy", "by": 1981, "bm": 6, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Viggo", "ln": "Mortensen", "by": 1958, "bm": 10, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Vin", "ln": "Diesel", "by": 1967, "bm": 7, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Warren", "ln": "Beatty", "by": 1937, "bm": 3, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Wes", "ln": "Anderson", "by": 1969, "bm": 5, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Wesley", "ln": "Snipes", "by": 1962, "bm": 7, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Whoopi", "ln": "Goldberg", "by": 1955, "bm": 11, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Will", "ln": "Ferrell", "by": 1967, "bm": 7, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Will", "ln": "Smith", "by": 1968, "bm": 9, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Willem", "ln": "Dafoe", "by": 1955, "bm": 7, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "William", "ln": "Hurt", "by": 1950, "bm": 3, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Winona", "ln": "Ryder", "by": 1971, "bm": 10, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Woody", "ln": "Allen", "by": 1935, "bm": 12, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Woody", "ln": "Harrelson", "by": 1961, "bm": 7, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Yolande", "ln": "Turgeon", "by": 1952, "bm": 8, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Yvan", "ln": "Morneau", "by": 1961, "bm": 9, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Yves", "ln": "Pelletier", "by": 1961, "bm": 1, "bd": 15, "dy": null, "dm": null, "dd": null}];
+
+// ── PERSISTENCE ──────────────────────────────────────────────────────────────
+function ctLoadContacts() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(CONTACTS_KEY));
+    return stored && stored.length ? stored : CONTACTS_PRELOADED;
+  } catch { return CONTACTS_PRELOADED; }
+}
+function ctSaveContacts(c) { localStorage.setItem(CONTACTS_KEY, JSON.stringify(c)); }
+
+// Init on first load
+if (!localStorage.getItem(CONTACTS_KEY)) {
+  ctSaveContacts(CONTACTS_PRELOADED);
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+// Returns contacts whose birthday falls on a given month/day
+function ctGetBirthdaysForDay(month, day) {
+  return ctLoadContacts().filter(c => c.bm === month && c.bd === day);
+}
+
+// Build the display label for a contact birthday on a given year
+function ctBuildBirthdayLabel(c, displayYear) {
+  const fullName = [c.fn, c.ln].filter(Boolean).join(' ');
+
+  if (c.dy) {
+    // Deceased — show age at death
+    const ageAtDeath = c.dy - (c.by || c.dy);
+    const deathStr = c.dm && c.dd
+      ? `${c.dy}-${String(c.dm).padStart(2,'0')}-${String(c.dd).padStart(2,'0')}`
+      : c.dy;
+    return `🕯 ${fullName} · né${c.by ? ' en ' + c.by : ''} · décédé ${deathStr} à ${ageAtDeath} ans`;
+  }
+
+  if (c.by) {
+    const age = displayYear - c.by;
+    return `🎂 ${fullName} · ${age} ans (${c.by})`;
+  }
+
+  return `🎂 ${fullName}`;
+}
+
+// ── INJECT BIRTHDAYS INTO WEEKLY VIEW EVENTS ─────────────────────────────────
+function ctInjectBirthdaysIntoDay(evListEl, dk) {
+  if (!evListEl) return;
+  const parts = dk.split('-');
+  const year  = parseInt(parts[0]);
+  const month = parseInt(parts[1]);
+  const day   = parseInt(parts[2]);
+
+  const birthdays = ctGetBirthdaysForDay(month, day);
+  if (!birthdays.length) return;
+
+  // Remove existing birthday rows to avoid duplicates on re-render
+  evListEl.querySelectorAll('.ct-bday-row').forEach(r => r.remove());
+
+  birthdays.forEach(c => {
+    const label = ctBuildBirthdayLabel(c, year);
+    const isDeceased = !!c.dy;
+
+    const row = document.createElement('div');
+    row.className = 'wv-event-row ct-bday-row';
+    row.style.cssText = `background:${isDeceased ? '#f5f0ea' : '#fff8f0'};border-left:3px solid ${isDeceased ? '#8b7355' : '#e8855a'};cursor:default;`;
+
+    // No time column for birthdays — just the icon + label
+    const iconSpan = document.createElement('span');
+    iconSpan.style.cssText = 'font-size:.85rem;flex-shrink:0;width:58px;text-align:center;';
+    iconSpan.textContent = isDeceased ? '🕯' : '🎂';
+
+    const titleSpan = document.createElement('span');
+    titleSpan.className = 'wv-row-label';
+    titleSpan.style.cssText = `font-size:.75rem;color:${isDeceased ? '#6b5840' : '#8b4513'};flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;`;
+    titleSpan.textContent = label.replace(/^[🎂🕯] /, '');
+    titleSpan.title = label.replace(/^[🎂🕯] /, '');
+
+    row.appendChild(iconSpan);
+    row.appendChild(titleSpan);
+
+    // Insert before first empty row, or append
+    const firstEmpty = evListEl.querySelector('.wv-event-row:not(.ct-bday-row)');
+    if (firstEmpty) evListEl.insertBefore(row, firstEmpty);
+    else evListEl.appendChild(row);
+  });
+}
+
+// ── HOOK INTO renderWvDays ────────────────────────────────────────────────────
+// Tag event list containers with data-evlist attribute in planner2026.js
+// We inject after render using MutationObserver fallback + direct call
+function ctInjectAllBirthdays() {
+  const strip = document.getElementById('wvDays');
+  if (!strip) return;
+  strip.querySelectorAll('[data-evlist]').forEach(el => {
+    ctInjectBirthdaysIntoDay(el, el.dataset.evlist);
+  });
+}
+
+// Patch renderWvDays to inject birthdays after each render
+const _ctOrigRenderWvDays = window.renderWvDays;
+window.renderWvDays = function(dates, wk, wdata) {
+  _ctOrigRenderWvDays(dates, wk, wdata);
+  ctInjectAllBirthdays();
+};
+
+// Initial injection (page load)
+ctInjectAllBirthdays();
+
+// ── CSV IMPORT ────────────────────────────────────────────────────────────────
+function ctImportCSV(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const text = e.target.result;
+      const lines = text.split(/\r?\n/);
+      const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,''));
+
+      const idx = (name) => headers.indexOf(name);
+      const idxFirst = idx('First Name'), idxLast = idx('Last Name'), idxBday = idx('Birthday');
+
+      if (idxBday < 0) throw new Error('Colonne "Birthday" introuvable');
+
+      const contacts = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols = ctParseCSVLine(lines[i]);
+        if (!cols || cols.length < 3) continue;
+        const fname = (cols[idxFirst]||'').trim();
+        const lname = (cols[idxLast]||'').trim();
+        const bday  = (cols[idxBday]||'').trim();
+        if (!bday || bday.startsWith('--') || (!fname && !lname)) continue;
+
+        let by = null, bm = null, bd = null;
+        const bp = bday.split('-');
+        if (bp.length === 3 && bp[0]) { by = parseInt(bp[0]); bm = parseInt(bp[1]); bd = parseInt(bp[2]); }
+        if (!bm || !bd) continue;
+
+        // Find death date
+        let dy = null, dm = null, dd = null;
+        for (let ei = 1; ei <= 4; ei++) {
+          const lbl = (cols[idx(`Event ${ei} - Label`)]||'').trim().toLowerCase();
+          const val = (cols[idx(`Event ${ei} - Value`)]||'').trim();
+          if (['décès','died','death','deces'].includes(lbl) && val) {
+            const dp = val.split('-');
+            try { dy = parseInt(dp[0]); dm = parseInt(dp[1]); dd = parseInt(dp[2]); } catch {}
+            break;
+          }
+        }
+        contacts.push({fn:fname, ln:lname, by, bm, bd, dy, dm, dd});
+      }
+
+      if (!contacts.length) throw new Error("Aucun contact avec date d'anniversaire trouvé");
+
+      if (confirm(`Importer ${contacts.length} contacts avec anniversaire ?\nCeci remplacera les contacts actuels.`)) {
+        ctSaveContacts(contacts);
+        ctInjectAllBirthdays();
+        alert(`✅ ${contacts.length} anniversaires importés !`);
+        // Re-render weekly view to reflect new contacts
+        if (window.renderWeeklyView) renderWeeklyView();
+      }
+    } catch(err) {
+      alert('❌ Erreur import : ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function ctParseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"' && !inQ) { inQ = true; }
+    else if (ch === '"' && inQ && line[i+1] === '"') { cur += '"'; i++; }
+    else if (ch === '"' && inQ) { inQ = false; }
+    else if (ch === ',' && !inQ) { result.push(cur); cur = ''; }
+    else { cur += ch; }
+  }
+  result.push(cur);
+  return result;
+}
+
+// ── HEADER BUTTON SETUP ───────────────────────────────────────────────────────
+(function setupContactsImport() {
+  const btn = document.getElementById('btnImportContacts');
+  if (!btn) return;
+
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file'; fileInput.accept = '.csv'; fileInput.style.display = 'none';
+  fileInput.id = 'ctFileInput';
+  document.body.appendChild(fileInput);
+
+  fileInput.addEventListener('change', e => {
+    if (e.target.files[0]) { ctImportCSV(e.target.files[0]); e.target.value = ''; }
+  });
+
+  btn.addEventListener('click', () => fileInput.click());
+})();
 
 </script>
 </body>
