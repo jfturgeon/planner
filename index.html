@@ -717,8 +717,8 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   min-height:30px; cursor:text; transition:background .1s;
 }
 .wv-event-row:hover, .wv-task-row:hover { background:#f8f6f2; }
-.wv-row-time { font-size:.7rem; font-weight:600; color:var(--accent2); min-width:42px; flex-shrink:0; }
-.wv-row-time.empty { color:#ddd; font-weight:400; }
+.wv-row-time { font-size:.7rem; font-weight:600; color:var(--accent2); min-width:42px; flex-shrink:0; cursor:pointer; }
+.wv-row-time.empty { color:#ddd; font-weight:400; cursor:text; }
 .wv-row-label { flex:1; font-size:.77rem; color:var(--text); min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .wv-row-label.empty { color:#d0ccc6; font-style:italic; }
 .wv-row-cb { flex-shrink:0; }
@@ -1584,8 +1584,8 @@ function renderWvDays(dates, wk, wdata){
 
         row.appendChild(timeSpan); row.appendChild(labelSpan); row.appendChild(delBtn);
 
-        // Click row to edit inline
-        const startEdit=()=>{
+        // Click row to edit inline — time or label independently
+        const startEdit=(focusTime=false)=>{
           row.innerHTML='';
           const timeIn=document.createElement('input');
           timeIn.type='time'; timeIn.className='wv-row-time-edit';
@@ -1595,24 +1595,32 @@ function renderWvDays(dates, wk, wdata){
           labelIn.placeholder='Titre de l\'événement…';
           labelIn.value=ev?ev.title:'';
           row.appendChild(timeIn); row.appendChild(labelIn);
-          labelIn.focus();
 
+          if(focusTime) timeIn.focus(); else { labelIn.focus(); labelIn.select(); }
+
+          let committed=false;
           const commit=()=>{
+            if(committed) return; committed=true;
             const t=labelIn.value.trim();
             const tm=timeIn.value||'00:00';
-            if(ev){ // edit existing
+            if(ev){
               const idx=dayExtra.events.indexOf(ev);
-              if(t){ if(idx>-1) { dayExtra.events[idx].title=t; dayExtra.events[idx].time=tm; } }
+              if(t){ if(idx>-1){ dayExtra.events[idx].title=t; dayExtra.events[idx].time=tm; } }
               else { if(idx>-1) dayExtra.events.splice(idx,1); }
             } else if(t){ dayExtra.events.push({time:tm,title:t}); }
             saveEvents(); renderEvRows();
           };
-          labelIn.addEventListener('blur',commit);
-          labelIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ labelIn.blur(); } if(e.key==='Escape'){ renderEvRows(); } });
-          timeIn.addEventListener('change',()=>labelIn.focus());
+          // Commit when both inputs lose focus (with small delay to allow switching between them)
+          const blurHandler=()=>{ setTimeout(()=>{ if(!row.contains(document.activeElement)) commit(); }, 150); };
+          timeIn.addEventListener('blur', blurHandler);
+          labelIn.addEventListener('blur', blurHandler);
+          labelIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ labelIn.blur(); } if(e.key==='Escape'){ committed=true; renderEvRows(); } });
+          timeIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ labelIn.focus(); } if(e.key==='Escape'){ committed=true; renderEvRows(); } });
         };
 
-        row.addEventListener('click',e=>{ if(e.target!==delBtn) startEdit(); });
+        timeSpan.addEventListener('click',e=>{ e.stopPropagation(); startEdit(true); });
+        labelSpan.addEventListener('click',e=>{ e.stopPropagation(); startEdit(false); });
+        row.addEventListener('click',e=>{ if(e.target===row) startEdit(false); });
 
         if(ev){
           delBtn.addEventListener('click',e=>{
