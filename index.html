@@ -1600,6 +1600,76 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 .wv-toggle-left-btn { font-size:.75rem; color:var(--muted); }
 .wv-toggle-left-btn.active { background:var(--text); color:#f4f1eb; }
 
+/* ── KANBAN ADDITIONS ── */
+
+/* + button in column header */
+.kb-col-add-btn {
+  margin-left:auto;
+  width:26px; height:26px;
+  border-radius:7px;
+  border:1px solid var(--col-color, #aaa);
+  background:transparent;
+  color:var(--col-color, #aaa);
+  font-size:1rem; font-weight:700;
+  cursor:pointer; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .15s; flex-shrink:0;
+}
+.kb-col-add-btn:hover {
+  background:var(--col-color, #aaa);
+  color:#fff;
+}
+
+/* Completion progress bar */
+.kb-progress-wrap {
+  display:flex; align-items:center; gap:10px;
+  padding:0 4px;
+}
+.kb-progress-label {
+  font-family:'DM Sans',sans-serif;
+  font-size:.75rem; font-weight:600;
+  color:var(--muted); white-space:nowrap;
+  min-width:80px;
+}
+.kb-progress-track {
+  width:120px; height:6px;
+  background:var(--border);
+  border-radius:3px; overflow:hidden;
+}
+.kb-progress-fill {
+  height:100%; border-radius:3px;
+  transition:width .3s ease;
+}
+
+/* Compact card */
+.kb-card-compact {
+  padding:7px 12px;
+  flex-direction:row;
+  align-items:center;
+  gap:8px;
+}
+.kb-card-compact .kb-card-title {
+  font-size:.82rem; font-weight:500;
+  flex:1; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis;
+}
+.kb-card-compact .kb-card-actions {
+  opacity:0; flex-shrink:0;
+}
+.kb-card-compact:hover .kb-card-actions { opacity:1; }
+
+/* Card actions no longer in a footer — inline at bottom */
+.kb-card .kb-card-actions {
+  display:flex; gap:4px;
+  opacity:0; transition:opacity .15s;
+  justify-content:flex-end;
+  margin-top:4px;
+}
+.kb-card:hover .kb-card-actions { opacity:1; }
+
+/* Compact board columns slightly narrower */
+.kb-board-compact .kb-col { min-width:240px; max-width:240px; }
+
 </style>
 </head>
 <body>
@@ -3863,6 +3933,7 @@ const KB_DEFAULT_STATUSES = [
 
 let kbDragCard   = null;
 let kbActiveYear = new Date().getFullYear();
+let kbCompactView = false; // false = titre+desc, true = titre seul (compact)
 
 // ── PERSISTENCE ──────────────────────────────────────────────────────────────
 function kbLoadStatuses() {
@@ -3923,8 +3994,39 @@ function renderKanban() {
   yearWrap.appendChild(addYrBtn);
   toolbar.appendChild(yearWrap);
 
+  // ── Completion bar for active year ──
+  const yearCards = allCards.filter(c => c.year === kbActiveYear);
+  const doneStatus = statuses.find(s => s.id === 'done' || s.label.toLowerCase().includes('complét') || s.label.toLowerCase().includes('done'));
+  const doneCount = doneStatus ? yearCards.filter(c => c.statusId === doneStatus.id).length : 0;
+  const total = yearCards.length;
+  const pct = total ? Math.round(doneCount / total * 100) : 0;
+
+  const progressWrap = document.createElement('div');
+  progressWrap.className = 'kb-progress-wrap';
+  const progressLabel = document.createElement('span');
+  progressLabel.className = 'kb-progress-label';
+  progressLabel.textContent = total ? `${doneCount}/${total} · ${pct}%` : '0 objectif';
+  const progressTrack = document.createElement('div');
+  progressTrack.className = 'kb-progress-track';
+  const progressFill = document.createElement('div');
+  progressFill.className = 'kb-progress-fill';
+  progressFill.style.width = pct + '%';
+  progressFill.style.background = doneStatus?.color || '#2a7a4b';
+  progressTrack.appendChild(progressFill);
+  progressWrap.appendChild(progressLabel);
+  progressWrap.appendChild(progressTrack);
+  toolbar.appendChild(progressWrap);
+
   const spacer = document.createElement('div'); spacer.style.flex='1';
   toolbar.appendChild(spacer);
+
+  // ── View toggle (compact / full) ──
+  const viewToggle = document.createElement('button');
+  viewToggle.className = 'kb-manage-btn';
+  viewToggle.title = kbCompactView ? 'Afficher descriptions' : 'Vue compacte';
+  viewToggle.textContent = kbCompactView ? '☰ Complet' : '▤ Compact';
+  viewToggle.addEventListener('click', () => { kbCompactView = !kbCompactView; renderKanban(); });
+  toolbar.appendChild(viewToggle);
 
   const manageBtn = document.createElement('button');
   manageBtn.className = 'kb-manage-btn';
@@ -3936,7 +4038,7 @@ function renderKanban() {
 
   // ── Board ──
   const board = document.createElement('div');
-  board.className = 'kb-board';
+  board.className = 'kb-board' + (kbCompactView ? ' kb-board-compact' : '');
 
   const cards = allCards.filter(c => c.year === kbActiveYear);
 
@@ -3956,6 +4058,7 @@ function kbBuildColumn(status, cards) {
   const col = document.createElement('div');
   col.className = 'kb-col';
 
+  // ── Column header with + button ──
   const hd = document.createElement('div');
   hd.className = 'kb-col-hd';
 
@@ -3973,7 +4076,15 @@ function kbBuildColumn(status, cards) {
   cnt.style.color = status.color;
   cnt.textContent = colCards.length;
 
-  hd.appendChild(dot); hd.appendChild(lbl); hd.appendChild(cnt);
+  // + button in header
+  const addHdBtn = document.createElement('button');
+  addHdBtn.className = 'kb-col-add-btn';
+  addHdBtn.textContent = '＋';
+  addHdBtn.title = `Ajouter dans "${status.label}"`;
+  addHdBtn.style.setProperty('--col-color', status.color);
+  addHdBtn.addEventListener('click', e => { e.stopPropagation(); kbShowCardModal(null, status.id); });
+
+  hd.appendChild(dot); hd.appendChild(lbl); hd.appendChild(cnt); hd.appendChild(addHdBtn);
   col.appendChild(hd);
 
   const list = document.createElement('div');
@@ -4012,12 +4123,6 @@ function kbBuildColumn(status, cards) {
 
   colCards.forEach(card => list.appendChild(kbBuildCard(card)));
 
-  const addBtn = document.createElement('button');
-  addBtn.className = 'kb-add-card-btn';
-  addBtn.innerHTML = '<span style="font-size:1rem;line-height:1">＋</span> Ajouter un objectif';
-  addBtn.addEventListener('click', () => kbShowCardModal(null, status.id));
-  list.appendChild(addBtn);
-
   col.appendChild(list);
   return col;
 }
@@ -4025,7 +4130,7 @@ function kbBuildColumn(status, cards) {
 // ── CARD ─────────────────────────────────────────────────────────────────────
 function kbBuildCard(card) {
   const el = document.createElement('div');
-  el.className = 'kb-card';
+  el.className = 'kb-card' + (kbCompactView ? ' kb-card-compact' : '');
   el.dataset.cardId = card.id;
   el.draggable = true;
 
@@ -4046,20 +4151,15 @@ function kbBuildCard(card) {
   title.textContent = card.title;
   el.appendChild(title);
 
-  if (card.desc) {
+  // Description only in full view
+  if (!kbCompactView && card.desc) {
     const desc = document.createElement('div');
     desc.className = 'kb-card-desc';
     desc.textContent = card.desc;
     el.appendChild(desc);
   }
 
-  const footer = document.createElement('div');
-  footer.className = 'kb-card-footer';
-
-  const yearBadge = document.createElement('span');
-  yearBadge.className = 'kb-card-year';
-  yearBadge.textContent = card.year;
-
+  // Actions (edit/delete) — always visible on hover, no year badge
   const actions = document.createElement('div');
   actions.className = 'kb-card-actions';
 
@@ -4080,8 +4180,7 @@ function kbBuildCard(card) {
   });
 
   actions.appendChild(editBtn); actions.appendChild(delBtn);
-  footer.appendChild(yearBadge); footer.appendChild(actions);
-  el.appendChild(footer);
+  el.appendChild(actions);
   return el;
 }
 
