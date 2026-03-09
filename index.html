@@ -1832,6 +1832,111 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 .ct-grp-list { display: flex; flex-direction: column; gap: 8px; }
 .ct-grp-row { display: flex; gap: 8px; align-items: center; }
 
+/* ═══════════════════════════════════════════════════════
+   KANBAN — New additions (column drag, card color, menus)
+   ═══════════════════════════════════════════════════════ */
+
+.kb-col-dragging { opacity: .4; cursor: grabbing; }
+.kb-col-drop-target { outline: 2px dashed var(--accent2); border-radius: 10px; }
+
+.kb-col-menu-btn {
+  width: 26px; height: 26px; border-radius: 6px;
+  border: none; background: transparent;
+  color: var(--muted); font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .12s; flex-shrink: 0; letter-spacing: .05em;
+}
+.kb-col-menu-btn:hover { background: var(--border); color: var(--text); }
+
+.kb-col-dropdown {
+  min-width: 180px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.14);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.kb-dropdown-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; font-family: 'DM Sans', sans-serif;
+  font-size: .84rem; color: var(--text); background: none; border: none;
+  cursor: pointer; width: 100%; text-align: left; transition: background .1s;
+}
+.kb-dropdown-item:hover { background: var(--surface); }
+.kb-dropdown-item:last-child { color: #c0392b; }
+.kb-dropdown-item:last-child:hover { background: #fde8e8; }
+
+/* Card color dot */
+.kb-card-color-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  display: inline-block; flex-shrink: 0;
+  cursor: pointer; align-self: flex-start; margin-top: 3px;
+  border: 1.5px solid rgba(0,0,0,.15); transition: transform .12s;
+}
+.kb-card-color-dot:hover { transform: scale(1.3); }
+
+/* Header buttons for kanban (prefs + compact) */
+.hdr-btn-prefs, .hdr-btn-compact {
+  padding: 5px 10px; border-radius: 6px; font-size: .82rem;
+  font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s;
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+}
+.hdr-btn-prefs:hover, .hdr-btn-compact:hover { background: var(--text); color: #f4f1eb; }
+.hdr-btn-compact { font-size: 1rem; }
+
+/* ═══════════════════════════════════════════════════════
+   CONTACTS — Multi-tags, soft edit, clear button
+   ═══════════════════════════════════════════════════════ */
+
+/* Search box clear ×  */
+.ct-search-clear {
+  position: absolute; right: 9px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: var(--muted); font-size: .85rem; padding: 2px 4px;
+  border-radius: 4px; line-height: 1; transition: color .12s;
+  display: none;
+}
+.ct-search-clear:hover { color: var(--accent); }
+.ct-search-wrap.has-value .ct-search-clear { display: block; }
+.ct-search-wrap.has-value .ct-search-input { padding-right: 28px; }
+
+/* Tag pills in filter row — color variant */
+.ct-group-pill {
+  display: flex; align-items: center; gap: 5px;
+}
+.ct-group-pill .ct-pill-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+
+/* Multi-tag cell: wrap of badges */
+.ct-tags-cell { display: flex; flex-wrap: wrap; gap: 4px; }
+.ct-grp-badge { cursor: default; }
+
+/* Inline soft-edit: input that appears in the cell */
+.ct-inline-input {
+  width: 100%; padding: 3px 6px; border: 1px solid var(--accent2);
+  border-radius: 5px; font-family: 'DM Sans', sans-serif; font-size: .83rem;
+  color: var(--text); background: #fff; outline: none; box-sizing: border-box;
+}
+.ct-inline-date {
+  width: 130px; padding: 3px 6px; border: 1px solid var(--accent2);
+  border-radius: 5px; font-family: 'DM Sans', sans-serif; font-size: .83rem;
+  color: var(--text); background: #fff; outline: none;
+}
+
+/* Multi-tag selector in modal */
+.ct-tags-picker {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.ct-tag-toggle {
+  padding: 4px 12px; border-radius: 16px;
+  border: 1.5px solid var(--border);
+  background: var(--surface); color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: .78rem;
+  cursor: pointer; transition: all .12s;
+}
+.ct-tag-toggle.selected {
+  color: #fff; border-color: transparent; font-weight: 600;
+}
+
 </style>
 </head>
 <body>
@@ -1863,6 +1968,7 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
       <button class="hdr-btn-export" id="btnExportData">⬇ Export</button>
       <button class="hdr-btn-import" id="btnImportData">⬆ Import</button>
       <button class="hdr-btn-contacts" id="btnImportContacts">👥 Contacts</button>
+      <button class="hdr-btn-prefs" id="btnPreferences" title="Préférences">⚙</button>
     </div>
   </div>
 </header>
@@ -2923,28 +3029,30 @@ function renderWvDays(dates, wk, wdata){
           if(!data||!data.srcDk) return;
           if(data.srcDk===dk) return; // same day, no-op
 
-          // Remove from source
-          const srcEntry=appData[data.srcDk]||{tasks:[]};
-          if(!srcEntry.tasks) srcEntry.tasks=[];
-          const removed=srcEntry.tasks.splice(data.taskIdx,1)[0];
-          if(!removed) return;
-          if(!srcEntry.tasks.length&&!srcEntry.notes) delete appData[data.srcDk];
-          else appData[data.srcDk]=srcEntry;
-
-          // Add to dest
-          if(!entry.tasks) entry.tasks=[];
-          entry.tasks.push(removed);
-          appData[dk]=entry;
-          saveData(appData);
-
-          // Re-render both columns
-          renderTaskRows();
-          const srcTaskList=document.querySelector(`[data-taskrows="${data.srcDk}"]`);
-          if(srcTaskList){
-            const srcDow=new Date(data.srcDk).getDay();
-            const srcColor=DAY_COLORS[srcDow]||'#7cb9e8';
-            // Trigger re-render by dispatching custom event
-            srcTaskList.dispatchEvent(new CustomEvent('wv-rerender',{bubbles:false}));
+          if(data.isEpisode) {
+            // Episodes come from the scheduler — just add as plain task in dest
+            const destEntry = appData[dk] || {notes:'', tasks:[]};
+            if(!destEntry.tasks) destEntry.tasks=[];
+            destEntry.tasks.push(data.task);
+            appData[dk] = destEntry;
+            saveData(appData);
+            renderTaskRows();
+          } else {
+            // Regular task: remove from source, add to dest
+            const srcEntry=appData[data.srcDk]||{tasks:[]};
+            if(!srcEntry.tasks) srcEntry.tasks=[];
+            if(data.taskIdx < 0 || data.taskIdx >= srcEntry.tasks.length) return;
+            const removed=srcEntry.tasks.splice(data.taskIdx,1)[0];
+            if(!removed) return;
+            if(!srcEntry.tasks.length&&!srcEntry.notes) delete appData[data.srcDk];
+            else appData[data.srcDk]=srcEntry;
+            if(!entry.tasks) entry.tasks=[];
+            entry.tasks.push(removed);
+            appData[dk]=entry;
+            saveData(appData);
+            renderTaskRows();
+            const srcTaskList=document.querySelector(`[data-taskrows="${data.srcDk}"]`);
+            if(srcTaskList) srcTaskList.dispatchEvent(new CustomEvent('wv-rerender',{bubbles:false}));
           }
         } catch(err){ console.warn('drop error',err); }
       });
@@ -4173,12 +4281,11 @@ document.getElementById('btnTracker').addEventListener('click', () => {
 // KANBAN — Objectifs annuels
 // localStorage keys:
 //   ap_kb_statuses  → [{id, label, color}]
-//   ap_kb_cards     → [{id, title, desc, year, statusId, order, createdAt}]
+//   ap_kb_cards     → [{id, title, desc, year, statusId, order, color, createdAt}]
 // ═══════════════════════════════════════════════════════════════════════════
 
 const KB_STATUSES_KEY = 'ap_kb_statuses';
 const KB_CARDS_KEY    = 'ap_kb_cards';
-
 const KB_DEFAULT_STATUSES = [
   { id: 'todo',  label: 'À faire',  color: '#8b7355' },
   { id: 'doing', label: 'En cours', color: '#2d6bbf' },
@@ -4186,25 +4293,17 @@ const KB_DEFAULT_STATUSES = [
 ];
 
 let kbDragCard   = null;
+let kbDragCol    = null;
 let kbActiveYear = new Date().getFullYear();
-let kbCompactView = false; // false = titre+desc, true = titre seul (compact)
+let kbCompactView = false;
 
-// ── PERSISTENCE ──────────────────────────────────────────────────────────────
-function kbLoadStatuses() {
-  try { return JSON.parse(localStorage.getItem(KB_STATUSES_KEY)) || [...KB_DEFAULT_STATUSES]; }
-  catch { return [...KB_DEFAULT_STATUSES]; }
-}
+function kbLoadStatuses() { try { return JSON.parse(localStorage.getItem(KB_STATUSES_KEY)) || [...KB_DEFAULT_STATUSES]; } catch { return [...KB_DEFAULT_STATUSES]; } }
 function kbSaveStatuses(s) { localStorage.setItem(KB_STATUSES_KEY, JSON.stringify(s)); }
-
-function kbLoadCards() {
-  try { return JSON.parse(localStorage.getItem(KB_CARDS_KEY)) || []; }
-  catch { return []; }
-}
+function kbLoadCards() { try { return JSON.parse(localStorage.getItem(KB_CARDS_KEY)) || []; } catch { return []; } }
 function kbSaveCards(c) { localStorage.setItem(KB_CARDS_KEY, JSON.stringify(c)); }
-
 function kbUid() { return 'kb_' + Date.now() + '_' + Math.random().toString(36).slice(2,7); }
 
-// ── RENDER ───────────────────────────────────────────────────────────────────
+// ── RENDER ──────────────────────────────────────────────────────────────────
 function renderKanban() {
   const view = document.getElementById('kanbanView');
   view.innerHTML = '';
@@ -4212,507 +4311,375 @@ function renderKanban() {
   const statuses = kbLoadStatuses();
   const allCards = kbLoadCards();
 
-  // ── Toolbar ──
-  const toolbar = document.createElement('div');
-  toolbar.className = 'kb-toolbar';
-
-  // ── Completion bar for active year ──
+  // Toolbar: progress bar only
+  const toolbar = document.createElement('div'); toolbar.className = 'kb-toolbar';
   const yearCards = allCards.filter(c => c.year === kbActiveYear);
   const doneStatus = statuses.find(s => s.id === 'done' || s.label.toLowerCase().includes('complét') || s.label.toLowerCase().includes('done'));
   const doneCount = doneStatus ? yearCards.filter(c => c.statusId === doneStatus.id).length : 0;
   const total = yearCards.length;
   const pct = total ? Math.round(doneCount / total * 100) : 0;
 
-  const progressWrap = document.createElement('div');
-  progressWrap.className = 'kb-progress-wrap';
-  const progressLabel = document.createElement('span');
-  progressLabel.className = 'kb-progress-label';
+  const progressWrap = document.createElement('div'); progressWrap.className = 'kb-progress-wrap';
+  const progressLabel = document.createElement('span'); progressLabel.className = 'kb-progress-label';
   progressLabel.textContent = total ? `${kbActiveYear} · ${doneCount}/${total} · ${pct}%` : `${kbActiveYear} · 0 objectif`;
-  const progressTrack = document.createElement('div');
-  progressTrack.className = 'kb-progress-track';
-  const progressFill = document.createElement('div');
-  progressFill.className = 'kb-progress-fill';
-  progressFill.style.width = pct + '%';
-  progressFill.style.background = doneStatus?.color || '#2a7a4b';
+  const progressTrack = document.createElement('div'); progressTrack.className = 'kb-progress-track';
+  const progressFill = document.createElement('div'); progressFill.className = 'kb-progress-fill';
+  progressFill.style.cssText = `width:${pct}%;background:${doneStatus?.color||'#2a7a4b'};`;
   progressTrack.appendChild(progressFill);
-  progressWrap.appendChild(progressLabel);
-  progressWrap.appendChild(progressTrack);
+  progressWrap.appendChild(progressLabel); progressWrap.appendChild(progressTrack);
   toolbar.appendChild(progressWrap);
 
-  const spacer = document.createElement('div'); spacer.style.flex='1';
-  toolbar.appendChild(spacer);
+  // Add New Column button + compact toggle in toolbar
+  const spacer = document.createElement('div'); spacer.style.flex='1'; toolbar.appendChild(spacer);
 
-  const manageBtn = document.createElement('button');
-  manageBtn.className = 'kb-manage-btn';
-  manageBtn.textContent = '⚙ Colonnes';
-  manageBtn.addEventListener('click', kbShowManageModal);
-  toolbar.appendChild(manageBtn);
+  // Compact toggle lives INSIDE the kanban page toolbar (not in header)
+  const compactToggleBtn = document.createElement('button');
+  compactToggleBtn.className = 'kb-manage-btn';
+  compactToggleBtn.textContent = kbCompactView ? '☰ Complet' : '▤ Compact';
+  compactToggleBtn.title = kbCompactView ? 'Vue complète' : 'Vue compacte';
+  compactToggleBtn.addEventListener('click', () => { kbCompactView = !kbCompactView; renderKanban(); });
+  toolbar.appendChild(compactToggleBtn);
 
-  // ── Settings / Préférences button ──
-  const settingsBtn = document.createElement('button');
-  settingsBtn.className = 'kb-manage-btn';
-  settingsBtn.textContent = '⚙ Préférences';
-  settingsBtn.addEventListener('click', kbShowSettingsModal);
-  toolbar.appendChild(settingsBtn);
-
+  const addColBtn = document.createElement('button'); addColBtn.className = 'kb-manage-btn'; addColBtn.textContent = '＋ Colonne';
+  addColBtn.addEventListener('click', () => {
+    const s = kbLoadStatuses();
+    s.push({ id: kbUid(), label: 'Nouveau', color: '#888888' });
+    kbSaveStatuses(s); renderKanban();
+  });
+  toolbar.appendChild(addColBtn);
   view.appendChild(toolbar);
 
-  // ── Board ──
+  // Board
   const board = document.createElement('div');
   board.className = 'kb-board' + (kbCompactView ? ' kb-board-compact' : '');
-
   const cards = allCards.filter(c => c.year === kbActiveYear);
-
-  statuses.forEach(status => {
-    board.appendChild(kbBuildColumn(status, cards));
-  });
-
+  statuses.forEach(status => board.appendChild(kbBuildColumn(status, cards)));
   view.appendChild(board);
 }
 
-// ── COLUMN ───────────────────────────────────────────────────────────────────
+// ── COLUMN ──────────────────────────────────────────────────────────────────
 function kbBuildColumn(status, cards) {
-  const colCards = cards
-    .filter(c => c.statusId === status.id)
-    .sort((a,b) => (a.order||0) - (b.order||0));
+  const colCards = cards.filter(c => c.statusId === status.id).sort((a,b) => (a.order||0)-(b.order||0));
+  const col = document.createElement('div'); col.className = 'kb-col'; col.dataset.statusId = status.id;
 
-  const col = document.createElement('div');
-  col.className = 'kb-col';
+  // Column drag-reorder
+  col.draggable = true;
+  col.addEventListener('dragstart', e => {
+    if (e.target !== col && !e.target.closest('.kb-col-hd')) return;
+    kbDragCol = status.id; setTimeout(() => col.classList.add('kb-col-dragging'), 0);
+    e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('kb-col', status.id);
+  });
+  col.addEventListener('dragend', () => { kbDragCol = null; col.classList.remove('kb-col-dragging'); });
+  col.addEventListener('dragover', e => {
+    if (kbDragCol && kbDragCol !== status.id) { e.preventDefault(); col.classList.add('kb-col-drop-target'); }
+    else if (kbDragCard) e.preventDefault();
+  });
+  col.addEventListener('dragleave', e => { if (!col.contains(e.relatedTarget)) col.classList.remove('kb-col-drop-target'); });
+  col.addEventListener('drop', e => {
+    col.classList.remove('kb-col-drop-target');
+    if (kbDragCol && kbDragCol !== status.id) {
+      e.preventDefault(); e.stopPropagation();
+      const ss = kbLoadStatuses();
+      const fi = ss.findIndex(s => s.id === kbDragCol), ti = ss.findIndex(s => s.id === status.id);
+      if (fi >= 0 && ti >= 0) { const [m] = ss.splice(fi,1); ss.splice(ti,0,m); kbSaveStatuses(ss); renderKanban(); }
+    }
+  });
 
-  // ── Column header with + button ──
-  const hd = document.createElement('div');
-  hd.className = 'kb-col-hd';
+  // Header
+  const hd = document.createElement('div'); hd.className = 'kb-col-hd';
+  hd.style.borderLeft = `4px solid ${status.color}`;
+  hd.style.background = `linear-gradient(90deg, ${status.color}18 0%, transparent 100%)`;
 
-  const dot = document.createElement('span');
-  dot.className = 'kb-col-dot';
-  dot.style.background = status.color;
-
-  const lbl = document.createElement('span');
-  lbl.className = 'kb-col-label';
-  lbl.textContent = status.label;
-
-  const cnt = document.createElement('span');
-  cnt.className = 'kb-col-count';
-  cnt.style.background = status.color + '33';
-  cnt.style.color = status.color;
-  cnt.textContent = colCards.length;
-
-  // + button in header
-  const addHdBtn = document.createElement('button');
-  addHdBtn.className = 'kb-col-add-btn';
-  addHdBtn.textContent = '＋';
-  addHdBtn.title = `Ajouter dans "${status.label}"`;
+  const dot = document.createElement('span'); dot.className = 'kb-col-dot'; dot.style.background = status.color;
+  const lbl = document.createElement('span'); lbl.className = 'kb-col-label'; lbl.textContent = status.label;
+  const cnt = document.createElement('span'); cnt.className = 'kb-col-count'; cnt.style.cssText=`background:${status.color}33;color:${status.color};`; cnt.textContent = colCards.length;
+  const addHdBtn = document.createElement('button'); addHdBtn.className = 'kb-col-add-btn'; addHdBtn.textContent = '＋';
   addHdBtn.style.setProperty('--col-color', status.color);
   addHdBtn.addEventListener('click', e => { e.stopPropagation(); kbShowCardModal(null, status.id); });
-
-  hd.appendChild(dot); hd.appendChild(lbl); hd.appendChild(cnt); hd.appendChild(addHdBtn);
+  const menuBtn = document.createElement('button'); menuBtn.className = 'kb-col-menu-btn'; menuBtn.textContent = '⋯';
+  menuBtn.addEventListener('click', e => { e.stopPropagation(); kbShowColMenu(menuBtn, status); });
+  hd.appendChild(dot); hd.appendChild(lbl); hd.appendChild(cnt); hd.appendChild(addHdBtn); hd.appendChild(menuBtn);
   col.appendChild(hd);
 
-  const list = document.createElement('div');
-  list.className = 'kb-list';
-  list.dataset.statusId = status.id;
-
-  // Drag events on list
+  // List
+  const list = document.createElement('div'); list.className = 'kb-list'; list.dataset.statusId = status.id;
   list.addEventListener('dragover', e => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
+    if (!kbDragCard) return; e.preventDefault(); e.dataTransfer.dropEffect = 'move';
     const after = kbDragAfterElement(list, e.clientY);
     let ghost = list.querySelector('.kb-ghost');
     if (!ghost) { ghost = document.createElement('div'); ghost.className = 'kb-ghost'; }
+    const addBtn = list.querySelector('.kb-add-card-btn');
     if (after) list.insertBefore(ghost, after);
-    else {
-      // insert before the add-button if it's there
-      const addBtn = list.querySelector('.kb-add-card-btn');
-      if (addBtn) list.insertBefore(ghost, addBtn);
-      else list.appendChild(ghost);
-    }
+    else if (addBtn) list.insertBefore(ghost, addBtn);
+    else list.appendChild(ghost);
   });
-
-  list.addEventListener('dragleave', e => {
-    if (!list.contains(e.relatedTarget)) {
-      const g = list.querySelector('.kb-ghost'); if (g) g.remove();
-    }
-  });
-
+  list.addEventListener('dragleave', e => { if (!list.contains(e.relatedTarget)) { const g=list.querySelector('.kb-ghost'); if(g) g.remove(); } });
   list.addEventListener('drop', e => {
-    e.preventDefault();
+    if (!kbDragCard) return; e.preventDefault();
     const ghost = list.querySelector('.kb-ghost');
     const afterEl = ghost ? ghost.nextSibling : null;
     if (ghost) ghost.remove();
     kbDropCard(status.id, afterEl?.dataset?.cardId || null);
   });
 
-  colCards.forEach(card => list.appendChild(kbBuildCard(card)));
-
+  colCards.forEach(card => list.appendChild(kbBuildCard(card, status)));
   col.appendChild(list);
   return col;
 }
 
+// ── COLUMN CONTEXT MENU ──────────────────────────────────────────────────────
+function kbShowColMenu(anchor, status) {
+  document.querySelectorAll('.kb-col-dropdown').forEach(d => d.remove());
+  const menu = document.createElement('div'); menu.className = 'kb-col-dropdown';
+  const rect = anchor.getBoundingClientRect();
+  menu.style.cssText = `position:fixed;top:${rect.bottom+4}px;left:${rect.left}px;z-index:1000;`;
+
+  const mkItem = (icon, label, cb) => {
+    const item = document.createElement('button'); item.className = 'kb-dropdown-item';
+    item.innerHTML = `<span>${icon}</span> ${label}`;
+    item.addEventListener('click', () => { menu.remove(); cb(); });
+    menu.appendChild(item);
+  };
+  mkItem('✏', 'Renommer / couleur', () => kbShowEditStatusModal(status));
+  mkItem('✕', 'Supprimer la colonne', (e) => {
+    const statuses = kbLoadStatuses();
+    if (statuses.length <= 1) { alert('Il faut au moins une colonne.'); return; }
+    if (confirm(`Supprimer "${status.label}" ? Les objectifs seront déplacés vers la première colonne.`)) {
+      const idx = statuses.findIndex(s => s.id === status.id);
+      if (idx >= 0) statuses.splice(idx, 1);
+      const first = statuses[0];
+      const allCards = kbLoadCards();
+      allCards.forEach(c => { if (c.statusId === status.id) c.statusId = first?.id; });
+      kbSaveCards(allCards); kbSaveStatuses(statuses); renderKanban();
+    }
+  });
+  document.body.appendChild(menu);
+  // Use setTimeout so the click that opened the menu doesn't immediately close it
+  setTimeout(() => document.addEventListener('click', () => menu.remove(), { once: true }), 50);
+}
+
+function kbShowEditStatusModal(status) {
+  kbRemoveModal();
+  const overlay = kbMakeOverlay();
+  const modal = document.createElement('div'); modal.className = 'kb-modal'; modal.style.maxWidth = '340px';
+  const mhd = document.createElement('div'); mhd.className = 'kb-modal-hd';
+  const mt = document.createElement('div'); mt.className = 'kb-modal-title'; mt.textContent = '✏ Modifier le statut';
+  const mc = kbCloseBtn(); mhd.appendChild(mt); mhd.appendChild(mc);
+  const mbd = document.createElement('div'); mbd.className = 'kb-modal-bd';
+
+  const nameIn = document.createElement('input'); nameIn.className = 'kb-field-input'; nameIn.value = status.label;
+  const nw = document.createElement('div'); nw.style.cssText='display:flex;flex-direction:column;gap:4px;';
+  const nl = document.createElement('label'); nl.className='kb-field-label'; nl.textContent='Nom';
+  nw.appendChild(nl); nw.appendChild(nameIn); mbd.appendChild(nw);
+
+  const cw = document.createElement('div'); cw.style.cssText='display:flex;flex-direction:column;gap:4px;margin-top:12px;';
+  const cl = document.createElement('label'); cl.className='kb-field-label'; cl.textContent='Couleur';
+  const cr = document.createElement('div'); cr.style.cssText='display:flex;align-items:center;gap:10px;';
+  const colorIn = document.createElement('input'); colorIn.type='color'; colorIn.value=status.color; colorIn.style.cssText='width:42px;height:36px;border:none;border-radius:6px;cursor:pointer;';
+  const colorPrev = document.createElement('span'); colorPrev.style.cssText=`flex:1;height:36px;border-radius:6px;background:${status.color};`;
+  colorIn.addEventListener('input', e => colorPrev.style.background = e.target.value);
+  cr.appendChild(colorIn); cr.appendChild(colorPrev); cw.appendChild(cl); cw.appendChild(cr); mbd.appendChild(cw);
+
+  const mft = document.createElement('div'); mft.className = 'kb-modal-ft';
+  const cancel = document.createElement('button'); cancel.className='kb-btn-cancel'; cancel.textContent='Annuler'; cancel.addEventListener('click', kbRemoveModal);
+  const save = document.createElement('button'); save.className='kb-btn-save'; save.textContent='Enregistrer';
+  save.addEventListener('click', () => {
+    const ss = kbLoadStatuses(); const idx = ss.findIndex(s => s.id === status.id);
+    if (idx >= 0) { ss[idx].label = nameIn.value.trim()||status.label; ss[idx].color = colorIn.value; }
+    kbSaveStatuses(ss); kbRemoveModal(); renderKanban();
+  });
+  mft.appendChild(cancel); mft.appendChild(save);
+  modal.appendChild(mhd); modal.appendChild(mbd); modal.appendChild(mft);
+  overlay.appendChild(modal); document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+  nameIn.focus();
+}
+
 // ── CARD ─────────────────────────────────────────────────────────────────────
-function kbBuildCard(card) {
+function kbBuildCard(card, status) {
   const el = document.createElement('div');
   el.className = 'kb-card' + (kbCompactView ? ' kb-card-compact' : '');
   el.dataset.cardId = card.id;
   el.draggable = true;
+  const cardColor = card.color || status.color;
+  el.style.borderLeft = `4px solid ${cardColor}`;
 
   el.addEventListener('dragstart', e => {
-    kbDragCard = card.id;
-    setTimeout(() => el.classList.add('dragging'), 0);
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', card.id);
+    kbDragCard = card.id; setTimeout(()=>el.classList.add('dragging'),0);
+    e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain', card.id);
   });
-  el.addEventListener('dragend', () => {
-    kbDragCard = null;
-    el.classList.remove('dragging');
-    document.querySelectorAll('.kb-ghost').forEach(g => g.remove());
-  });
+  el.addEventListener('dragend', () => { kbDragCard=null; el.classList.remove('dragging'); document.querySelectorAll('.kb-ghost').forEach(g=>g.remove()); });
 
-  const title = document.createElement('div');
-  title.className = 'kb-card-title';
-  title.textContent = card.title;
-  el.appendChild(title);
+  // Color dot (click to pick)
+  const colorDot = document.createElement('span'); colorDot.className='kb-card-color-dot'; colorDot.style.background=cardColor;
+  colorDot.title='Couleur de l\'objectif';
+  colorDot.addEventListener('click', e => { e.stopPropagation(); kbPickCardColor(colorDot, card, el); });
+  el.appendChild(colorDot);
 
-  // Description only in full view
-  if (!kbCompactView && card.desc) {
-    const desc = document.createElement('div');
-    desc.className = 'kb-card-desc';
-    desc.textContent = card.desc;
-    el.appendChild(desc);
-  }
+  const title = document.createElement('div'); title.className='kb-card-title'; title.textContent=card.title; el.appendChild(title);
+  if (!kbCompactView && card.desc) { const desc=document.createElement('div'); desc.className='kb-card-desc'; desc.textContent=card.desc; el.appendChild(desc); }
 
-  // Actions (edit/delete) — always visible on hover, no year badge
-  const actions = document.createElement('div');
-  actions.className = 'kb-card-actions';
-
-  const editBtn = document.createElement('button');
-  editBtn.className = 'kb-card-btn';
-  editBtn.title = 'Modifier'; editBtn.textContent = '✏';
+  const actions = document.createElement('div'); actions.className='kb-card-actions';
+  const editBtn = document.createElement('button'); editBtn.className='kb-card-btn'; editBtn.title='Modifier'; editBtn.textContent='✏';
   editBtn.addEventListener('click', e => { e.stopPropagation(); kbShowCardModal(card); });
-
-  const delBtn = document.createElement('button');
-  delBtn.className = 'kb-card-btn kb-card-btn-del';
-  delBtn.title = 'Supprimer'; delBtn.textContent = '✕';
+  const delBtn = document.createElement('button'); delBtn.className='kb-card-btn kb-card-btn-del'; delBtn.title='Supprimer'; delBtn.textContent='✕';
   delBtn.addEventListener('click', e => {
     e.stopPropagation();
-    if (confirm(`Supprimer l'objectif "${card.title}" ?`)) {
-      kbSaveCards(kbLoadCards().filter(c => c.id !== card.id));
-      renderKanban();
-    }
+    if (confirm(`Supprimer l'objectif "${card.title}" ?`)) { kbSaveCards(kbLoadCards().filter(c=>c.id!==card.id)); renderKanban(); }
   });
-
-  actions.appendChild(editBtn); actions.appendChild(delBtn);
-  el.appendChild(actions);
+  actions.appendChild(editBtn); actions.appendChild(delBtn); el.appendChild(actions);
   return el;
+}
+
+function kbPickCardColor(dotEl, card, cardEl) {
+  const input = document.createElement('input'); input.type='color'; input.value=card.color||'#888888';
+  input.style.cssText='position:absolute;opacity:0;width:0;height:0;';
+  document.body.appendChild(input);
+  input.addEventListener('input', e => { card.color=e.target.value; dotEl.style.background=e.target.value; cardEl.style.borderLeft=`4px solid ${e.target.value}`; });
+  input.addEventListener('change', () => {
+    const cards=kbLoadCards(); const idx=cards.findIndex(c=>c.id===card.id); if(idx>=0) cards[idx].color=card.color; kbSaveCards(cards); input.remove();
+  });
+  input.click();
 }
 
 function kbDragAfterElement(container, y) {
   const els = [...container.querySelectorAll('.kb-card:not(.dragging)')];
   return els.reduce((closest, child) => {
-    const box = child.getBoundingClientRect();
-    const offset = y - box.top - box.height / 2;
-    if (offset < 0 && offset > closest.offset) return { offset, element: child };
-    return closest;
-  }, { offset: Number.NEGATIVE_INFINITY }).element;
+    const box=child.getBoundingClientRect(), offset=y-box.top-box.height/2;
+    if(offset<0&&offset>closest.offset) return {offset,element:child}; return closest;
+  }, {offset:Number.NEGATIVE_INFINITY}).element;
 }
 
 function kbDropCard(targetStatusId, beforeCardId) {
   if (!kbDragCard) return;
-  const cards = kbLoadCards();
-  const card  = cards.find(c => c.id === kbDragCard);
-  if (!card) return;
-
-  card.statusId = targetStatusId;
-
-  const colCards = cards
-    .filter(c => c.statusId === targetStatusId && c.id !== kbDragCard)
-    .sort((a,b) => (a.order||0) - (b.order||0));
-
-  const insertIdx = beforeCardId
-    ? colCards.findIndex(c => c.id === beforeCardId)
-    : colCards.length;
-
-  colCards.splice(insertIdx < 0 ? colCards.length : insertIdx, 0, card);
-  colCards.forEach((c,i) => { c.order = i; });
-
-  kbSaveCards(cards);
-  renderKanban();
+  const cards=kbLoadCards(), card=cards.find(c=>c.id===kbDragCard); if(!card) return;
+  card.statusId=targetStatusId;
+  const colCards=cards.filter(c=>c.statusId===targetStatusId&&c.id!==kbDragCard).sort((a,b)=>(a.order||0)-(b.order||0));
+  const insertIdx=beforeCardId?colCards.findIndex(c=>c.id===beforeCardId):colCards.length;
+  colCards.splice(insertIdx<0?colCards.length:insertIdx,0,card);
+  colCards.forEach((c,i)=>{c.order=i;}); kbSaveCards(cards); renderKanban();
 }
 
-// ── CARD MODAL ───────────────────────────────────────────────────────────────
-function kbShowCardModal(card = null, defaultStatusId = null) {
+// ── CARD MODAL ────────────────────────────────────────────────────────────────
+function kbShowCardModal(card=null, defaultStatusId=null) {
   kbRemoveModal();
-  const statuses = kbLoadStatuses();
-  const isEdit   = !!card;
+  const statuses=kbLoadStatuses(); const isEdit=!!card;
+  const overlay=kbMakeOverlay(); const modal=document.createElement('div'); modal.className='kb-modal';
+  const mhd=document.createElement('div'); mhd.className='kb-modal-hd';
+  const mtitle=document.createElement('div'); mtitle.className='kb-modal-title'; mtitle.textContent=isEdit?'✏ Modifier l\'objectif':'＋ Nouvel objectif';
+  const mclose=kbCloseBtn(); mhd.appendChild(mtitle); mhd.appendChild(mclose);
+  const mbd=document.createElement('div'); mbd.className='kb-modal-bd';
+  const mkField=(lbl,el)=>{ const w=document.createElement('div'); w.style.cssText='display:flex;flex-direction:column;gap:4px;'; const l=document.createElement('label'); l.className='kb-field-label'; l.textContent=lbl; w.appendChild(l); w.appendChild(el); return w; };
 
-  const overlay = kbMakeOverlay();
-  const modal   = document.createElement('div'); modal.className = 'kb-modal';
+  const titleInput=document.createElement('input'); titleInput.className='kb-field-input'; titleInput.placeholder='Nom de l\'objectif…'; titleInput.value=card?.title||'';
+  const descInput=document.createElement('textarea'); descInput.className='kb-field-textarea'; descInput.placeholder='Détails, notes…'; descInput.value=card?.desc||''; descInput.rows=3;
+  const yearInput=document.createElement('input'); yearInput.className='kb-field-input'; yearInput.type='number'; yearInput.min=2020; yearInput.max=2099; yearInput.value=card?.year||kbActiveYear;
+  const statusSel=document.createElement('select'); statusSel.className='kb-field-select';
+  statuses.forEach(s=>{ const opt=document.createElement('option'); opt.value=s.id; opt.textContent=s.label; if((card?.statusId||defaultStatusId)===s.id) opt.selected=true; statusSel.appendChild(opt); });
 
-  // Header
-  const mhd = document.createElement('div'); mhd.className = 'kb-modal-hd';
-  const mtitle = document.createElement('div'); mtitle.className = 'kb-modal-title';
-  mtitle.textContent = isEdit ? '✏ Modifier l\'objectif' : '＋ Nouvel objectif';
-  const mclose = kbCloseBtn(); mhd.appendChild(mtitle); mhd.appendChild(mclose);
+  let currentColor=card?.color||'';
+  const colorRow=document.createElement('div'); colorRow.style.cssText='display:flex;align-items:center;gap:10px;';
+  const colorIn=document.createElement('input'); colorIn.type='color'; colorIn.value=currentColor||'#888888'; colorIn.style.cssText='width:42px;height:36px;border:none;border-radius:6px;cursor:pointer;';
+  const colorPrev=document.createElement('span'); colorPrev.style.cssText=`flex:1;height:36px;border-radius:6px;background:${currentColor||'#e0ddd8'};`;
+  const colorClear=document.createElement('button'); colorClear.className='kb-btn-cancel'; colorClear.style.cssText='padding:4px 10px;font-size:.75rem;'; colorClear.textContent='Par défaut';
+  colorIn.addEventListener('input',e=>{currentColor=e.target.value;colorPrev.style.background=e.target.value;});
+  colorClear.addEventListener('click',()=>{currentColor='';colorPrev.style.background='#e0ddd8';});
+  colorRow.appendChild(colorIn); colorRow.appendChild(colorPrev); colorRow.appendChild(colorClear);
 
-  // Body
-  const mbd = document.createElement('div'); mbd.className = 'kb-modal-bd';
+  mbd.appendChild(mkField('Objectif *',titleInput));
+  mbd.appendChild(mkField('Description',descInput));
+  mbd.appendChild(mkField('Année',yearInput));
+  mbd.appendChild(mkField('Statut',statusSel));
+  mbd.appendChild(mkField('Couleur de la carte',colorRow));
 
-  const mkField = (lbl, el) => {
-    const wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
-    const label = document.createElement('label'); label.className = 'kb-field-label'; label.textContent = lbl;
-    wrap.appendChild(label); wrap.appendChild(el); return wrap;
-  };
-
-  const titleInput = document.createElement('input'); titleInput.className = 'kb-field-input';
-  titleInput.placeholder = 'Nom de l\'objectif…'; titleInput.value = card?.title || '';
-
-  const descInput = document.createElement('textarea'); descInput.className = 'kb-field-textarea';
-  descInput.placeholder = 'Détails, notes…'; descInput.value = card?.desc || ''; descInput.rows = 3;
-
-  const yearInput = document.createElement('input'); yearInput.className = 'kb-field-input';
-  yearInput.type = 'number'; yearInput.min = 2020; yearInput.max = 2099;
-  yearInput.value = card?.year || kbActiveYear;
-
-  const statusSel = document.createElement('select'); statusSel.className = 'kb-field-select';
-  statuses.forEach(s => {
-    const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.label;
-    if ((card?.statusId || defaultStatusId) === s.id) opt.selected = true;
-    statusSel.appendChild(opt);
+  const mft=document.createElement('div'); mft.className='kb-modal-ft';
+  const cancelBtn=document.createElement('button'); cancelBtn.className='kb-btn-cancel'; cancelBtn.textContent='Annuler'; cancelBtn.addEventListener('click',kbRemoveModal);
+  const saveBtn=document.createElement('button'); saveBtn.className='kb-btn-save'; saveBtn.textContent=isEdit?'Enregistrer':'Créer';
+  saveBtn.addEventListener('click',()=>{
+    const title=titleInput.value.trim(); if(!title){titleInput.style.borderColor='#e05';titleInput.focus();return;}
+    const cards=kbLoadCards(); const yr=parseInt(yearInput.value)||kbActiveYear; const stId=statusSel.value;
+    if(isEdit){ const idx=cards.findIndex(c=>c.id===card.id); if(idx>=0) Object.assign(cards[idx],{title,desc:descInput.value.trim(),year:yr,statusId:stId,color:currentColor||undefined}); }
+    else { const cc=cards.filter(c=>c.statusId===stId&&c.year===yr); const mo=cc.length?Math.max(...cc.map(c=>c.order||0))+1:0; cards.push({id:kbUid(),title,desc:descInput.value.trim(),year:yr,statusId:stId,order:mo,color:currentColor||undefined,createdAt:new Date().toISOString()}); }
+    kbSaveCards(cards); if(yr!==kbActiveYear) kbActiveYear=yr; kbRemoveModal(); renderKanban();
   });
-
-  mbd.appendChild(mkField('Objectif *', titleInput));
-  mbd.appendChild(mkField('Description', descInput));
-  mbd.appendChild(mkField('Année', yearInput));
-  mbd.appendChild(mkField('Statut', statusSel));
-
-  // Footer
-  const mft = document.createElement('div'); mft.className = 'kb-modal-ft';
-  const cancelBtn = document.createElement('button'); cancelBtn.className = 'kb-btn-cancel'; cancelBtn.textContent = 'Annuler';
-  cancelBtn.addEventListener('click', kbRemoveModal);
-  const saveBtn = document.createElement('button'); saveBtn.className = 'kb-btn-save';
-  saveBtn.textContent = isEdit ? 'Enregistrer' : 'Créer';
-
-  saveBtn.addEventListener('click', () => {
-    const title = titleInput.value.trim();
-    if (!title) { titleInput.style.borderColor='#e05'; titleInput.focus(); return; }
-    const cards = kbLoadCards();
-    const yr    = parseInt(yearInput.value) || kbActiveYear;
-    const stId  = statusSel.value;
-
-    if (isEdit) {
-      const idx = cards.findIndex(c => c.id === card.id);
-      if (idx >= 0) Object.assign(cards[idx], { title, desc: descInput.value.trim(), year: yr, statusId: stId });
-    } else {
-      const colCards = cards.filter(c => c.statusId === stId && c.year === yr);
-      const maxOrder = colCards.length ? Math.max(...colCards.map(c=>c.order||0)) + 1 : 0;
-      cards.push({ id: kbUid(), title, desc: descInput.value.trim(), year: yr, statusId: stId, order: maxOrder, createdAt: new Date().toISOString() });
-    }
-
-    kbSaveCards(cards);
-    if (yr !== kbActiveYear) kbActiveYear = yr;
-    kbRemoveModal();
-    renderKanban();
-  });
-
   mft.appendChild(cancelBtn); mft.appendChild(saveBtn);
   modal.appendChild(mhd); modal.appendChild(mbd); modal.appendChild(mft);
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-  requestAnimationFrame(() => overlay.classList.add('visible'));
+  overlay.appendChild(modal); document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add('visible'));
   titleInput.focus();
-  titleInput.addEventListener('keydown', e => { if (e.key==='Enter') saveBtn.click(); });
+  titleInput.addEventListener('keydown',e=>{if(e.key==='Enter')saveBtn.click();});
 }
 
-// ── MANAGE COLUMNS MODAL ─────────────────────────────────────────────────────
-function kbShowManageModal() {
-  kbRemoveModal();
-  let statuses = kbLoadStatuses().map(s => ({...s})); // work on copies
-
-  const overlay = kbMakeOverlay();
-  const modal   = document.createElement('div'); modal.className = 'kb-modal'; modal.style.maxWidth='480px';
-
-  const mhd = document.createElement('div'); mhd.className = 'kb-modal-hd';
-  const mtitle = document.createElement('div'); mtitle.className = 'kb-modal-title'; mtitle.textContent = '⚙ Gérer les colonnes';
-  const mclose = kbCloseBtn(); mhd.appendChild(mtitle); mhd.appendChild(mclose);
-
-  const mbd = document.createElement('div'); mbd.className = 'kb-modal-bd';
-  const hint = document.createElement('p');
-  hint.style.cssText = 'font-size:.78rem;color:var(--muted);margin:0 0 14px;';
-  hint.textContent = 'Glissez ⠿ pour réordonner. Cliquez sur la pastille pour changer la couleur.';
-  mbd.appendChild(hint);
-
-  let dragSrc = null;
-
-  const buildList = () => {
-    const old = mbd.querySelector('.kb-status-list'); if (old) old.remove();
-    const list = document.createElement('div'); list.className = 'kb-status-list';
-
-    statuses.forEach((s, idx) => {
-      const row = document.createElement('div'); row.className = 'kb-status-row'; row.draggable = true;
-
-      row.addEventListener('dragstart', e => { dragSrc = idx; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
-      row.addEventListener('dragend',   () => { row.classList.remove('dragging'); list.querySelectorAll('.kb-status-row').forEach(r=>r.classList.remove('drag-over')); });
-      row.addEventListener('dragover',  e => { e.preventDefault(); row.classList.add('drag-over'); });
-      row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
-      row.addEventListener('drop', e => {
-        e.preventDefault(); row.classList.remove('drag-over');
-        if (dragSrc === null || dragSrc === idx) return;
-        const [moved] = statuses.splice(dragSrc, 1);
-        statuses.splice(idx, 0, moved);
-        dragSrc = null; buildList();
-      });
-
-      const handle = document.createElement('span'); handle.className = 'kb-status-handle'; handle.textContent = '⠿';
-
-      // Color picker
-      const colorWrap = document.createElement('span'); colorWrap.style.cssText='position:relative;display:inline-flex;';
-      const colorDot = document.createElement('button'); colorDot.className='kb-status-color-btn';
-      colorDot.style.background = s.color; colorDot.title = 'Changer la couleur';
-      const colorPicker = document.createElement('input'); colorPicker.type='color'; colorPicker.value=s.color;
-      colorPicker.style.cssText='position:absolute;opacity:0;width:0;height:0;top:0;left:0;';
-      colorPicker.addEventListener('input', e => { s.color=e.target.value; colorDot.style.background=e.target.value; });
-      colorDot.addEventListener('click', ()=>colorPicker.click());
-      colorWrap.appendChild(colorDot); colorWrap.appendChild(colorPicker);
-
-      const nameInput = document.createElement('input'); nameInput.className='kb-status-name-input';
-      nameInput.value = s.label;
-      nameInput.addEventListener('input', e => { s.label = e.target.value; });
-
-      const delBtn = document.createElement('button'); delBtn.className='kb-status-del-btn'; delBtn.textContent='✕';
-      delBtn.disabled = statuses.length <= 1;
-      delBtn.addEventListener('click', () => {
-        if (statuses.length <= 1) return;
-        if (confirm(`Supprimer la colonne "${s.label}" ?`)) { statuses.splice(idx,1); buildList(); }
-      });
-
-      row.appendChild(handle); row.appendChild(colorWrap); row.appendChild(nameInput); row.appendChild(delBtn);
-      list.appendChild(row);
-    });
-
-    const addBtn = document.createElement('button'); addBtn.className='kb-status-add-btn'; addBtn.textContent='＋ Ajouter un statut';
-    addBtn.addEventListener('click', () => { statuses.push({id:kbUid(),label:'Nouveau',color:'#888888'}); buildList(); });
-    list.appendChild(addBtn);
-    mbd.appendChild(list);
-  };
-
-  buildList();
-
-  const mft = document.createElement('div'); mft.className = 'kb-modal-ft';
-  const cancelBtn = document.createElement('button'); cancelBtn.className='kb-btn-cancel'; cancelBtn.textContent='Annuler';
-  cancelBtn.addEventListener('click', kbRemoveModal);
-  const saveBtn = document.createElement('button'); saveBtn.className='kb-btn-save'; saveBtn.textContent='Enregistrer';
-  saveBtn.addEventListener('click', () => { kbSaveStatuses(statuses); kbRemoveModal(); renderKanban(); });
-
-  mft.appendChild(cancelBtn); mft.appendChild(saveBtn);
-  modal.appendChild(mhd); modal.appendChild(mbd); modal.appendChild(mft);
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-  requestAnimationFrame(() => overlay.classList.add('visible'));
-}
-
-// ── SETTINGS MODAL ───────────────────────────────────────────────────────────
+// ── SETTINGS MODAL ────────────────────────────────────────────────────────────
 function kbShowSettingsModal() {
   kbRemoveModal();
-  const overlay = kbMakeOverlay();
-  const modal = document.createElement('div'); modal.className = 'kb-modal'; modal.style.maxWidth = '400px';
+  const overlay=kbMakeOverlay(); const modal=document.createElement('div'); modal.className='kb-modal'; modal.style.maxWidth='400px';
+  const mhd=document.createElement('div'); mhd.className='kb-modal-hd';
+  const mtitle=document.createElement('div'); mtitle.className='kb-modal-title'; mtitle.textContent='⚙ Préférences';
+  const mclose=kbCloseBtn(); mhd.appendChild(mtitle); mhd.appendChild(mclose);
+  const mbd=document.createElement('div'); mbd.className='kb-modal-bd';
+  const mkRow=(label,control)=>{ const r=document.createElement('div'); r.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--border);'; const l=document.createElement('span'); l.style.cssText='font-family:"DM Sans",sans-serif;font-size:.85rem;color:var(--text);font-weight:500;'; l.textContent=label; r.appendChild(l); r.appendChild(control); return r; };
 
-  const mhd = document.createElement('div'); mhd.className = 'kb-modal-hd';
-  const mtitle = document.createElement('div'); mtitle.className = 'kb-modal-title'; mtitle.textContent = '⚙ Préférences';
-  const mclose = kbCloseBtn(); mhd.appendChild(mtitle); mhd.appendChild(mclose);
+  const viewSel=document.createElement('select'); viewSel.className='kb-field-select'; viewSel.style.width='auto';
+  [['false','Complet (titre + desc)'],['true','Compact (titre seul)']].forEach(([v,t])=>{ const o=document.createElement('option'); o.value=v; o.textContent=t; if(String(kbCompactView)===v) o.selected=true; viewSel.appendChild(o); });
+  mbd.appendChild(mkRow('Vue par défaut',viewSel));
 
-  const mbd = document.createElement('div'); mbd.className = 'kb-modal-bd';
+  const wsSel=document.createElement('select'); wsSel.className='kb-field-select'; wsSel.style.width='auto';
+  const wsVal=localStorage.getItem('ap_ws')||'0';
+  [['0','Dimanche'],['1','Lundi']].forEach(([v,t])=>{ const o=document.createElement('option'); o.value=v; o.textContent=t; if(wsVal===v) o.selected=true; wsSel.appendChild(o); });
+  mbd.appendChild(mkRow('Premier jour de la semaine',wsSel));
 
-  const mkRow = (label, control) => {
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--border);';
-    const lbl = document.createElement('span');
-    lbl.style.cssText = 'font-family:"DM Sans",sans-serif;font-size:.85rem;color:var(--text);font-weight:500;';
-    lbl.textContent = label;
-    row.appendChild(lbl); row.appendChild(control);
-    return row;
-  };
-
-  // ── Vue par défaut ──
-  const viewSel = document.createElement('select'); viewSel.className = 'kb-field-select'; viewSel.style.width = 'auto';
-  [['false','Complet (titre + description)'],['true','Compact (titre seul)']].forEach(([v,t]) => {
-    const o = document.createElement('option'); o.value = v; o.textContent = t;
-    if (String(kbCompactView) === v) o.selected = true;
-    viewSel.appendChild(o);
-  });
-  mbd.appendChild(mkRow('Vue par défaut', viewSel));
-
-  // ── Premier jour de la semaine ──
-  const wsSel = document.createElement('select'); wsSel.className = 'kb-field-select'; wsSel.style.width = 'auto';
-  const wsVal = localStorage.getItem('ap_ws') || '0';
-  [['0','Dimanche'],['1','Lundi']].forEach(([v,t]) => {
-    const o = document.createElement('option'); o.value = v; o.textContent = t;
-    if (wsVal === v) o.selected = true;
-    wsSel.appendChild(o);
-  });
-  mbd.appendChild(mkRow('Premier jour de la semaine', wsSel));
-
-  const mft = document.createElement('div'); mft.className = 'kb-modal-ft';
-  const cancelBtn = document.createElement('button'); cancelBtn.className = 'kb-btn-cancel'; cancelBtn.textContent = 'Annuler';
-  cancelBtn.addEventListener('click', kbRemoveModal);
-  const saveBtn = document.createElement('button'); saveBtn.className = 'kb-btn-save'; saveBtn.textContent = 'Enregistrer';
-  saveBtn.addEventListener('click', () => {
-    kbCompactView = viewSel.value === 'true';
-    const newWs = parseInt(wsSel.value);
-    if (newWs !== parseInt(localStorage.getItem('ap_ws') || '0')) {
-      localStorage.setItem('ap_ws', newWs);
-      // Update the header select and re-render planner if needed
-      const wsSel2 = document.getElementById('weekStart');
-      if (wsSel2) { wsSel2.value = newWs; wsSel2.dispatchEvent(new Event('change')); }
-    }
-    kbRemoveModal();
-    renderKanban();
+  const mft=document.createElement('div'); mft.className='kb-modal-ft';
+  const cancelBtn=document.createElement('button'); cancelBtn.className='kb-btn-cancel'; cancelBtn.textContent='Annuler'; cancelBtn.addEventListener('click',kbRemoveModal);
+  const saveBtn=document.createElement('button'); saveBtn.className='kb-btn-save'; saveBtn.textContent='Enregistrer';
+  saveBtn.addEventListener('click',()=>{
+    kbCompactView=viewSel.value==='true';
+    const newWs=parseInt(wsSel.value);
+    if(newWs!==parseInt(localStorage.getItem('ap_ws')||'0')){ localStorage.setItem('ap_ws',newWs); const ws2=document.getElementById('weekStart'); if(ws2){ws2.value=newWs;ws2.dispatchEvent(new Event('change'));} }
+    kbRemoveModal(); renderKanban();
   });
   mft.appendChild(cancelBtn); mft.appendChild(saveBtn);
   modal.appendChild(mhd); modal.appendChild(mbd); modal.appendChild(mft);
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-  requestAnimationFrame(() => overlay.classList.add('visible'));
+  overlay.appendChild(modal); document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add('visible'));
 }
 
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function kbMakeOverlay() {
-  const o = document.createElement('div'); o.className='kb-modal-overlay'; o.id='kbModalOverlay';
-  o.addEventListener('click', e => { if (e.target===o) kbRemoveModal(); });
-  return o;
-}
-function kbCloseBtn() {
-  const b = document.createElement('button'); b.className='kb-modal-close'; b.textContent='✕';
-  b.addEventListener('click', kbRemoveModal); return b;
-}
-function kbRemoveModal() { const m=document.getElementById('kbModalOverlay'); if(m) m.remove(); }
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function kbMakeOverlay(){ const o=document.createElement('div'); o.className='kb-modal-overlay'; o.id='kbModalOverlay'; o.addEventListener('click',e=>{if(e.target===o)kbRemoveModal();}); return o; }
+function kbCloseBtn(){ const b=document.createElement('button'); b.className='kb-modal-close'; b.textContent='✕'; b.addEventListener('click',kbRemoveModal); return b; }
+function kbRemoveModal(){ const m=document.getElementById('kbModalOverlay'); if(m) m.remove(); }
 
-// ── HOOK INTO HEADER BUTTON ───────────────────────────────────────────────────
+// ── HOOK ─────────────────────────────────────────────────────────────────────
 document.getElementById('btnKanban').addEventListener('click', () => {
-  // Hide all other views
-  ['trackerView','kanbanView','scrollArea','monthView','weeklyView'].forEach(id => {
-    const el=document.getElementById(id); if(el) el.style.display='none';
-  });
-  const sw = document.querySelector('.strip-wrapper'); if(sw) sw.style.display='none';
-  document.querySelectorAll('.btn-view').forEach(b => b.classList.remove('active'));
+  ['trackerView','kanbanView','contactsView','scrollArea','monthView','weeklyView'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+  const sw=document.querySelector('.strip-wrapper'); if(sw) sw.style.display='none';
+  document.querySelectorAll('.btn-view').forEach(b=>b.classList.remove('active'));
   document.getElementById('btnKanban').classList.add('active');
-  document.getElementById('kanbanView').style.display = 'flex';
+  document.getElementById('kanbanView').style.display='flex';
   renderKanban();
 });
 
-// Patch switchView so kanban is hidden when switching to other views
+// Wire Préférences button — always visible, always opens settings
+document.addEventListener('DOMContentLoaded', () => {
+  const pb = document.getElementById('btnPreferences');
+  if (pb) pb.addEventListener('click', kbShowSettingsModal);
+});
+// Fallback if DOMContentLoaded already fired
+(function() {
+  const pb = document.getElementById('btnPreferences');
+  if (pb && !pb._kbWired) { pb._kbWired = true; pb.addEventListener('click', kbShowSettingsModal); }
+})();
+
 const _kbOrigSwitchView = window.switchView;
 window.switchView = function(mode) {
   const kv=document.getElementById('kanbanView'); if(kv) kv.style.display='none';
   _kbOrigSwitchView(mode);
 };
 
-// Re-render kanban when year changes (btnPrev/btnNext) if kanban tab is active
 const _kbOrigRender = window.render;
 window.render = function() {
   _kbOrigRender();
-  if (document.getElementById('btnKanban')?.classList.contains('active')) {
-    kbActiveYear = CY;
-    renderKanban();
-  }
+  if (document.getElementById('btnKanban')?.classList.contains('active')) { kbActiveYear=CY; renderKanban(); }
 };
 
 </script>
@@ -4917,470 +4884,610 @@ function ctParseCSVLine(line) {
 })();
 
 // ═══════════════════════════════════════════════════════════════════════════
-// CONTACTS TAB VIEW
+// ═══════════════════════════════════════════════════════════════════════════
+// CONTACTS TAB VIEW — Multi-tags, soft-edit, ×clear, colored pills
+// Data model: contact.tags = [] (array of strings) — replaces .grp
 // ═══════════════════════════════════════════════════════════════════════════
 
-let ctSortField  = 'fn';
-let ctSortAsc    = true;
-let ctFilter     = '';
-let ctGroupFilter= '';   // '' = tous
-let ctPage       = 1;
+let ctSortField   = 'fn';
+let ctSortAsc     = true;
+let ctFilter      = '';
+let ctTagFilter   = '';   // '' = tous, tag name = filter by tag
+let ctPage        = 1;
 const CT_PAGE_SIZE = 25;
 
-// Groups stored separately: ap_ct_groups → ['Famille','Ami','Célébrité',…]
-const CT_GROUPS_KEY = 'ap_ct_groups';
+const CT_GROUPS_KEY    = 'ap_ct_groups';
 const CT_DEFAULT_GROUPS = ['Famille', 'Ami', 'Célébrité'];
+
 function ctLoadGroups() {
-  try { return JSON.parse(localStorage.getItem(CT_GROUPS_KEY)) || CT_DEFAULT_GROUPS; }
-  catch { return CT_DEFAULT_GROUPS; }
+  try { return JSON.parse(localStorage.getItem(CT_GROUPS_KEY)) || [...CT_DEFAULT_GROUPS]; }
+  catch { return [...CT_DEFAULT_GROUPS]; }
 }
 function ctSaveGroups(g) { localStorage.setItem(CT_GROUPS_KEY, JSON.stringify(g)); }
 
-const MONTHS_FR_CT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-function ctFmtDate(y, m, d) {
-  if (!m) return y ? String(y) : '—';
-  const ms = MONTHS_FR_CT[m - 1] || '';
-  return d ? `${d} ${ms} ${y || ''}` : `${ms} ${y || ''}`;
+// Migrate old .grp string field → .tags array on first access
+function ctMigrateContact(c) {
+  if (!c.tags) {
+    c.tags = c.grp ? [c.grp] : [];
+    delete c.grp;
+  }
+  return c;
 }
 
-function ctSortedFiltered() {
-  let list = ctLoadContacts();
-  const q = ctFilter.trim().toLowerCase();
-  if (q) list = list.filter(c => `${c.fn||''} ${c.ln||''}`.toLowerCase().includes(q));
-  if (ctGroupFilter) list = list.filter(c => (c.grp||'') === ctGroupFilter);
-  list = list.slice().sort((a, b) => {
-    let va, vb;
-    if      (ctSortField==='fn')   { va=(a.fn||'').toLowerCase(); vb=(b.fn||'').toLowerCase(); }
-    else if (ctSortField==='ln')   { va=(a.ln||'').toLowerCase(); vb=(b.ln||'').toLowerCase(); }
-    else if (ctSortField==='grp')  { va=(a.grp||'').toLowerCase(); vb=(b.grp||'').toLowerCase(); }
-    else if (ctSortField==='bday') { va=(a.bm||13)*100+(a.bd||32); vb=(b.bm||13)*100+(b.bd||32); }
-    else if (ctSortField==='dday') {
-      va=a.dy?a.dy*10000+(a.dm||0)*100+(a.dd||0):99999999;
-      vb=b.dy?b.dy*10000+(b.dm||0)*100+(b.dd||0):99999999;
-    }
-    if (va < vb) return ctSortAsc ? -1 : 1;
-    if (va > vb) return ctSortAsc ?  1 : -1;
-    return 0;
-  });
-  return list;
+// ── COLOR PALETTE FOR TAGS ────────────────────────────────────────────────────
+const CT_TAG_COLORS = [
+  '#7cb9e8','#8dd4a0','#e8a87c','#c4a8e8',
+  '#e8d47c','#e889b8','#7ce8d4','#a8b8e8',
+  '#e88888','#b8e88d','#e8c47c','#8ab8e8',
+];
+function ctTagColor(tag, groups) {
+  const idx = groups.indexOf(tag);
+  return CT_TAG_COLORS[idx >= 0 ? idx % CT_TAG_COLORS.length : (tag.charCodeAt(0) % CT_TAG_COLORS.length)];
+}
+function ctTagBg(tag, groups) {
+  const col = ctTagColor(tag, groups);
+  return col + '28'; // ~16% opacity
 }
 
-// ── Unique contact key for identify (fn+ln+bm+bd+by)
+// Identity key
 function ctKey(c) { return `${c.fn}|${c.ln}|${c.bm}|${c.bd}|${c.by}`; }
 
-function renderContactsView() {
+// ── VIEW STATE ────────────────────────────────────────────────────────────────
+let _ctViewInit = false;
+let _ctTableBody = null;
+let _ctPagerEl   = null;
+let _ctPillsEl   = null;
+
+// ── INIT VIEW (called once) ───────────────────────────────────────────────────
+function ctInitView() {
   const view = document.getElementById('contactsView');
-  if (!view || view.style.display === 'none') return;
+  if (_ctViewInit) return;
+  _ctViewInit = true;
+  view.innerHTML = '';
 
-  // ── First call: build the static skeleton ──
-  if (!view.querySelector('.ct-toolbar')) {
-    view.innerHTML = '';
-    view.className = 'ct-view';
+  const wrap = document.createElement('div'); wrap.className = 'ct-view';
 
-    // Toolbar
-    const toolbar = document.createElement('div');
-    toolbar.className = 'ct-toolbar';
+  // ── Toolbar ──
+  const toolbar = document.createElement('div'); toolbar.className = 'ct-toolbar';
+  const title = document.createElement('div'); title.className = 'ct-view-title'; title.textContent = '👥 Contacts';
+  toolbar.appendChild(title);
 
-    const title = document.createElement('div');
-    title.className = 'ct-view-title'; title.textContent = '👥 Contacts';
-    toolbar.appendChild(title);
+  // Search with × clear
+  const searchWrap = document.createElement('div'); searchWrap.className = 'ct-search-wrap';
+  const searchIn = document.createElement('input'); searchIn.type = 'text';
+  searchIn.className = 'ct-search-input'; searchIn.id = 'ctSearchInput';
+  searchIn.placeholder = 'Rechercher…'; searchIn.value = ctFilter;
+  const clearBtn = document.createElement('button'); clearBtn.className = 'ct-search-clear'; clearBtn.textContent = '✕';
+  clearBtn.title = 'Effacer le filtre';
+  clearBtn.addEventListener('click', () => {
+    ctFilter = ''; searchIn.value = ''; searchWrap.classList.remove('has-value');
+    ctPage = 1; ctRenderBody(); ctRenderPager();
+    searchIn.focus();
+  });
+  searchIn.addEventListener('input', () => {
+    ctFilter = searchIn.value;
+    searchWrap.classList.toggle('has-value', !!ctFilter);
+    ctPage = 1; ctRenderBody(); ctRenderPager();
+  });
+  if (ctFilter) searchWrap.classList.add('has-value');
+  searchWrap.appendChild(searchIn); searchWrap.appendChild(clearBtn);
+  toolbar.appendChild(searchWrap);
 
-    const spacer = document.createElement('div'); spacer.style.flex='1';
-    toolbar.appendChild(spacer);
+  const spacer = document.createElement('div'); spacer.style.flex='1'; toolbar.appendChild(spacer);
 
-    const searchIn = document.createElement('input');
-    searchIn.type='text'; searchIn.id='ctSearchInput';
-    searchIn.className='ct-search-input'; searchIn.placeholder='🔍 Rechercher…';
-    searchIn.value = ctFilter;
-    searchIn.addEventListener('input', e => { ctFilter=e.target.value; ctPage=1; ctRenderBody(); });
-    toolbar.appendChild(searchIn);
+  const addBtn = document.createElement('button'); addBtn.className = 'ct-add-btn'; addBtn.textContent = '＋ Ajouter';
+  addBtn.addEventListener('click', () => ctShowContactModal(null));
+  toolbar.appendChild(addBtn);
 
-    const addBtn = document.createElement('button');
-    addBtn.className='ct-add-btn'; addBtn.textContent='＋ Ajouter';
-    addBtn.addEventListener('click', ()=>ctShowContactModal(null));
-    toolbar.appendChild(addBtn);
+  const grpBtn = document.createElement('button');
+  grpBtn.style.cssText = 'padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);font-family:"DM Sans",sans-serif;font-size:.82rem;cursor:pointer;white-space:nowrap;';
+  grpBtn.textContent = '⚙ Tags';
+  grpBtn.addEventListener('click', ctShowGroupsModal);
+  toolbar.appendChild(grpBtn);
+  wrap.appendChild(toolbar);
 
-    const mgrBtn = document.createElement('button');
-    mgrBtn.className='ct-add-btn'; mgrBtn.style.cssText='background:var(--muted);margin-left:4px;';
-    mgrBtn.textContent='⚙ Groupes';
-    mgrBtn.addEventListener('click', ctShowGroupsModal);
-    toolbar.appendChild(mgrBtn);
+  // ── Tag Pills ──
+  _ctPillsEl = document.createElement('div'); _ctPillsEl.id = 'ctGroupPills'; _ctPillsEl.className = 'ct-group-pills';
+  wrap.appendChild(_ctPillsEl);
 
-    view.appendChild(toolbar);
+  // ── Table ──
+  const tableWrap = document.createElement('div'); tableWrap.className = 'ct-table-wrap';
+  const table = document.createElement('table'); table.className = 'ct-table';
 
-    // Group pills bar
-    const pillsBar = document.createElement('div');
-    pillsBar.id='ctGroupPills'; pillsBar.className='ct-group-pills';
-    view.appendChild(pillsBar);
+  const thead = document.createElement('thead');
+  const hrow = document.createElement('tr');
+  const cols = [
+    {key:'fn', label:'Prénom'}, {key:'ln', label:'Nom'}, {key:'tags', label:'Tags'},
+    {key:'bday', label:'Anniversaire'}, {key:'dday', label:'Décès'}, {key:null, label:''}
+  ];
+  cols.forEach(col => {
+    const th = document.createElement('th'); th.className = 'ct-th' + (col.key ? ' ct-th-sort' : '');
+    th.innerHTML = col.label + (col.key ? `<span class="ct-sort-icon">${col.key===ctSortField?(ctSortAsc?'▲':'▼'):'▲▼'}</span>` : '');
+    if (col.key) th.addEventListener('click', () => {
+      if (ctSortField === col.key) ctSortAsc = !ctSortAsc; else { ctSortField = col.key; ctSortAsc = true; }
+      ctPage = 1; ctRenderBody(); ctRenderPager();
+      thead.querySelectorAll('.ct-sort-icon').forEach((ic,i) => {
+        ic.textContent = cols[i].key === ctSortField ? (ctSortAsc?'▲':'▼') : '▲▼';
+      });
+    });
+    hrow.appendChild(th);
+  });
+  thead.appendChild(hrow); table.appendChild(thead);
 
-    // Table wrapper (will be filled by ctRenderBody)
-    const tableWrap = document.createElement('div');
-    tableWrap.id='ctTableWrap'; tableWrap.className='ct-table-wrap';
-    view.appendChild(tableWrap);
+  _ctTableBody = document.createElement('tbody');
+  table.appendChild(_ctTableBody);
+  tableWrap.appendChild(table); wrap.appendChild(tableWrap);
 
-    // Pager (will be filled by ctRenderBody)
-    const pager = document.createElement('div');
-    pager.id='ctPager'; pager.className='ct-pager';
-    view.appendChild(pager);
+  // ── Pager ──
+  _ctPagerEl = document.createElement('div'); _ctPagerEl.className = 'ct-pager';
+  wrap.appendChild(_ctPagerEl);
 
-    requestAnimationFrame(()=>searchIn.focus());
-  }
-
-  ctRenderPills();
-  ctRenderBody();
+  view.appendChild(wrap);
+  ctRenderPills(); ctRenderBody(); ctRenderPager();
 }
 
+// ── TAG PILLS ─────────────────────────────────────────────────────────────────
 function ctRenderPills() {
-  const bar = document.getElementById('ctGroupPills');
-  if (!bar) return;
-  bar.innerHTML = '';
+  if (!_ctPillsEl) return;
   const groups = ctLoadGroups();
+  const contacts = ctLoadContacts().map(ctMigrateContact);
+  _ctPillsEl.innerHTML = '';
 
-  const mkPill = (label, val) => {
-    const p = document.createElement('button');
-    p.className = 'ct-group-pill' + (ctGroupFilter===val ? ' active' : '');
-    p.textContent = label;
-    p.addEventListener('click', ()=>{ ctGroupFilter=val; ctPage=1; ctRenderPills(); ctRenderBody(); });
-    bar.appendChild(p);
+  const mkPill = (label, filterVal, count, color) => {
+    const pill = document.createElement('button'); pill.className = 'ct-group-pill' + (ctTagFilter === filterVal ? ' active' : '');
+    if (color && ctTagFilter !== filterVal) {
+      pill.style.borderColor = color;
+      pill.style.color = color;
+    }
+    if (color && ctTagFilter === filterVal) {
+      pill.style.background = color;
+      pill.style.borderColor = color;
+    }
+
+    if (color) {
+      const dot = document.createElement('span'); dot.className = 'ct-pill-dot';
+      dot.style.background = color; pill.appendChild(dot);
+    }
+    const lbl = document.createElement('span'); lbl.textContent = `${label} (${count})`; pill.appendChild(lbl);
+
+    pill.addEventListener('click', () => {
+      ctTagFilter = ctTagFilter === filterVal ? '' : filterVal;
+      ctPage = 1; ctRenderPills(); ctRenderBody(); ctRenderPager();
+    });
+    _ctPillsEl.appendChild(pill);
   };
 
-  // Count contacts per group
-  const allContacts = ctLoadContacts();
-  const totals = {};
-  allContacts.forEach(c => { const g=c.grp||''; totals[g]=(totals[g]||0)+1; });
-
-  mkPill(`Tous (${allContacts.length})`, '');
+  mkPill('Tous', '', contacts.length, null);
   groups.forEach(g => {
-    const n = totals[g] || 0;
-    mkPill(`${g} (${n})`, g);
+    const n = contacts.filter(c => (c.tags||[]).includes(g)).length;
+    mkPill(g, g, n, ctTagColor(g, groups));
   });
-  // "Sans groupe"
-  const noGrp = totals[''] || 0;
-  if (noGrp > 0) mkPill(`Sans groupe (${noGrp})`, '__none__');
+  const noTag = contacts.filter(c => !(c.tags||[]).length).length;
+  if (noTag > 0) mkPill('Sans tag', '__none__', noTag, '#bbb');
 }
 
+// ── TABLE BODY ────────────────────────────────────────────────────────────────
 function ctRenderBody() {
-  const tableWrap = document.getElementById('ctTableWrap');
-  const pager = document.getElementById('ctPager');
-  if (!tableWrap || !pager) return;
+  if (!_ctTableBody) return;
+  const groups  = ctLoadGroups();
+  let contacts  = ctLoadContacts().map(ctMigrateContact);
 
-  // Apply __none__ group filter
-  let list = ctSortedFiltered();
-  if (ctGroupFilter === '__none__') {
-    list = ctLoadContacts().filter(c => !c.grp);
-    // re-sort
-    const q = ctFilter.trim().toLowerCase();
-    if (q) list = list.filter(c => `${c.fn||''} ${c.ln||''}`.toLowerCase().includes(q));
+  // Tag filter
+  if (ctTagFilter === '__none__') contacts = contacts.filter(c => !(c.tags||[]).length);
+  else if (ctTagFilter) contacts = contacts.filter(c => (c.tags||[]).includes(ctTagFilter));
+
+  // Text filter
+  if (ctFilter) {
+    const q = ctFilter.toLowerCase();
+    contacts = contacts.filter(c => (c.fn||'').toLowerCase().includes(q) || (c.ln||'').toLowerCase().includes(q));
   }
 
-  const totalPages = Math.max(1, Math.ceil(list.length / CT_PAGE_SIZE));
-  ctPage = Math.min(ctPage, totalPages);
-  const pageItems = list.slice((ctPage-1)*CT_PAGE_SIZE, ctPage*CT_PAGE_SIZE);
-
-  // Build table
-  tableWrap.innerHTML = '';
-  const table = document.createElement('table'); table.className='ct-table';
-
-  // Header
-  const thead = document.createElement('thead');
-  const htr   = document.createElement('tr');
-  const cols  = [
-    {key:'fn',   label:'Prénom'},
-    {key:'ln',   label:'Nom'},
-    {key:'grp',  label:'Groupe'},
-    {key:'bday', label:'Anniversaire'},
-    {key:'dday', label:'Décès'},
-    {key:null,   label:''},
-  ];
-  cols.forEach(col=>{
-    const th = document.createElement('th');
-    th.className = 'ct-th'+(col.key?' ct-th-sort':'');
-    if (col.key) {
-      const active = ctSortField===col.key;
-      th.innerHTML=`${col.label} <span class="ct-sort-icon">${active?(ctSortAsc?'▲':'▼'):'⇅'}</span>`;
-      th.addEventListener('click', ()=>{
-        if (ctSortField===col.key) ctSortAsc=!ctSortAsc;
-        else { ctSortField=col.key; ctSortAsc=true; }
-        ctPage=1; ctRenderBody();
-      });
-    } else { th.textContent=col.label; }
-    htr.appendChild(th);
+  // Sort
+  contacts.sort((a,b) => {
+    let va, vb;
+    if (ctSortField === 'bday') { va = (a.bm||0)*100+(a.bd||0); vb = (b.bm||0)*100+(b.bd||0); }
+    else if (ctSortField === 'dday') { va = a.dy||0; vb = b.dy||0; }
+    else if (ctSortField === 'tags') { va = (a.tags||[]).join(','); vb = (b.tags||[]).join(','); }
+    else { va = (a[ctSortField]||'').toString().toLowerCase(); vb = (b[ctSortField]||'').toString().toLowerCase(); }
+    if (va < vb) return ctSortAsc ? -1 : 1;
+    if (va > vb) return ctSortAsc ? 1 : -1;
+    return 0;
   });
-  thead.appendChild(htr);
-  table.appendChild(thead);
 
-  // Body
-  const tbody = document.createElement('tbody');
-  if (!pageItems.length) {
-    const tr=document.createElement('tr');
-    const td=document.createElement('td'); td.colSpan=6; td.className='ct-empty';
-    td.textContent=ctFilter||ctGroupFilter?'Aucun résultat.':'Aucun contact.';
-    tr.appendChild(td); tbody.appendChild(tr);
+  const total = contacts.length;
+  const start = (ctPage-1) * CT_PAGE_SIZE;
+  const pageContacts = contacts.slice(start, start + CT_PAGE_SIZE);
+
+  _ctTableBody.innerHTML = '';
+  if (!pageContacts.length) {
+    const emptyRow = document.createElement('tr');
+    const emptyTd = document.createElement('td'); emptyTd.colSpan = 6; emptyTd.className = 'ct-empty';
+    emptyTd.textContent = ctFilter || ctTagFilter ? 'Aucun résultat.' : 'Aucun contact.';
+    emptyRow.appendChild(emptyTd); _ctTableBody.appendChild(emptyRow); return;
   }
 
-  const groups = ctLoadGroups();
+  pageContacts.forEach(c => {
+    const key = ctKey(c);
+    const tr = document.createElement('tr'); tr.className = 'ct-tr' + (c.dy ? ' ct-tr-deceased' : '');
 
-  pageItems.forEach(c => {
-    const tr = document.createElement('tr');
-    tr.className='ct-tr'+(c.dy?' ct-tr-deceased':'');
+    const mkEditableTd = (field, displayVal, editVal) => {
+      const td = document.createElement('td'); td.className = 'ct-td'; td.textContent = displayVal;
+      td.title = 'Cliquer pour modifier'; td.style.cursor = 'pointer';
+      td.addEventListener('click', () => {
+        td.innerHTML = '';
+        const inp = document.createElement('input'); inp.className = 'ct-inline-input';
+        inp.value = editVal !== undefined ? editVal : displayVal;
+        td.appendChild(inp); inp.focus(); inp.select();
+        const commit = () => {
+          const val = inp.value.trim();
+          const all = ctLoadContacts().map(ctMigrateContact);
+          const idx = all.findIndex(x => ctKey(x) === key);
+          if (idx >= 0) { all[idx][field] = val; ctSaveContacts(all); }
+          ctRenderBody(); ctRenderPager();
+          if (window.ctInjectAllBirthdays) ctInjectAllBirthdays();
+        };
+        inp.addEventListener('blur', commit);
+        inp.addEventListener('keydown', e => { if (e.key==='Enter') inp.blur(); if (e.key==='Escape') ctRenderBody(); });
+      });
+      return td;
+    };
 
-    const tdFn  = document.createElement('td'); tdFn.className='ct-td'; tdFn.textContent=c.fn||'—';
-    const tdLn  = document.createElement('td'); tdLn.className='ct-td'; tdLn.textContent=c.ln||'—';
+    const mkDateTd = (y, m, d, fieldY, fieldM, fieldD) => {
+      const td = document.createElement('td'); td.className = 'ct-td';
+      const isBday = fieldY === 'by'; // birthday gets age calculation
+      let display = '';
+      if (m && d) {
+        display = `${String(d).padStart(2,'0')}-${String(m).padStart(2,'0')}`;
+        if (y) {
+          display += `-${y}`;
+          if (isBday) {
+            const thisYear = new Date().getFullYear();
+            const age = thisYear - y;
+            display += ` (${age} ans)`;
+          }
+        }
+      }
+      td.textContent = display; td.style.cursor = 'pointer'; td.title = 'Cliquer pour modifier';
+      td.addEventListener('click', () => {
+        td.innerHTML = '';
+        const current = y&&m&&d ? `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}` : '';
+        const inp = document.createElement('input'); inp.className = 'ct-inline-date';
+        inp.type = 'text'; inp.placeholder = 'YYYY-MM-DD'; inp.value = current;
+        td.appendChild(inp); inp.focus(); inp.select();
+        const commit = () => {
+          const val = inp.value.trim();
+          const all = ctLoadContacts().map(ctMigrateContact);
+          const idx = all.findIndex(x => ctKey(x) === key);
+          if (idx >= 0) {
+            if (!val) { all[idx][fieldY]=null; all[idx][fieldM]=null; all[idx][fieldD]=null; }
+            else {
+              const parts = val.split('-');
+              if (parts.length===3) { all[idx][fieldY]=parseInt(parts[0])||null; all[idx][fieldM]=parseInt(parts[1])||null; all[idx][fieldD]=parseInt(parts[2])||null; }
+            }
+            ctSaveContacts(all);
+          }
+          ctRenderBody(); if (window.ctInjectAllBirthdays) ctInjectAllBirthdays();
+        };
+        inp.addEventListener('blur', commit);
+        inp.addEventListener('keydown', e => { if(e.key==='Enter') inp.blur(); if(e.key==='Escape') ctRenderBody(); });
+      });
+      return td;
+    };
 
-    // Group badge
-    const tdGrp = document.createElement('td'); tdGrp.className='ct-td';
-    if (c.grp) {
-      const badge = document.createElement('span'); badge.className='ct-grp-badge';
-      badge.textContent=c.grp;
-      const idx = groups.indexOf(c.grp);
-      const hues = [200,120,30,280,0,180,60];
-      const h = hues[idx%hues.length];
-      badge.style.cssText=`background:hsl(${h},40%,88%);color:hsl(${h},40%,30%);border-color:hsl(${h},40%,70%);`;
-      tdGrp.appendChild(badge);
-    } else { tdGrp.textContent='—'; }
+    // Tags cell — inline multi-tag editor
+    const mkTagsTd = () => {
+      const td = document.createElement('td'); td.className = 'ct-td';
+      const renderTags = () => {
+        td.innerHTML = '';
+        const tags = c.tags || [];
+        const cell = document.createElement('div'); cell.className = 'ct-tags-cell';
+        tags.forEach(tag => {
+          const badge = document.createElement('span'); badge.className = 'ct-grp-badge';
+          const col = ctTagColor(tag, groups);
+          badge.style.cssText = `background:${ctTagBg(tag,groups)};color:${col};border-color:${col};`;
+          badge.textContent = tag; cell.appendChild(badge);
+        });
+        if (!tags.length) { const empty = document.createElement('span'); empty.style.color='#bbb'; empty.style.fontSize='.75rem'; empty.textContent='—'; cell.appendChild(empty); }
+        td.appendChild(cell);
+      };
+      renderTags();
+      td.style.cursor = 'pointer'; td.title = 'Cliquer pour modifier les tags';
+      td.addEventListener('click', (e) => {
+        e.stopPropagation();
+        td.innerHTML = '';
+        const picker = document.createElement('div'); picker.className = 'ct-tags-picker';
+        const curTags = [...(c.tags||[])];
+        groups.forEach(g => {
+          const btn = document.createElement('button'); btn.className = 'ct-tag-toggle' + (curTags.includes(g)?' selected':'');
+          btn.textContent = g;
+          const col = ctTagColor(g, groups);
+          if (curTags.includes(g)) btn.style.background = col;
+          btn.addEventListener('click', e2 => { e2.stopPropagation();
+            const idx = curTags.indexOf(g);
+            if (idx >= 0) curTags.splice(idx,1); else curTags.push(g);
+            btn.classList.toggle('selected', curTags.includes(g));
+            btn.style.background = curTags.includes(g) ? col : '';
+          });
+          picker.appendChild(btn);
+        });
+        td.appendChild(picker);
+        const save = () => {
+          c.tags = curTags;
+          const all = ctLoadContacts().map(ctMigrateContact);
+          const idx = all.findIndex(x => ctKey(x) === key);
+          if (idx >= 0) { all[idx].tags = curTags; ctSaveContacts(all); }
+          ctRenderPills(); ctRenderBody();
+        };
+        // Save on click outside — use setTimeout to skip the current event
+        setTimeout(() => document.addEventListener('click', function outsideClick(e) {
+          if (!td.contains(e.target)) { document.removeEventListener('click', outsideClick); save(); }
+        }), 0);
+      });
+      return td;
+    };
 
-    const tdBday = document.createElement('td'); tdBday.className='ct-td';
-    if (c.bm) {
-      const age = c.by?(new Date().getFullYear()-c.by):null;
-      tdBday.innerHTML=`${ctFmtDate(c.by,c.bm,c.bd)}${age!==null?` <span class="ct-age">(${age} ans)</span>`:''}`;
-    } else { tdBday.textContent='—'; }
+    const bdayStr = c.bm&&c.bd ? `${String(c.bm).padStart(2,'0')}-${String(c.bd).padStart(2,'0')}${c.by?' ('+c.by+')':''}` : '';
+    const ddayStr = c.dy&&c.dm&&c.dd ? `${c.dy}-${String(c.dm).padStart(2,'0')}-${String(c.dd).padStart(2,'0')}` : '';
 
-    const tdDday = document.createElement('td'); tdDday.className='ct-td';
-    tdDday.textContent=c.dy?ctFmtDate(c.dy,c.dm,c.dd):'—';
+    tr.appendChild(mkEditableTd('fn', c.fn||'', c.fn||''));
+    tr.appendChild(mkEditableTd('ln', c.ln||'', c.ln||''));
+    tr.appendChild(mkTagsTd());
+    tr.appendChild(mkDateTd(c.by, c.bm, c.bd, 'by', 'bm', 'bd'));
+    tr.appendChild(mkDateTd(c.dy, c.dm, c.dd, 'dy', 'dm', 'dd'));
 
-    const tdAct  = document.createElement('td'); tdAct.className='ct-td ct-td-actions';
-    const editBtn = document.createElement('button'); editBtn.className='ct-row-btn'; editBtn.textContent='✏'; editBtn.title='Modifier';
-    editBtn.addEventListener('click', ()=>ctShowContactModal(c));
-    const delBtn  = document.createElement('button'); delBtn.className='ct-row-btn ct-row-btn-del'; delBtn.textContent='✕'; delBtn.title='Supprimer';
-    delBtn.addEventListener('click', ()=>{
-      const full=[c.fn,c.ln].filter(Boolean).join(' ');
-      if (confirm(`Supprimer "${full}" ?`)) {
-        const k=ctKey(c);
-        ctSaveContacts(ctLoadContacts().filter(x=>ctKey(x)!==k));
-        ctRenderPills(); ctRenderBody(); ctInjectAllBirthdays();
+    // Actions
+    const actTd = document.createElement('td'); actTd.className = 'ct-td-actions';
+    const editBtn = document.createElement('button'); editBtn.className = 'ct-row-btn'; editBtn.textContent = '✏'; editBtn.title = 'Modifier';
+    editBtn.addEventListener('click', e => { e.stopPropagation(); ctShowContactModal(c); });
+    const delBtn = document.createElement('button'); delBtn.className = 'ct-row-btn ct-row-btn-del'; delBtn.textContent = '✕'; delBtn.title = 'Supprimer';
+    delBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      if (confirm(`Supprimer ${c.fn||''} ${c.ln||''} ?`)) {
+        const all = ctLoadContacts().map(ctMigrateContact);
+        ctSaveContacts(all.filter(x => ctKey(x) !== key));
+        ctRenderPills(); ctRenderBody(); ctRenderPager();
+        if (window.ctInjectAllBirthdays) ctInjectAllBirthdays();
       }
     });
-    tdAct.appendChild(editBtn); tdAct.appendChild(delBtn);
-
-    tr.appendChild(tdFn); tr.appendChild(tdLn); tr.appendChild(tdGrp);
-    tr.appendChild(tdBday); tr.appendChild(tdDday); tr.appendChild(tdAct);
-    tbody.appendChild(tr);
+    actTd.appendChild(editBtn); actTd.appendChild(delBtn); tr.appendChild(actTd);
+    _ctTableBody.appendChild(tr);
   });
-  table.appendChild(tbody);
-  tableWrap.appendChild(table);
+}
 
-  // Pager
-  pager.innerHTML='';
-  const info=document.createElement('span'); info.className='ct-pager-info';
-  const start=(ctPage-1)*CT_PAGE_SIZE+1, end=Math.min(ctPage*CT_PAGE_SIZE,list.length);
-  info.textContent=list.length?`${start}–${end} de ${list.length}`:'0 contact';
-  pager.appendChild(info);
+// ── PAGER ─────────────────────────────────────────────────────────────────────
+function ctRenderPager() {
+  if (!_ctPagerEl) return;
+  const groups   = ctLoadGroups();
+  let contacts   = ctLoadContacts().map(ctMigrateContact);
+  if (ctTagFilter === '__none__') contacts = contacts.filter(c => !(c.tags||[]).length);
+  else if (ctTagFilter) contacts = contacts.filter(c => (c.tags||[]).includes(ctTagFilter));
+  if (ctFilter) { const q=ctFilter.toLowerCase(); contacts=contacts.filter(c=>(c.fn||'').toLowerCase().includes(q)||(c.ln||'').toLowerCase().includes(q)); }
 
-  const pageBtns=document.createElement('div'); pageBtns.className='ct-pager-btns';
-  const mkPBtn=(label,page,disabled)=>{
-    const b=document.createElement('button');
-    b.className='ct-pager-btn'+(page===ctPage?' active':'');
-    b.textContent=label; b.disabled=disabled;
-    b.addEventListener('click',()=>{ ctPage=page; ctRenderBody(); });
-    return b;
+  const total = contacts.length;
+  const pages = Math.ceil(total / CT_PAGE_SIZE) || 1;
+  if (ctPage > pages) ctPage = pages;
+  _ctPagerEl.innerHTML = '';
+
+  const info = document.createElement('span'); info.className = 'ct-pager-info';
+  const s = (ctPage-1)*CT_PAGE_SIZE+1, e = Math.min(ctPage*CT_PAGE_SIZE, total);
+  info.textContent = total ? `${s}–${e} sur ${total}` : '0 contact';
+  _ctPagerEl.appendChild(info);
+
+  if (pages <= 1) return;
+  const btns = document.createElement('div'); btns.className = 'ct-pager-btns';
+
+  const mk = (label, page, active=false, disabled=false) => {
+    const b = document.createElement('button'); b.className = 'ct-pager-btn' + (active?' active':'');
+    b.textContent = label; b.disabled = disabled;
+    b.addEventListener('click', () => { ctPage = page; ctRenderBody(); ctRenderPager(); });
+    btns.appendChild(b);
   };
-  pageBtns.appendChild(mkPBtn('‹',ctPage-1,ctPage<=1));
-  const pageRange=[];
-  for(let p=Math.max(1,ctPage-3);p<=Math.min(totalPages,ctPage+3);p++) pageRange.push(p);
-  if(pageRange[0]>1){ pageBtns.appendChild(mkPBtn('1',1,false)); if(pageRange[0]>2){const d=document.createElement('span');d.textContent='…';d.className='ct-pager-dots';pageBtns.appendChild(d);} }
-  pageRange.forEach(p=>pageBtns.appendChild(mkPBtn(p,p,false)));
-  if(pageRange[pageRange.length-1]<totalPages){ if(pageRange[pageRange.length-1]<totalPages-1){const d=document.createElement('span');d.textContent='…';d.className='ct-pager-dots';pageBtns.appendChild(d);} pageBtns.appendChild(mkPBtn(totalPages,totalPages,false)); }
-  pageBtns.appendChild(mkPBtn('›',ctPage+1,ctPage>=totalPages));
-  pager.appendChild(pageBtns);
+  const dots = () => { const d=document.createElement('span'); d.className='ct-pager-dots'; d.textContent='…'; btns.appendChild(d); };
+
+  mk('‹', ctPage-1, false, ctPage<=1);
+  for (let i=1; i<=pages; i++) {
+    if (i===1||i===pages||Math.abs(i-ctPage)<=1) mk(i, i, i===ctPage);
+    else if (i===2&&ctPage>4) dots();
+    else if (i===pages-1&&ctPage<pages-3) dots();
+  }
+  mk('›', ctPage+1, false, ctPage>=pages);
+  _ctPagerEl.appendChild(btns);
 }
 
 // ── GROUPS MODAL ──────────────────────────────────────────────────────────────
 function ctShowGroupsModal() {
-  ctRemoveContactModal();
-  let groups = ctLoadGroups().slice();
+  document.getElementById('ctGrpModal')?.remove();
+  const groups = ctLoadGroups().map((g,i) => ({name:g, color:ctTagColor(g, ctLoadGroups())}));
 
   const overlay = document.createElement('div');
-  overlay.className='kb-modal-overlay'; overlay.id='ctModalOverlay';
-  overlay.addEventListener('click', e=>{ if(e.target===overlay) ctRemoveContactModal(); });
+  overlay.id = 'ctGrpModal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;display:flex;align-items:center;justify-content:center;';
 
-  const modal = document.createElement('div'); modal.className='kb-modal'; modal.style.maxWidth='380px';
-  const mhd=document.createElement('div'); mhd.className='kb-modal-hd';
-  const mt=document.createElement('div'); mt.className='kb-modal-title'; mt.textContent='⚙ Gérer les groupes';
-  const mc=document.createElement('button'); mc.className='kb-modal-close'; mc.textContent='✕'; mc.addEventListener('click',ctRemoveContactModal);
+  const modal = document.createElement('div');
+  modal.style.cssText = 'background:var(--bg);border-radius:14px;width:90%;max-width:380px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2);';
+
+  const mhd = document.createElement('div');
+  mhd.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:16px 20px 14px;border-bottom:1px solid var(--border);flex-shrink:0;';
+  const mt = document.createElement('div'); mt.style.cssText='font-family:"DM Serif Display",serif;font-size:1rem;color:var(--text);'; mt.textContent = '⚙ Gérer les tags';
+  const mc = document.createElement('button'); mc.textContent='✕'; mc.style.cssText='width:28px;height:28px;border-radius:7px;border:none;background:var(--surface);color:var(--muted);cursor:pointer;';
+  mc.addEventListener('click', () => overlay.remove());
   mhd.appendChild(mt); mhd.appendChild(mc);
 
-  const mbd=document.createElement('div'); mbd.className='kb-modal-bd';
+  const mbd = document.createElement('div');
+  mbd.style.cssText = 'padding:18px 20px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1;';
 
-  const buildList=()=>{
-    const old=mbd.querySelector('.ct-grp-list'); if(old) old.remove();
-    const list=document.createElement('div'); list.className='ct-grp-list';
-    groups.forEach((g,i)=>{
-      const row=document.createElement('div'); row.className='ct-grp-row';
-      const inp=document.createElement('input'); inp.className='kb-field-input'; inp.value=g; inp.style.flex='1';
-      inp.addEventListener('input',e=>{ groups[i]=e.target.value; });
-      const del=document.createElement('button'); del.className='ct-row-btn ct-row-btn-del'; del.textContent='✕';
-      del.addEventListener('click',()=>{ groups.splice(i,1); buildList(); });
-      row.appendChild(inp); row.appendChild(del); list.appendChild(row);
+  let localGroups = ctLoadGroups();
+
+  const buildList = () => {
+    mbd.innerHTML = '';
+    localGroups.forEach((g, i) => {
+      const row = document.createElement('div'); row.className = 'ct-grp-row';
+      const col = ctTagColor(g, localGroups);
+
+      // Color dot
+      const colorWrap = document.createElement('span'); colorWrap.style.cssText='position:relative;display:inline-flex;';
+      const colorDot = document.createElement('span');
+      colorDot.style.cssText = `width:18px;height:18px;border-radius:50%;background:${col};flex-shrink:0;cursor:pointer;border:2px solid rgba(0,0,0,.12);`;
+      const colorIn = document.createElement('input'); colorIn.type='color'; colorIn.value=col;
+      colorIn.style.cssText='position:absolute;opacity:0;width:0;height:0;';
+      colorDot.addEventListener('click', ()=>colorIn.click());
+      colorIn.addEventListener('change', ()=>{ colorDot.style.background=colorIn.value; });
+      colorWrap.appendChild(colorDot); colorWrap.appendChild(colorIn);
+
+      const inp = document.createElement('input');
+      inp.style.cssText='flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:7px;font-family:"DM Sans",sans-serif;font-size:.84rem;color:var(--text);background:var(--bg);outline:none;';
+      inp.value = g;
+      inp.addEventListener('input', () => localGroups[i] = inp.value);
+
+      const del = document.createElement('button'); del.textContent='✕';
+      del.style.cssText='width:28px;height:28px;border-radius:6px;border:none;background:transparent;color:var(--muted);cursor:pointer;flex-shrink:0;';
+      del.addEventListener('click', () => { localGroups.splice(i,1); buildList(); });
+
+      row.appendChild(colorWrap); row.appendChild(inp); row.appendChild(del);
+      mbd.appendChild(row);
     });
-    const addRow=document.createElement('button'); addRow.className='ct-add-btn'; addRow.style.cssText='margin-top:10px;width:100%;';
-    addRow.textContent='＋ Nouveau groupe';
-    addRow.addEventListener('click',()=>{ groups.push('Nouveau'); buildList(); });
-    list.appendChild(addRow);
-    mbd.appendChild(list);
+
+    const addRow = document.createElement('button');
+    addRow.style.cssText='padding:8px 14px;border-radius:8px;border:1px dashed var(--border);background:transparent;color:var(--muted);font-family:"DM Sans",sans-serif;font-size:.8rem;cursor:pointer;width:100%;';
+    addRow.textContent = '＋ Nouveau tag';
+    addRow.addEventListener('click', () => { localGroups.push('Nouveau'); buildList(); });
+    mbd.appendChild(addRow);
   };
   buildList();
 
-  const mft=document.createElement('div'); mft.className='kb-modal-ft';
-  const cancel=document.createElement('button'); cancel.className='kb-btn-cancel'; cancel.textContent='Annuler'; cancel.addEventListener('click',ctRemoveContactModal);
-  const save=document.createElement('button'); save.className='kb-btn-save'; save.textContent='Enregistrer';
-  save.addEventListener('click',()=>{
-    const cleaned=groups.map(g=>g.trim()).filter(Boolean);
-    ctSaveGroups(cleaned);
-    ctRemoveContactModal();
-    renderContactsView();
+  const mft = document.createElement('div');
+  mft.style.cssText = 'display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0;';
+  const cancel = document.createElement('button'); cancel.className='kb-btn-cancel'; cancel.textContent='Annuler'; cancel.addEventListener('click',()=>overlay.remove());
+  const save = document.createElement('button'); save.className='kb-btn-save'; save.textContent='Enregistrer';
+  save.addEventListener('click', () => {
+    ctSaveGroups(localGroups.filter(g=>g.trim()));
+    overlay.remove();
+    ctRenderPills(); ctRenderBody();
   });
   mft.appendChild(cancel); mft.appendChild(save);
   modal.appendChild(mhd); modal.appendChild(mbd); modal.appendChild(mft);
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add('visible'));
+  overlay.appendChild(modal); document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
 }
 
 // ── CONTACT MODAL (add/edit) ──────────────────────────────────────────────────
 function ctShowContactModal(contact) {
-  ctRemoveContactModal();
+  document.getElementById('ctContactModal')?.remove();
   const isEdit = !!contact;
+  const groups = ctLoadGroups();
 
   const overlay = document.createElement('div');
-  overlay.className = 'kb-modal-overlay'; overlay.id = 'ctModalOverlay';
-  overlay.addEventListener('click', e => { if (e.target === overlay) ctRemoveContactModal(); });
+  overlay.id = 'ctContactModal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;display:flex;align-items:center;justify-content:center;';
 
-  const modal = document.createElement('div'); modal.className = 'kb-modal'; modal.style.maxWidth = '440px';
+  const modal = document.createElement('div');
+  modal.style.cssText = 'background:var(--bg);border-radius:14px;width:90%;max-width:440px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2);';
 
-  const mhd = document.createElement('div'); mhd.className = 'kb-modal-hd';
-  const mtitle = document.createElement('div'); mtitle.className = 'kb-modal-title';
-  mtitle.textContent = isEdit ? '✏ Modifier le contact' : '＋ Nouveau contact';
-  const mclose = document.createElement('button'); mclose.className = 'kb-modal-close'; mclose.textContent = '✕';
-  mclose.addEventListener('click', ctRemoveContactModal);
-  mhd.appendChild(mtitle); mhd.appendChild(mclose);
+  const mhd = document.createElement('div');
+  mhd.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:16px 20px 14px;border-bottom:1px solid var(--border);flex-shrink:0;';
+  const mt = document.createElement('div'); mt.style.cssText='font-family:"DM Serif Display",serif;font-size:1rem;color:var(--text);'; mt.textContent = isEdit ? '✏ Modifier le contact' : '＋ Nouveau contact';
+  const mc = document.createElement('button'); mc.textContent='✕'; mc.style.cssText='width:28px;height:28px;border-radius:7px;border:none;background:var(--surface);color:var(--muted);cursor:pointer;';
+  mc.addEventListener('click', ()=>overlay.remove());
+  mhd.appendChild(mt); mhd.appendChild(mc);
 
-  const mbd = document.createElement('div'); mbd.className = 'kb-modal-bd';
+  const mbd = document.createElement('div');
+  mbd.style.cssText = 'padding:18px 20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;flex:1;';
 
-  const mkField = (lbl, el) => {
-    const wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
-    const label = document.createElement('label'); label.className = 'kb-field-label'; label.textContent = lbl;
-    wrap.appendChild(label); wrap.appendChild(el);
-    return wrap;
+  const mkField = (label, el) => {
+    const w = document.createElement('div'); w.style.cssText='display:flex;flex-direction:column;gap:5px;';
+    const l = document.createElement('label'); l.style.cssText='font-family:"DM Sans",sans-serif;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;'; l.textContent=label;
+    w.appendChild(l); w.appendChild(el); return w;
+  };
+  const mkInput = (val, placeholder='') => {
+    const i = document.createElement('input'); i.className='kb-field-input'; i.value=val||''; i.placeholder=placeholder; return i;
   };
 
-  // Row 1: Prénom + Nom
-  const nameGrid = document.createElement('div');
-  nameGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:12px;';
-  const fnIn = document.createElement('input'); fnIn.className = 'kb-field-input'; fnIn.placeholder = 'Prénom'; fnIn.value = contact?.fn || '';
-  const lnIn = document.createElement('input'); lnIn.className = 'kb-field-input'; lnIn.placeholder = 'Nom'; lnIn.value = contact?.ln || '';
-  nameGrid.appendChild(mkField('Prénom *', fnIn));
-  nameGrid.appendChild(mkField('Nom', lnIn));
-  mbd.appendChild(nameGrid);
+  const fnIn = mkInput(contact?.fn||'', 'Prénom');
+  const lnIn = mkInput(contact?.ln||'', 'Nom');
 
-  // Row 2: Groupe
-  const grpSel = document.createElement('select'); grpSel.className = 'kb-field-select';
-  const grpEmpty = document.createElement('option'); grpEmpty.value=''; grpEmpty.textContent='— Aucun groupe —';
-  grpSel.appendChild(grpEmpty);
-  ctLoadGroups().forEach(g => {
-    const o=document.createElement('option'); o.value=g; o.textContent=g;
-    if ((contact?.grp||'')===g) o.selected=true;
-    grpSel.appendChild(o);
+  // Tags picker
+  const tagsPicker = document.createElement('div'); tagsPicker.className='ct-tags-picker';
+  let selectedTags = [...(contact?.tags||[])];
+  groups.forEach(g => {
+    const col = ctTagColor(g, groups);
+    const btn = document.createElement('button'); btn.className='ct-tag-toggle'+(selectedTags.includes(g)?' selected':'');
+    btn.textContent = g; btn.type='button';
+    if (selectedTags.includes(g)) btn.style.background = col;
+    btn.addEventListener('click', () => {
+      const idx = selectedTags.indexOf(g);
+      if (idx>=0) selectedTags.splice(idx,1); else selectedTags.push(g);
+      btn.classList.toggle('selected', selectedTags.includes(g));
+      btn.style.background = selectedTags.includes(g) ? col : '';
+    });
+    tagsPicker.appendChild(btn);
   });
-  mbd.appendChild(mkField('Groupe', grpSel));
 
-  // Row 3: Birthday
-  const bdayGrid = document.createElement('div');
-  bdayGrid.style.cssText = 'display:grid;grid-template-columns:2fr 2fr 3fr;gap:8px;margin-top:4px;';
-  const bmIn = document.createElement('input'); bmIn.className='kb-field-input'; bmIn.type='number'; bmIn.min=1; bmIn.max=12; bmIn.placeholder='MM'; bmIn.value=contact?.bm||'';
-  const bdIn = document.createElement('input'); bdIn.className='kb-field-input'; bdIn.type='number'; bdIn.min=1; bdIn.max=31; bdIn.placeholder='JJ'; bdIn.value=contact?.bd||'';
-  const byIn = document.createElement('input'); byIn.className='kb-field-input'; byIn.type='number'; byIn.min=1800; byIn.max=2100; byIn.placeholder='AAAA'; byIn.value=contact?.by||'';
-  bdayGrid.appendChild(mkField('Mois nais.', bmIn));
-  bdayGrid.appendChild(mkField('Jour nais.', bdIn));
-  bdayGrid.appendChild(mkField('Année nais.', byIn));
-  mbd.appendChild(bdayGrid);
+  // Birthday row
+  const bdRow = document.createElement('div'); bdRow.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;';
+  const bmIn = mkInput(contact?.bm||'', 'Mois (1-12)'); bmIn.type='number'; bmIn.min=1; bmIn.max=12;
+  const bdIn = mkInput(contact?.bd||'', 'Jour (1-31)'); bdIn.type='number'; bdIn.min=1; bdIn.max=31;
+  const byIn = mkInput(contact?.by||'', 'Année'); byIn.type='number'; byIn.min=1900; byIn.max=2099;
+  bdRow.appendChild(bmIn); bdRow.appendChild(bdIn); bdRow.appendChild(byIn);
 
-  // Row 4: Death
-  const ddayGrid = document.createElement('div');
-  ddayGrid.style.cssText = 'display:grid;grid-template-columns:2fr 2fr 3fr;gap:8px;margin-top:4px;';
-  const dmIn = document.createElement('input'); dmIn.className='kb-field-input'; dmIn.type='number'; dmIn.min=1; dmIn.max=12; dmIn.placeholder='MM'; dmIn.value=contact?.dm||'';
-  const ddIn = document.createElement('input'); ddIn.className='kb-field-input'; ddIn.type='number'; ddIn.min=1; ddIn.max=31; ddIn.placeholder='JJ'; ddIn.value=contact?.dd||'';
-  const dyIn = document.createElement('input'); dyIn.className='kb-field-input'; dyIn.type='number'; dyIn.min=1800; dyIn.max=2100; dyIn.placeholder='AAAA'; dyIn.value=contact?.dy||'';
-  ddayGrid.appendChild(mkField('Mois décès', dmIn));
-  ddayGrid.appendChild(mkField('Jour décès', ddIn));
-  ddayGrid.appendChild(mkField('Année décès', dyIn));
-  mbd.appendChild(ddayGrid);
+  // Death date
+  const ddRow = document.createElement('div'); ddRow.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;';
+  const dmIn = mkInput(contact?.dm||'', 'Mois'); dmIn.type='number'; dmIn.min=1; dmIn.max=12;
+  const ddIn = mkInput(contact?.dd||'', 'Jour'); ddIn.type='number'; ddIn.min=1; ddIn.max=31;
+  const dyIn = mkInput(contact?.dy||'', 'Année'); dyIn.type='number'; dyIn.min=1900; dyIn.max=2099;
+  ddRow.appendChild(dmIn); ddRow.appendChild(ddIn); ddRow.appendChild(dyIn);
 
-  const mft = document.createElement('div'); mft.className = 'kb-modal-ft';
-  const cancelBtn = document.createElement('button'); cancelBtn.className = 'kb-btn-cancel'; cancelBtn.textContent = 'Annuler';
-  cancelBtn.addEventListener('click', ctRemoveContactModal);
-  const saveBtn = document.createElement('button'); saveBtn.className = 'kb-btn-save';
-  saveBtn.textContent = isEdit ? 'Enregistrer' : 'Créer';
+  mbd.appendChild(mkField('Prénom *', fnIn));
+  mbd.appendChild(mkField('Nom', lnIn));
+  mbd.appendChild(mkField('Tags', tagsPicker));
+  mbd.appendChild(mkField('Anniversaire (Mois / Jour / Année)', bdRow));
+  mbd.appendChild(mkField('Décès (Mois / Jour / Année)', ddRow));
 
+  const mft = document.createElement('div');
+  mft.style.cssText='display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0;';
+  const cancel = document.createElement('button'); cancel.className='kb-btn-cancel'; cancel.textContent='Annuler'; cancel.addEventListener('click',()=>overlay.remove());
+  const saveBtn = document.createElement('button'); saveBtn.className='kb-btn-save'; saveBtn.textContent=isEdit?'Enregistrer':'Créer';
   saveBtn.addEventListener('click', () => {
-    const fn = fnIn.value.trim();
-    if (!fn) { fnIn.style.borderColor = '#e05'; fnIn.focus(); return; }
-    const newContact = {
-      fn,
-      ln: lnIn.value.trim(),
-      grp: grpSel.value || undefined,
-      by: parseInt(byIn.value) || null,
-      bm: parseInt(bmIn.value) || null,
-      bd: parseInt(bdIn.value) || null,
-      dy: parseInt(dyIn.value) || null,
-      dm: parseInt(dmIn.value) || null,
-      dd: parseInt(ddIn.value) || null,
+    const fn=fnIn.value.trim(); if(!fn){fnIn.style.borderColor='#e05';fnIn.focus();return;}
+    const newC = {
+      fn, ln:lnIn.value.trim(),
+      tags: selectedTags,
+      bm: parseInt(bmIn.value)||null, bd: parseInt(bdIn.value)||null, by: parseInt(byIn.value)||null,
+      dm: parseInt(dmIn.value)||null, dd: parseInt(ddIn.value)||null, dy: parseInt(dyIn.value)||null,
     };
-    let contacts = ctLoadContacts();
+    const all = ctLoadContacts().map(ctMigrateContact);
     if (isEdit) {
-      const origKey = ctKey(contact);
-      const idx = contacts.findIndex(x => ctKey(x) === origKey);
-      if (idx >= 0) contacts[idx] = newContact; else contacts.push(newContact);
-    } else {
-      contacts.push(newContact);
-      contacts.sort((a,b) => (a.fn||'').localeCompare(b.fn||''));
-    }
-    ctSaveContacts(contacts);
-    ctRemoveContactModal();
-    ctRenderPills(); ctRenderBody();
-    ctInjectAllBirthdays();
+      const k = ctKey(contact); const idx=all.findIndex(x=>ctKey(x)===k);
+      if(idx>=0) all[idx]=newC; else all.push(newC);
+    } else all.push(newC);
+    ctSaveContacts(all); overlay.remove();
+    ctRenderPills(); ctRenderBody(); ctRenderPager();
+    if(window.ctInjectAllBirthdays) ctInjectAllBirthdays();
   });
-
-  mft.appendChild(cancelBtn); mft.appendChild(saveBtn);
+  fnIn.addEventListener('keydown', e=>{if(e.key==='Enter')saveBtn.click();});
+  mft.appendChild(cancel); mft.appendChild(saveBtn);
   modal.appendChild(mhd); modal.appendChild(mbd); modal.appendChild(mft);
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-  requestAnimationFrame(() => overlay.classList.add('visible'));
+  overlay.appendChild(modal); document.body.appendChild(overlay);
+  overlay.addEventListener('click', e=>{if(e.target===overlay)overlay.remove();});
   fnIn.focus();
-  fnIn.addEventListener('keydown', e => { if (e.key==='Enter') saveBtn.click(); });
-}
-
-function ctRemoveContactModal() {
-  const m = document.getElementById('ctModalOverlay'); if (m) m.remove();
 }
 
 // ── CONTACTS TAB BUTTON ───────────────────────────────────────────────────────
-document.getElementById('btnContacts')?.addEventListener('click', () => {
-  ['trackerView','kanbanView','contactsView','scrollArea','monthView','weeklyView'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.style.display = 'none';
+document.getElementById('btnContacts').addEventListener('click', () => {
+  ['trackerView','kanbanView','scrollArea','monthView','weeklyView'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='none';
   });
-  const sw = document.querySelector('.strip-wrapper'); if (sw) sw.style.display = 'none';
-  document.querySelectorAll('.btn-view').forEach(b => b.classList.remove('active'));
+  const sw=document.querySelector('.strip-wrapper'); if(sw) sw.style.display='none';
+  document.querySelectorAll('.btn-view').forEach(b=>b.classList.remove('active'));
   document.getElementById('btnContacts').classList.add('active');
-  document.getElementById('contactsView').style.display = 'flex';
-  renderContactsView();
+  // Hide kanban-specific header buttons
+  // Prefs button stays visible always (it's a global settings button)
+  const cv=document.getElementById('contactsView'); cv.style.display='flex';
+  ctInitView();
+  ctRenderPills(); ctRenderBody(); ctRenderPager();
 });
 
-// Hide contacts view when switching to other views
-const _ctOrigSwitchView = window.switchView;
-window.switchView = function(mode) {
-  const cv = document.getElementById('contactsView'); if (cv) cv.style.display = 'none';
-  _ctOrigSwitchView(mode);
-};
+// Expose globally for use by planner
+window.ctInjectAllBirthdays = ctInjectAllBirthdays;
 
 </script>
 </body>
