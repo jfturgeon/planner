@@ -691,6 +691,9 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   display:flex; align-items:center; justify-content:space-between;
   margin-bottom:16px;
 }
+.wv-week-label-wrap {
+  display:flex; align-items:center; gap:8px;
+}
 .wv-week-label {
   font-family:'DM Serif Display',serif; font-size:1.1rem; color:var(--text);
 }
@@ -702,6 +705,16 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 }
 .wv-nav-btn:hover { background:var(--text); color:#f4f1eb; }
 .wv-nav-btn.today-btn { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+/* Drag & drop task rows */
+.wv-task-row[draggable="true"] { cursor:grab; }
+.wv-task-row[draggable="true"]:active { cursor:grabbing; }
+.wv-task-row.wv-drag-active { opacity:.4; }
+.wv-task-scroll.wv-drop-target {
+  background: rgba(124,185,232,.12);
+  outline: 2px dashed var(--accent2);
+  border-radius: 4px;
+}
 
 /* ── DAY COLOR PALETTE ── */
 :root {
@@ -1597,7 +1610,11 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 .wv-row-time-edit[style*="display:none"] { display:none !important; }
 
 /* ── TOGGLE LEFT PANEL BUTTON ── */
-.wv-toggle-left-btn { font-size:.75rem; color:var(--muted); }
+.wv-toggle-left-btn {
+  font-size:.85rem; color:var(--muted);
+  min-width:28px; padding:5px 8px;
+  border-radius:6px;
+}
 .wv-toggle-left-btn.active { background:var(--text); color:#f4f1eb; }
 
 /* ── KANBAN ADDITIONS ── */
@@ -1786,6 +1803,34 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 /* Contacts tab button style */
 .btn-contacts-tab { background: var(--surface) !important; }
 .btn-contacts-tab.active { background: #4a3060 !important; color: #d4b8f0 !important; border-color: #6b4a90 !important; }
+
+/* ── Contacts: group pills & badges ── */
+.ct-group-pills {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  flex-shrink: 0; padding: 2px 0;
+}
+.ct-group-pill {
+  padding: 5px 14px; border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--surface); color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: .78rem; font-weight: 500;
+  cursor: pointer; transition: all .15s;
+}
+.ct-group-pill:hover { border-color: var(--accent2); color: var(--accent2); }
+.ct-group-pill.active {
+  background: var(--accent2); color: #fff;
+  border-color: var(--accent2); font-weight: 700;
+}
+
+.ct-grp-badge {
+  display: inline-block; padding: 2px 9px; border-radius: 12px;
+  font-size: .72rem; font-weight: 600; border: 1px solid;
+  white-space: nowrap;
+}
+
+/* Groups modal list */
+.ct-grp-list { display: flex; flex-direction: column; gap: 8px; }
+.ct-grp-row { display: flex; gap: 8px; align-items: center; }
 
 </style>
 </head>
@@ -2290,9 +2335,11 @@ function renderWeeklyView(){
 
   wv.innerHTML=`
   <div class="wv-week-nav">
-    <div class="wv-week-label">${weekLabel}</div>
+    <div class="wv-week-label-wrap">
+      <button class="wv-nav-btn wv-toggle-left-btn" id="wvToggleLeft" title="Afficher / masquer le panneau">◀</button>
+      <div class="wv-week-label" id="wvWeekLabel">${weekLabel}</div>
+    </div>
     <div class="wv-nav-btns">
-      <button class="wv-nav-btn wv-toggle-left-btn" id="wvToggleLeft" title="Afficher / masquer le panneau">◀ Panneau</button>
       <button class="wv-nav-btn" id="wvPrev">‹ Semaine préc.</button>
       <button class="wv-nav-btn today-btn" id="wvToday">Aujourd'hui</button>
       <button class="wv-nav-btn" id="wvNext">Semaine suiv. ›</button>
@@ -2310,9 +2357,22 @@ function renderWeeklyView(){
   let leftVisible = localStorage.getItem('ap_left_panel')!=='0';
   const wvLeft=document.getElementById('wvLeft');
   const toggleBtn=document.getElementById('wvToggleLeft');
+  const wvWeekLabel=document.getElementById('wvWeekLabel');
   const applyLeftState=()=>{
     wvLeft.style.display=leftVisible?'':'none';
-    toggleBtn.textContent=leftVisible?'◀ Panneau':'▶ Panneau';
+    if(leftVisible){
+      toggleBtn.textContent='◀';
+      toggleBtn.title='Masquer le panneau';
+      // Move button to be before the label (left side)
+      const wrap=document.querySelector('.wv-week-label-wrap');
+      wrap.insertBefore(toggleBtn, wvWeekLabel);
+    } else {
+      toggleBtn.textContent='▶';
+      toggleBtn.title='Afficher le panneau';
+      // Move button to be before the label (left side, same position)
+      const wrap=document.querySelector('.wv-week-label-wrap');
+      wrap.insertBefore(toggleBtn, wvWeekLabel);
+    }
     toggleBtn.classList.toggle('active', !leftVisible);
     document.querySelector('.wv-layout').style.gridTemplateColumns=leftVisible?'auto 1fr':'1fr';
   };
@@ -2754,13 +2814,20 @@ function renderWvDays(dates, wk, wdata){
     const NUM_TASK_ROWS=25;
 
     const saveTasks=()=>{ appData[dk]=entry; saveData(appData); };
+    const deleteSaveTasks=()=>{
+      if(entry.tasks&&entry.tasks.length===0&&!entry.notes){
+        delete appData[dk];
+      } else {
+        appData[dk]=entry;
+      }
+      saveData(appData);
+    };
 
     const renderTaskRows=()=>{
       taskList.innerHTML='';
       if(!entry.tasks) entry.tasks=[];
       const tasks=entry.tasks;
-      // Episodes will be prepended by tracker.js; reserve space for them
-      const epCount=(dow>=1&&dow<=5)?6:0; // 6 episodes Mon-Fri
+      const epCount=(dow>=1&&dow<=5)?6:0;
       const taskSlots=Math.max(0, NUM_TASK_ROWS - epCount);
       const total=Math.max(taskSlots, tasks.length);
       for(let ri=0;ri<total;ri++){
@@ -2768,7 +2835,19 @@ function renderWvDays(dates, wk, wdata){
         const row=document.createElement('div');
         row.className='wv-task-row'+(t&&t.done?' done':'');
 
-        // Checkbox (only for real tasks)
+        // Drag handle + draggable (only for real tasks)
+        if(t){
+          row.draggable=true;
+          row.dataset.taskDk=dk;
+          row.dataset.taskIdx=String(ri);
+          row.addEventListener('dragstart',e=>{
+            e.dataTransfer.effectAllowed='move';
+            e.dataTransfer.setData('text/plain', JSON.stringify({srcDk:dk, taskIdx:ri, task:t}));
+            row.classList.add('wv-drag-active');
+          });
+          row.addEventListener('dragend',()=>row.classList.remove('wv-drag-active'));
+        }
+
         const cb=document.createElement('input');
         cb.type='checkbox'; cb.className='wv-row-cb';
         cb.style.cssText=`width:14px;height:14px;cursor:pointer;flex-shrink:0;accent-color:${dayColor};`;
@@ -2793,7 +2872,7 @@ function renderWvDays(dates, wk, wdata){
           delBtn.addEventListener('click',e=>{
             e.stopPropagation();
             tasks.splice(ri,1);
-            if(!tasks.length&&!entry.notes) delete appData[dk]; else saveTasks();
+            deleteSaveTasks();
             renderTaskRows();
           });
         }
@@ -2815,12 +2894,11 @@ function renderWvDays(dates, wk, wdata){
             const txt=labelIn.value.trim();
             if(t){
               if(txt) tasks[ri].text=txt;
-              else tasks.splice(ri,1);
+              else { tasks.splice(ri,1); }
             } else if(txt){
               tasks.push({text:txt,priority:'normal',done:false});
             }
-            if(tasks.length||entry.notes) saveTasks();
-            else delete appData[dk];
+            deleteSaveTasks();
             renderTaskRows();
           };
           labelIn.addEventListener('blur',commit);
@@ -2831,10 +2909,52 @@ function renderWvDays(dates, wk, wdata){
 
         taskList.appendChild(row);
       }
+
+      // ── Drop zone setup on taskList ──
+      taskList.addEventListener('dragover',e=>{
+        e.preventDefault(); e.dataTransfer.dropEffect='move';
+        taskList.classList.add('wv-drop-target');
+      });
+      taskList.addEventListener('dragleave',()=>taskList.classList.remove('wv-drop-target'));
+      taskList.addEventListener('drop',e=>{
+        e.preventDefault(); taskList.classList.remove('wv-drop-target');
+        try {
+          const data=JSON.parse(e.dataTransfer.getData('text/plain'));
+          if(!data||!data.srcDk) return;
+          if(data.srcDk===dk) return; // same day, no-op
+
+          // Remove from source
+          const srcEntry=appData[data.srcDk]||{tasks:[]};
+          if(!srcEntry.tasks) srcEntry.tasks=[];
+          const removed=srcEntry.tasks.splice(data.taskIdx,1)[0];
+          if(!removed) return;
+          if(!srcEntry.tasks.length&&!srcEntry.notes) delete appData[data.srcDk];
+          else appData[data.srcDk]=srcEntry;
+
+          // Add to dest
+          if(!entry.tasks) entry.tasks=[];
+          entry.tasks.push(removed);
+          appData[dk]=entry;
+          saveData(appData);
+
+          // Re-render both columns
+          renderTaskRows();
+          const srcTaskList=document.querySelector(`[data-taskrows="${data.srcDk}"]`);
+          if(srcTaskList){
+            const srcDow=new Date(data.srcDk).getDay();
+            const srcColor=DAY_COLORS[srcDow]||'#7cb9e8';
+            // Trigger re-render by dispatching custom event
+            srcTaskList.dispatchEvent(new CustomEvent('wv-rerender',{bubbles:false}));
+          }
+        } catch(err){ console.warn('drop error',err); }
+      });
+
       // Re-inject episode rows after every task render
       if (window.renderDayScheduleInTasks) renderDayScheduleInTasks(taskList, dk, dow, dayColor);
     };
     renderTaskRows();
+    taskList._rerender = renderTaskRows;
+    taskList.addEventListener('wv-rerender', renderTaskRows);
     taskSec.appendChild(taskList);
     col.appendChild(taskSec);
 
@@ -3795,6 +3915,19 @@ function renderDayScheduleInTasks(taskListEl, dk, dow, dayColor) {
     const isW = !!watched[ep.key];
     const row = document.createElement('div');
     row.className = 'wv-task-row wv-ep-row' + (isW ? ' done' : '');
+    row.draggable = true;
+    row.addEventListener('dragstart', e => {
+      e.dataTransfer.effectAllowed = 'move';
+      const epLabel = `${ep.label} S${String(ep.sn).padStart(2,'0')}E${String(ep.en).padStart(2,'0')} – ${ep.title}`;
+      e.dataTransfer.setData('text/plain', JSON.stringify({
+        srcDk: dk,
+        taskIdx: -1,
+        task: { text: epLabel, priority: 'normal', done: isW },
+        isEpisode: true
+      }));
+      row.classList.add('wv-drag-active');
+    });
+    row.addEventListener('dragend', () => row.classList.remove('wv-drag-active'));
 
     const cb = document.createElement('input');
     cb.type = 'checkbox';
@@ -4657,18 +4790,12 @@ function ctInjectBirthdaysIntoDay(evListEl, dk) {
     row.className = 'wv-event-row ct-bday-row';
     row.style.cssText = `background:${isDeceased ? '#f5f0ea' : '#fff8f0'};border-left:3px solid ${isDeceased ? '#8b7355' : '#e8855a'};cursor:default;`;
 
-    // No time column for birthdays — just the icon + label
-    const iconSpan = document.createElement('span');
-    iconSpan.style.cssText = 'font-size:.85rem;flex-shrink:0;width:58px;text-align:center;';
-    iconSpan.textContent = isDeceased ? '🕯' : '🎂';
-
     const titleSpan = document.createElement('span');
     titleSpan.className = 'wv-row-label';
-    titleSpan.style.cssText = `font-size:.75rem;color:${isDeceased ? '#6b5840' : '#8b4513'};flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;`;
-    titleSpan.textContent = label.replace(/^[🎂🕯] /, '');
-    titleSpan.title = label.replace(/^[🎂🕯] /, '');
+    titleSpan.style.cssText = `font-size:.75rem;color:${isDeceased ? '#6b5840' : '#8b4513'};flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:6px;`;
+    titleSpan.textContent = label;
+    titleSpan.title = label;
 
-    row.appendChild(iconSpan);
     row.appendChild(titleSpan);
 
     // Insert before first empty row, or append
@@ -4793,14 +4920,23 @@ function ctParseCSVLine(line) {
 // CONTACTS TAB VIEW
 // ═══════════════════════════════════════════════════════════════════════════
 
-let ctSortField = 'fn';   // fn | ln | bday | dday
-let ctSortAsc   = true;
-let ctFilter    = '';
-let ctPage      = 1;
+let ctSortField  = 'fn';
+let ctSortAsc    = true;
+let ctFilter     = '';
+let ctGroupFilter= '';   // '' = tous
+let ctPage       = 1;
 const CT_PAGE_SIZE = 25;
 
-const MONTHS_FR_CT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+// Groups stored separately: ap_ct_groups → ['Famille','Ami','Célébrité',…]
+const CT_GROUPS_KEY = 'ap_ct_groups';
+const CT_DEFAULT_GROUPS = ['Famille', 'Ami', 'Célébrité'];
+function ctLoadGroups() {
+  try { return JSON.parse(localStorage.getItem(CT_GROUPS_KEY)) || CT_DEFAULT_GROUPS; }
+  catch { return CT_DEFAULT_GROUPS; }
+}
+function ctSaveGroups(g) { localStorage.setItem(CT_GROUPS_KEY, JSON.stringify(g)); }
 
+const MONTHS_FR_CT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
 function ctFmtDate(y, m, d) {
   if (!m) return y ? String(y) : '—';
   const ms = MONTHS_FR_CT[m - 1] || '';
@@ -4810,107 +4946,164 @@ function ctFmtDate(y, m, d) {
 function ctSortedFiltered() {
   let list = ctLoadContacts();
   const q = ctFilter.trim().toLowerCase();
-  if (q) {
-    list = list.filter(c => {
-      const full = `${c.fn} ${c.ln}`.toLowerCase();
-      return full.includes(q);
-    });
-  }
+  if (q) list = list.filter(c => `${c.fn||''} ${c.ln||''}`.toLowerCase().includes(q));
+  if (ctGroupFilter) list = list.filter(c => (c.grp||'') === ctGroupFilter);
   list = list.slice().sort((a, b) => {
     let va, vb;
-    if (ctSortField === 'fn') { va = (a.fn||'').toLowerCase(); vb = (b.fn||'').toLowerCase(); }
-    else if (ctSortField === 'ln') { va = (a.ln||'').toLowerCase(); vb = (b.ln||'').toLowerCase(); }
-    else if (ctSortField === 'bday') {
-      va = (a.bm||13)*100 + (a.bd||32); vb = (b.bm||13)*100 + (b.bd||32);
-    }
-    else if (ctSortField === 'dday') {
-      va = a.dy ? a.dy*10000 + (a.dm||0)*100 + (a.dd||0) : 99999999;
-      vb = b.dy ? b.dy*10000 + (b.dm||0)*100 + (b.dd||0) : 99999999;
+    if      (ctSortField==='fn')   { va=(a.fn||'').toLowerCase(); vb=(b.fn||'').toLowerCase(); }
+    else if (ctSortField==='ln')   { va=(a.ln||'').toLowerCase(); vb=(b.ln||'').toLowerCase(); }
+    else if (ctSortField==='grp')  { va=(a.grp||'').toLowerCase(); vb=(b.grp||'').toLowerCase(); }
+    else if (ctSortField==='bday') { va=(a.bm||13)*100+(a.bd||32); vb=(b.bm||13)*100+(b.bd||32); }
+    else if (ctSortField==='dday') {
+      va=a.dy?a.dy*10000+(a.dm||0)*100+(a.dd||0):99999999;
+      vb=b.dy?b.dy*10000+(b.dm||0)*100+(b.dd||0):99999999;
     }
     if (va < vb) return ctSortAsc ? -1 : 1;
-    if (va > vb) return ctSortAsc ? 1 : -1;
+    if (va > vb) return ctSortAsc ?  1 : -1;
     return 0;
   });
   return list;
 }
 
+// ── Unique contact key for identify (fn+ln+bm+bd+by)
+function ctKey(c) { return `${c.fn}|${c.ln}|${c.bm}|${c.bd}|${c.by}`; }
+
 function renderContactsView() {
   const view = document.getElementById('contactsView');
   if (!view || view.style.display === 'none') return;
-  view.innerHTML = '';
-  view.className = 'ct-view';
 
-  // ── Toolbar ──
-  const toolbar = document.createElement('div');
-  toolbar.className = 'ct-toolbar';
+  // ── First call: build the static skeleton ──
+  if (!view.querySelector('.ct-toolbar')) {
+    view.innerHTML = '';
+    view.className = 'ct-view';
 
-  // Title
-  const title = document.createElement('div');
-  title.className = 'ct-view-title';
-  title.textContent = '👥 Contacts';
-  toolbar.appendChild(title);
+    // Toolbar
+    const toolbar = document.createElement('div');
+    toolbar.className = 'ct-toolbar';
 
-  const spacer = document.createElement('div'); spacer.style.flex = '1';
-  toolbar.appendChild(spacer);
+    const title = document.createElement('div');
+    title.className = 'ct-view-title'; title.textContent = '👥 Contacts';
+    toolbar.appendChild(title);
 
-  // Search input
-  const searchWrap = document.createElement('div');
-  searchWrap.className = 'ct-search-wrap';
-  const searchIn = document.createElement('input');
-  searchIn.type = 'text'; searchIn.className = 'ct-search-input';
-  searchIn.placeholder = '🔍 Rechercher…';
-  searchIn.value = ctFilter;
-  searchIn.addEventListener('input', e => {
-    ctFilter = e.target.value; ctPage = 1; renderContactsView();
+    const spacer = document.createElement('div'); spacer.style.flex='1';
+    toolbar.appendChild(spacer);
+
+    const searchIn = document.createElement('input');
+    searchIn.type='text'; searchIn.id='ctSearchInput';
+    searchIn.className='ct-search-input'; searchIn.placeholder='🔍 Rechercher…';
+    searchIn.value = ctFilter;
+    searchIn.addEventListener('input', e => { ctFilter=e.target.value; ctPage=1; ctRenderBody(); });
+    toolbar.appendChild(searchIn);
+
+    const addBtn = document.createElement('button');
+    addBtn.className='ct-add-btn'; addBtn.textContent='＋ Ajouter';
+    addBtn.addEventListener('click', ()=>ctShowContactModal(null));
+    toolbar.appendChild(addBtn);
+
+    const mgrBtn = document.createElement('button');
+    mgrBtn.className='ct-add-btn'; mgrBtn.style.cssText='background:var(--muted);margin-left:4px;';
+    mgrBtn.textContent='⚙ Groupes';
+    mgrBtn.addEventListener('click', ctShowGroupsModal);
+    toolbar.appendChild(mgrBtn);
+
+    view.appendChild(toolbar);
+
+    // Group pills bar
+    const pillsBar = document.createElement('div');
+    pillsBar.id='ctGroupPills'; pillsBar.className='ct-group-pills';
+    view.appendChild(pillsBar);
+
+    // Table wrapper (will be filled by ctRenderBody)
+    const tableWrap = document.createElement('div');
+    tableWrap.id='ctTableWrap'; tableWrap.className='ct-table-wrap';
+    view.appendChild(tableWrap);
+
+    // Pager (will be filled by ctRenderBody)
+    const pager = document.createElement('div');
+    pager.id='ctPager'; pager.className='ct-pager';
+    view.appendChild(pager);
+
+    requestAnimationFrame(()=>searchIn.focus());
+  }
+
+  ctRenderPills();
+  ctRenderBody();
+}
+
+function ctRenderPills() {
+  const bar = document.getElementById('ctGroupPills');
+  if (!bar) return;
+  bar.innerHTML = '';
+  const groups = ctLoadGroups();
+
+  const mkPill = (label, val) => {
+    const p = document.createElement('button');
+    p.className = 'ct-group-pill' + (ctGroupFilter===val ? ' active' : '');
+    p.textContent = label;
+    p.addEventListener('click', ()=>{ ctGroupFilter=val; ctPage=1; ctRenderPills(); ctRenderBody(); });
+    bar.appendChild(p);
+  };
+
+  // Count contacts per group
+  const allContacts = ctLoadContacts();
+  const totals = {};
+  allContacts.forEach(c => { const g=c.grp||''; totals[g]=(totals[g]||0)+1; });
+
+  mkPill(`Tous (${allContacts.length})`, '');
+  groups.forEach(g => {
+    const n = totals[g] || 0;
+    mkPill(`${g} (${n})`, g);
   });
-  searchWrap.appendChild(searchIn);
-  toolbar.appendChild(searchWrap);
+  // "Sans groupe"
+  const noGrp = totals[''] || 0;
+  if (noGrp > 0) mkPill(`Sans groupe (${noGrp})`, '__none__');
+}
 
-  // Add button
-  const addBtn = document.createElement('button');
-  addBtn.className = 'ct-add-btn';
-  addBtn.textContent = '＋ Ajouter';
-  addBtn.addEventListener('click', () => ctShowContactModal(null));
-  toolbar.appendChild(addBtn);
+function ctRenderBody() {
+  const tableWrap = document.getElementById('ctTableWrap');
+  const pager = document.getElementById('ctPager');
+  if (!tableWrap || !pager) return;
 
-  view.appendChild(toolbar);
+  // Apply __none__ group filter
+  let list = ctSortedFiltered();
+  if (ctGroupFilter === '__none__') {
+    list = ctLoadContacts().filter(c => !c.grp);
+    // re-sort
+    const q = ctFilter.trim().toLowerCase();
+    if (q) list = list.filter(c => `${c.fn||''} ${c.ln||''}`.toLowerCase().includes(q));
+  }
 
-  // ── Table ──
-  const list = ctSortedFiltered();
   const totalPages = Math.max(1, Math.ceil(list.length / CT_PAGE_SIZE));
   ctPage = Math.min(ctPage, totalPages);
-  const pageItems = list.slice((ctPage - 1) * CT_PAGE_SIZE, ctPage * CT_PAGE_SIZE);
+  const pageItems = list.slice((ctPage-1)*CT_PAGE_SIZE, ctPage*CT_PAGE_SIZE);
 
-  const tableWrap = document.createElement('div');
-  tableWrap.className = 'ct-table-wrap';
-
-  const table = document.createElement('table');
-  table.className = 'ct-table';
+  // Build table
+  tableWrap.innerHTML = '';
+  const table = document.createElement('table'); table.className='ct-table';
 
   // Header
   const thead = document.createElement('thead');
-  const htr = document.createElement('tr');
-  const cols = [
-    { key: 'fn',   label: 'Prénom' },
-    { key: 'ln',   label: 'Nom' },
-    { key: 'bday', label: 'Anniversaire' },
-    { key: 'dday', label: 'Décès' },
-    { key: null,   label: '' }, // actions
+  const htr   = document.createElement('tr');
+  const cols  = [
+    {key:'fn',   label:'Prénom'},
+    {key:'ln',   label:'Nom'},
+    {key:'grp',  label:'Groupe'},
+    {key:'bday', label:'Anniversaire'},
+    {key:'dday', label:'Décès'},
+    {key:null,   label:''},
   ];
-  cols.forEach(col => {
+  cols.forEach(col=>{
     const th = document.createElement('th');
-    th.className = 'ct-th' + (col.key ? ' ct-th-sort' : '');
+    th.className = 'ct-th'+(col.key?' ct-th-sort':'');
     if (col.key) {
-      const isActive = ctSortField === col.key;
-      th.innerHTML = `${col.label} <span class="ct-sort-icon">${isActive ? (ctSortAsc ? '▲' : '▼') : '⇅'}</span>`;
-      th.addEventListener('click', () => {
-        if (ctSortField === col.key) ctSortAsc = !ctSortAsc;
-        else { ctSortField = col.key; ctSortAsc = true; }
-        ctPage = 1; renderContactsView();
+      const active = ctSortField===col.key;
+      th.innerHTML=`${col.label} <span class="ct-sort-icon">${active?(ctSortAsc?'▲':'▼'):'⇅'}</span>`;
+      th.addEventListener('click', ()=>{
+        if (ctSortField===col.key) ctSortAsc=!ctSortAsc;
+        else { ctSortField=col.key; ctSortAsc=true; }
+        ctPage=1; ctRenderBody();
       });
-    } else {
-      th.textContent = col.label;
-    }
+    } else { th.textContent=col.label; }
     htr.appendChild(th);
   });
   thead.appendChild(htr);
@@ -4919,90 +5112,138 @@ function renderContactsView() {
   // Body
   const tbody = document.createElement('tbody');
   if (!pageItems.length) {
-    const tr = document.createElement('tr');
-    const td = document.createElement('td');
-    td.colSpan = 5; td.className = 'ct-empty';
-    td.textContent = ctFilter ? 'Aucun résultat pour cette recherche.' : 'Aucun contact.';
+    const tr=document.createElement('tr');
+    const td=document.createElement('td'); td.colSpan=6; td.className='ct-empty';
+    td.textContent=ctFilter||ctGroupFilter?'Aucun résultat.':'Aucun contact.';
     tr.appendChild(td); tbody.appendChild(tr);
   }
-  pageItems.forEach((c, i) => {
+
+  const groups = ctLoadGroups();
+
+  pageItems.forEach(c => {
     const tr = document.createElement('tr');
-    tr.className = 'ct-tr' + (c.dy ? ' ct-tr-deceased' : '');
+    tr.className='ct-tr'+(c.dy?' ct-tr-deceased':'');
 
-    const tdFn = document.createElement('td'); tdFn.className = 'ct-td'; tdFn.textContent = c.fn || '—';
-    const tdLn = document.createElement('td'); tdLn.className = 'ct-td'; tdLn.textContent = c.ln || '—';
+    const tdFn  = document.createElement('td'); tdFn.className='ct-td'; tdFn.textContent=c.fn||'—';
+    const tdLn  = document.createElement('td'); tdLn.className='ct-td'; tdLn.textContent=c.ln||'—';
 
-    const tdBday = document.createElement('td'); tdBday.className = 'ct-td';
+    // Group badge
+    const tdGrp = document.createElement('td'); tdGrp.className='ct-td';
+    if (c.grp) {
+      const badge = document.createElement('span'); badge.className='ct-grp-badge';
+      badge.textContent=c.grp;
+      const idx = groups.indexOf(c.grp);
+      const hues = [200,120,30,280,0,180,60];
+      const h = hues[idx%hues.length];
+      badge.style.cssText=`background:hsl(${h},40%,88%);color:hsl(${h},40%,30%);border-color:hsl(${h},40%,70%);`;
+      tdGrp.appendChild(badge);
+    } else { tdGrp.textContent='—'; }
+
+    const tdBday = document.createElement('td'); tdBday.className='ct-td';
     if (c.bm) {
-      const today = new Date();
-      const age = c.by ? (today.getFullYear() - c.by) : null;
-      const bdStr = ctFmtDate(c.by, c.bm, c.bd);
-      tdBday.innerHTML = `${bdStr}${age !== null ? ` <span class="ct-age">(${age} ans)</span>` : ''}`;
-    } else { tdBday.textContent = '—'; }
+      const age = c.by?(new Date().getFullYear()-c.by):null;
+      tdBday.innerHTML=`${ctFmtDate(c.by,c.bm,c.bd)}${age!==null?` <span class="ct-age">(${age} ans)</span>`:''}`;
+    } else { tdBday.textContent='—'; }
 
-    const tdDday = document.createElement('td'); tdDday.className = 'ct-td';
-    tdDday.textContent = c.dy ? ctFmtDate(c.dy, c.dm, c.dd) : '—';
+    const tdDday = document.createElement('td'); tdDday.className='ct-td';
+    tdDday.textContent=c.dy?ctFmtDate(c.dy,c.dm,c.dd):'—';
 
-    const tdAct = document.createElement('td'); tdAct.className = 'ct-td ct-td-actions';
-    const editBtn = document.createElement('button'); editBtn.className = 'ct-row-btn'; editBtn.textContent = '✏';
-    editBtn.title = 'Modifier';
-    editBtn.addEventListener('click', () => ctShowContactModal(c));
-    const delBtn = document.createElement('button'); delBtn.className = 'ct-row-btn ct-row-btn-del'; delBtn.textContent = '✕';
-    delBtn.title = 'Supprimer';
-    delBtn.addEventListener('click', () => {
-      const full = [c.fn, c.ln].filter(Boolean).join(' ');
-      if (confirm(`Supprimer le contact "${full}" ?`)) {
-        const contacts = ctLoadContacts().filter(x => x !== c && !(x.fn===c.fn && x.ln===c.ln && x.bm===c.bm && x.bd===c.bd && x.by===c.by));
-        ctSaveContacts(contacts);
-        renderContactsView();
-        ctInjectAllBirthdays();
+    const tdAct  = document.createElement('td'); tdAct.className='ct-td ct-td-actions';
+    const editBtn = document.createElement('button'); editBtn.className='ct-row-btn'; editBtn.textContent='✏'; editBtn.title='Modifier';
+    editBtn.addEventListener('click', ()=>ctShowContactModal(c));
+    const delBtn  = document.createElement('button'); delBtn.className='ct-row-btn ct-row-btn-del'; delBtn.textContent='✕'; delBtn.title='Supprimer';
+    delBtn.addEventListener('click', ()=>{
+      const full=[c.fn,c.ln].filter(Boolean).join(' ');
+      if (confirm(`Supprimer "${full}" ?`)) {
+        const k=ctKey(c);
+        ctSaveContacts(ctLoadContacts().filter(x=>ctKey(x)!==k));
+        ctRenderPills(); ctRenderBody(); ctInjectAllBirthdays();
       }
     });
     tdAct.appendChild(editBtn); tdAct.appendChild(delBtn);
 
-    tr.appendChild(tdFn); tr.appendChild(tdLn); tr.appendChild(tdBday); tr.appendChild(tdDday); tr.appendChild(tdAct);
+    tr.appendChild(tdFn); tr.appendChild(tdLn); tr.appendChild(tdGrp);
+    tr.appendChild(tdBday); tr.appendChild(tdDday); tr.appendChild(tdAct);
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
   tableWrap.appendChild(table);
-  view.appendChild(tableWrap);
 
-  // ── Pagination ──
-  const pager = document.createElement('div');
-  pager.className = 'ct-pager';
-
-  const info = document.createElement('span');
-  info.className = 'ct-pager-info';
-  const start = (ctPage - 1) * CT_PAGE_SIZE + 1;
-  const end = Math.min(ctPage * CT_PAGE_SIZE, list.length);
-  info.textContent = list.length ? `${start}–${end} de ${list.length}` : '0 contact';
+  // Pager
+  pager.innerHTML='';
+  const info=document.createElement('span'); info.className='ct-pager-info';
+  const start=(ctPage-1)*CT_PAGE_SIZE+1, end=Math.min(ctPage*CT_PAGE_SIZE,list.length);
+  info.textContent=list.length?`${start}–${end} de ${list.length}`:'0 contact';
   pager.appendChild(info);
 
-  const pageBtns = document.createElement('div');
-  pageBtns.className = 'ct-pager-btns';
-
-  const mkPBtn = (label, page, disabled) => {
-    const b = document.createElement('button');
-    b.className = 'ct-pager-btn' + (page === ctPage ? ' active' : '');
-    b.textContent = label; b.disabled = disabled;
-    b.addEventListener('click', () => { ctPage = page; renderContactsView(); });
+  const pageBtns=document.createElement('div'); pageBtns.className='ct-pager-btns';
+  const mkPBtn=(label,page,disabled)=>{
+    const b=document.createElement('button');
+    b.className='ct-pager-btn'+(page===ctPage?' active':'');
+    b.textContent=label; b.disabled=disabled;
+    b.addEventListener('click',()=>{ ctPage=page; ctRenderBody(); });
     return b;
   };
-
-  pageBtns.appendChild(mkPBtn('‹', ctPage - 1, ctPage <= 1));
-  // Page numbers — show up to 7 around current
-  const pageRange = [];
-  for (let p = Math.max(1, ctPage - 3); p <= Math.min(totalPages, ctPage + 3); p++) pageRange.push(p);
-  if (pageRange[0] > 1) { pageBtns.appendChild(mkPBtn('1', 1, false)); if (pageRange[0] > 2) { const dots=document.createElement('span'); dots.textContent='…'; dots.className='ct-pager-dots'; pageBtns.appendChild(dots); } }
-  pageRange.forEach(p => pageBtns.appendChild(mkPBtn(p, p, false)));
-  if (pageRange[pageRange.length-1] < totalPages) { if (pageRange[pageRange.length-1] < totalPages-1) { const dots=document.createElement('span'); dots.textContent='…'; dots.className='ct-pager-dots'; pageBtns.appendChild(dots); } pageBtns.appendChild(mkPBtn(totalPages, totalPages, false)); }
-  pageBtns.appendChild(mkPBtn('›', ctPage + 1, ctPage >= totalPages));
-
+  pageBtns.appendChild(mkPBtn('‹',ctPage-1,ctPage<=1));
+  const pageRange=[];
+  for(let p=Math.max(1,ctPage-3);p<=Math.min(totalPages,ctPage+3);p++) pageRange.push(p);
+  if(pageRange[0]>1){ pageBtns.appendChild(mkPBtn('1',1,false)); if(pageRange[0]>2){const d=document.createElement('span');d.textContent='…';d.className='ct-pager-dots';pageBtns.appendChild(d);} }
+  pageRange.forEach(p=>pageBtns.appendChild(mkPBtn(p,p,false)));
+  if(pageRange[pageRange.length-1]<totalPages){ if(pageRange[pageRange.length-1]<totalPages-1){const d=document.createElement('span');d.textContent='…';d.className='ct-pager-dots';pageBtns.appendChild(d);} pageBtns.appendChild(mkPBtn(totalPages,totalPages,false)); }
+  pageBtns.appendChild(mkPBtn('›',ctPage+1,ctPage>=totalPages));
   pager.appendChild(pageBtns);
-  view.appendChild(pager);
+}
 
-  // Focus search
-  requestAnimationFrame(() => { if (!ctFilter) searchIn.focus(); });
+// ── GROUPS MODAL ──────────────────────────────────────────────────────────────
+function ctShowGroupsModal() {
+  ctRemoveContactModal();
+  let groups = ctLoadGroups().slice();
+
+  const overlay = document.createElement('div');
+  overlay.className='kb-modal-overlay'; overlay.id='ctModalOverlay';
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) ctRemoveContactModal(); });
+
+  const modal = document.createElement('div'); modal.className='kb-modal'; modal.style.maxWidth='380px';
+  const mhd=document.createElement('div'); mhd.className='kb-modal-hd';
+  const mt=document.createElement('div'); mt.className='kb-modal-title'; mt.textContent='⚙ Gérer les groupes';
+  const mc=document.createElement('button'); mc.className='kb-modal-close'; mc.textContent='✕'; mc.addEventListener('click',ctRemoveContactModal);
+  mhd.appendChild(mt); mhd.appendChild(mc);
+
+  const mbd=document.createElement('div'); mbd.className='kb-modal-bd';
+
+  const buildList=()=>{
+    const old=mbd.querySelector('.ct-grp-list'); if(old) old.remove();
+    const list=document.createElement('div'); list.className='ct-grp-list';
+    groups.forEach((g,i)=>{
+      const row=document.createElement('div'); row.className='ct-grp-row';
+      const inp=document.createElement('input'); inp.className='kb-field-input'; inp.value=g; inp.style.flex='1';
+      inp.addEventListener('input',e=>{ groups[i]=e.target.value; });
+      const del=document.createElement('button'); del.className='ct-row-btn ct-row-btn-del'; del.textContent='✕';
+      del.addEventListener('click',()=>{ groups.splice(i,1); buildList(); });
+      row.appendChild(inp); row.appendChild(del); list.appendChild(row);
+    });
+    const addRow=document.createElement('button'); addRow.className='ct-add-btn'; addRow.style.cssText='margin-top:10px;width:100%;';
+    addRow.textContent='＋ Nouveau groupe';
+    addRow.addEventListener('click',()=>{ groups.push('Nouveau'); buildList(); });
+    list.appendChild(addRow);
+    mbd.appendChild(list);
+  };
+  buildList();
+
+  const mft=document.createElement('div'); mft.className='kb-modal-ft';
+  const cancel=document.createElement('button'); cancel.className='kb-btn-cancel'; cancel.textContent='Annuler'; cancel.addEventListener('click',ctRemoveContactModal);
+  const save=document.createElement('button'); save.className='kb-btn-save'; save.textContent='Enregistrer';
+  save.addEventListener('click',()=>{
+    const cleaned=groups.map(g=>g.trim()).filter(Boolean);
+    ctSaveGroups(cleaned);
+    ctRemoveContactModal();
+    renderContactsView();
+  });
+  mft.appendChild(cancel); mft.appendChild(save);
+  modal.appendChild(mhd); modal.appendChild(mbd); modal.appendChild(mft);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add('visible'));
 }
 
 // ── CONTACT MODAL (add/edit) ──────────────────────────────────────────────────
@@ -5025,40 +5266,50 @@ function ctShowContactModal(contact) {
 
   const mbd = document.createElement('div'); mbd.className = 'kb-modal-bd';
 
-  const mkField = (lbl, el, hint) => {
+  const mkField = (lbl, el) => {
     const wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
     const label = document.createElement('label'); label.className = 'kb-field-label'; label.textContent = lbl;
     wrap.appendChild(label); wrap.appendChild(el);
-    if (hint) { const h = document.createElement('span'); h.style.cssText='font-size:.7rem;color:var(--muted);'; h.textContent=hint; wrap.appendChild(h); }
     return wrap;
   };
 
-  const grid = document.createElement('div');
-  grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:12px;';
-
+  // Row 1: Prénom + Nom
+  const nameGrid = document.createElement('div');
+  nameGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:12px;';
   const fnIn = document.createElement('input'); fnIn.className = 'kb-field-input'; fnIn.placeholder = 'Prénom'; fnIn.value = contact?.fn || '';
   const lnIn = document.createElement('input'); lnIn.className = 'kb-field-input'; lnIn.placeholder = 'Nom'; lnIn.value = contact?.ln || '';
-  grid.appendChild(mkField('Prénom *', fnIn));
-  grid.appendChild(mkField('Nom', lnIn));
-  mbd.appendChild(grid);
+  nameGrid.appendChild(mkField('Prénom *', fnIn));
+  nameGrid.appendChild(mkField('Nom', lnIn));
+  mbd.appendChild(nameGrid);
 
-  // Birthday fields
+  // Row 2: Groupe
+  const grpSel = document.createElement('select'); grpSel.className = 'kb-field-select';
+  const grpEmpty = document.createElement('option'); grpEmpty.value=''; grpEmpty.textContent='— Aucun groupe —';
+  grpSel.appendChild(grpEmpty);
+  ctLoadGroups().forEach(g => {
+    const o=document.createElement('option'); o.value=g; o.textContent=g;
+    if ((contact?.grp||'')===g) o.selected=true;
+    grpSel.appendChild(o);
+  });
+  mbd.appendChild(mkField('Groupe', grpSel));
+
+  // Row 3: Birthday
   const bdayGrid = document.createElement('div');
   bdayGrid.style.cssText = 'display:grid;grid-template-columns:2fr 2fr 3fr;gap:8px;margin-top:4px;';
-  const bmIn = document.createElement('input'); bmIn.className = 'kb-field-input'; bmIn.type='number'; bmIn.min=1; bmIn.max=12; bmIn.placeholder='MM'; bmIn.value = contact?.bm || '';
-  const bdIn = document.createElement('input'); bdIn.className = 'kb-field-input'; bdIn.type='number'; bdIn.min=1; bdIn.max=31; bdIn.placeholder='JJ'; bdIn.value = contact?.bd || '';
-  const byIn = document.createElement('input'); byIn.className = 'kb-field-input'; byIn.type='number'; byIn.min=1800; byIn.max=2100; byIn.placeholder='AAAA'; byIn.value = contact?.by || '';
+  const bmIn = document.createElement('input'); bmIn.className='kb-field-input'; bmIn.type='number'; bmIn.min=1; bmIn.max=12; bmIn.placeholder='MM'; bmIn.value=contact?.bm||'';
+  const bdIn = document.createElement('input'); bdIn.className='kb-field-input'; bdIn.type='number'; bdIn.min=1; bdIn.max=31; bdIn.placeholder='JJ'; bdIn.value=contact?.bd||'';
+  const byIn = document.createElement('input'); byIn.className='kb-field-input'; byIn.type='number'; byIn.min=1800; byIn.max=2100; byIn.placeholder='AAAA'; byIn.value=contact?.by||'';
   bdayGrid.appendChild(mkField('Mois nais.', bmIn));
   bdayGrid.appendChild(mkField('Jour nais.', bdIn));
   bdayGrid.appendChild(mkField('Année nais.', byIn));
   mbd.appendChild(bdayGrid);
 
-  // Death fields
+  // Row 4: Death
   const ddayGrid = document.createElement('div');
   ddayGrid.style.cssText = 'display:grid;grid-template-columns:2fr 2fr 3fr;gap:8px;margin-top:4px;';
-  const dmIn = document.createElement('input'); dmIn.className = 'kb-field-input'; dmIn.type='number'; dmIn.min=1; dmIn.max=12; dmIn.placeholder='MM'; dmIn.value = contact?.dm || '';
-  const ddIn = document.createElement('input'); ddIn.className = 'kb-field-input'; ddIn.type='number'; ddIn.min=1; ddIn.max=31; ddIn.placeholder='JJ'; ddIn.value = contact?.dd || '';
-  const dyIn = document.createElement('input'); dyIn.className = 'kb-field-input'; dyIn.type='number'; dyIn.min=1800; dyIn.max=2100; dyIn.placeholder='AAAA'; dyIn.value = contact?.dy || '';
+  const dmIn = document.createElement('input'); dmIn.className='kb-field-input'; dmIn.type='number'; dmIn.min=1; dmIn.max=12; dmIn.placeholder='MM'; dmIn.value=contact?.dm||'';
+  const ddIn = document.createElement('input'); ddIn.className='kb-field-input'; ddIn.type='number'; ddIn.min=1; ddIn.max=31; ddIn.placeholder='JJ'; ddIn.value=contact?.dd||'';
+  const dyIn = document.createElement('input'); dyIn.className='kb-field-input'; dyIn.type='number'; dyIn.min=1800; dyIn.max=2100; dyIn.placeholder='AAAA'; dyIn.value=contact?.dy||'';
   ddayGrid.appendChild(mkField('Mois décès', dmIn));
   ddayGrid.appendChild(mkField('Jour décès', ddIn));
   ddayGrid.appendChild(mkField('Année décès', dyIn));
@@ -5076,6 +5327,7 @@ function ctShowContactModal(contact) {
     const newContact = {
       fn,
       ln: lnIn.value.trim(),
+      grp: grpSel.value || undefined,
       by: parseInt(byIn.value) || null,
       bm: parseInt(bmIn.value) || null,
       bd: parseInt(bdIn.value) || null,
@@ -5085,7 +5337,8 @@ function ctShowContactModal(contact) {
     };
     let contacts = ctLoadContacts();
     if (isEdit) {
-      const idx = contacts.findIndex(x => x.fn===contact.fn && x.ln===contact.ln && x.bm===contact.bm && x.bd===contact.bd && x.by===contact.by);
+      const origKey = ctKey(contact);
+      const idx = contacts.findIndex(x => ctKey(x) === origKey);
       if (idx >= 0) contacts[idx] = newContact; else contacts.push(newContact);
     } else {
       contacts.push(newContact);
@@ -5093,7 +5346,7 @@ function ctShowContactModal(contact) {
     }
     ctSaveContacts(contacts);
     ctRemoveContactModal();
-    renderContactsView();
+    ctRenderPills(); ctRenderBody();
     ctInjectAllBirthdays();
   });
 
@@ -5103,6 +5356,7 @@ function ctShowContactModal(contact) {
   document.body.appendChild(overlay);
   requestAnimationFrame(() => overlay.classList.add('visible'));
   fnIn.focus();
+  fnIn.addEventListener('keydown', e => { if (e.key==='Enter') saveBtn.click(); });
 }
 
 function ctRemoveContactModal() {
