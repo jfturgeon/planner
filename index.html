@@ -2937,20 +2937,78 @@ function exportAllData() {
     dayEvents: {}
   };
 
-  // Collect all per-week keys
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && key.startsWith('ap_w_'))    data.weeklyData[key] = localStorage.getItem(key);
-    if (key && key.startsWith('ap_de_'))   data.dayEvents[key]  = localStorage.getItem(key);
+    if (key && key.startsWith('ap_w_'))  data.weeklyData[key] = localStorage.getItem(key);
+    if (key && key.startsWith('ap_de_')) data.dayEvents[key]  = localStorage.getItem(key);
   }
 
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `planner-export-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  const json = JSON.stringify(data, null, 2);
+  const filename = 'planner-export-' + new Date().toISOString().slice(0,10) + '.json';
+
+  // Try Blob + createObjectURL first (works locally), fall back to copy-to-clipboard modal
+  try {
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch(e) {
+    // Fallback: show JSON in a copyable modal
+    showExportModal(json, filename);
+  }
+}
+
+function showExportModal(json, filename) {
+  // Remove existing if any
+  const existing = document.getElementById('exportModal');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'exportModal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;';
+
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:12px;padding:24px;width:90%;max-width:700px;max-height:80vh;display:flex;flex-direction:column;gap:12px;';
+
+  const title = document.createElement('div');
+  title.style.cssText = 'font-family:\'DM Serif Display\',serif;font-size:1.1rem;color:#25231f;';
+  title.textContent = '⬇ Exporter données — ' + filename;
+
+  const hint = document.createElement('div');
+  hint.style.cssText = 'font-size:.78rem;color:#888;';
+  hint.textContent = 'Copiez ce JSON et sauvegardez-le dans un fichier .json sur votre disque.';
+
+  const ta = document.createElement('textarea');
+  ta.value = json;
+  ta.style.cssText = 'flex:1;min-height:300px;font-family:monospace;font-size:.72rem;border:1px solid #ddd;border-radius:6px;padding:10px;resize:vertical;';
+  ta.readOnly = true;
+
+  const btns = document.createElement('div');
+  btns.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;';
+
+  const copyBtn = document.createElement('button');
+  copyBtn.textContent = '📋 Copier tout';
+  copyBtn.style.cssText = 'padding:8px 18px;border-radius:6px;border:none;background:#2d6bbf;color:#fff;cursor:pointer;font-family:\'DM Sans\',sans-serif;font-size:.82rem;';
+  copyBtn.addEventListener('click', () => {
+    ta.select(); document.execCommand('copy');
+    copyBtn.textContent = '✅ Copié !';
+    setTimeout(() => copyBtn.textContent = '📋 Copier tout', 2000);
+  });
+
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent = 'Fermer';
+  closeBtn.style.cssText = 'padding:8px 18px;border-radius:6px;border:1px solid #ddd;background:#f7f5f0;cursor:pointer;font-family:\'DM Sans\',sans-serif;font-size:.82rem;';
+  closeBtn.addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
+
+  btns.appendChild(copyBtn); btns.appendChild(closeBtn);
+  box.appendChild(title); box.appendChild(hint); box.appendChild(ta); box.appendChild(btns);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  setTimeout(() => ta.select(), 100);
 }
 
 function importAllData(file) {
@@ -2968,9 +3026,8 @@ function importAllData(file) {
       if (data.trackerWatched) localStorage.setItem(TR_KEY, data.trackerWatched);
       if (data.trackerSched)   localStorage.setItem(TR_SCHED_KEY, data.trackerSched);
       if (data.globalHabits)   localStorage.setItem('ap_global_habits', data.globalHabits);
-
-      if (data.weeklyData) Object.entries(data.weeklyData).forEach(([k,v]) => localStorage.setItem(k,v));
-      if (data.dayEvents)  Object.entries(data.dayEvents).forEach(([k,v])  => localStorage.setItem(k,v));
+      if (data.weeklyData)     Object.entries(data.weeklyData).forEach(([k,v]) => localStorage.setItem(k, v));
+      if (data.dayEvents)      Object.entries(data.dayEvents).forEach(([k,v])  => localStorage.setItem(k, v));
 
       alert('✅ Données importées avec succès !');
       location.reload();
