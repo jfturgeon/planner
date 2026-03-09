@@ -1670,6 +1670,123 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 /* Compact board columns slightly narrower */
 .kb-board-compact .kb-col { min-width:300px; max-width:300px; }
 
+/* ═══════════════════════════════════════════════════════
+   CONTACTS TAB VIEW
+   ═══════════════════════════════════════════════════════ */
+
+#contactsView {
+  flex-direction: column;
+  padding: 24px 28px;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.ct-view { display:flex; flex-direction:column; gap:16px; height:100%; }
+
+/* Toolbar */
+.ct-toolbar {
+  display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+}
+.ct-view-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem; color: var(--text);
+  white-space: nowrap;
+}
+.ct-search-wrap { position: relative; }
+.ct-search-input {
+  width: 260px; padding: 7px 12px;
+  border: 1px solid var(--border); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: .85rem;
+  background: var(--surface); color: var(--text);
+  outline: none; transition: border-color .15s;
+}
+.ct-search-input:focus { border-color: var(--accent2); }
+.ct-add-btn {
+  padding: 7px 16px; border-radius: 8px;
+  background: var(--accent2); color: #fff;
+  border: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .85rem; font-weight: 600;
+  white-space: nowrap; transition: opacity .15s;
+}
+.ct-add-btn:hover { opacity: .85; }
+
+/* Table */
+.ct-table-wrap {
+  flex: 1; overflow-y: auto; overflow-x: auto;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 1px 6px rgba(0,0,0,.05);
+}
+.ct-table-wrap::-webkit-scrollbar { width: 5px; height: 5px; }
+.ct-table-wrap::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+.ct-table {
+  width: 100%; border-collapse: collapse;
+  font-family: 'DM Sans', sans-serif; font-size: .83rem;
+}
+.ct-th {
+  padding: 10px 14px; text-align: left;
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); background: #f7f5f0;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap; position: sticky; top: 0; z-index: 1;
+}
+.ct-th-sort { cursor: pointer; user-select: none; }
+.ct-th-sort:hover { color: var(--accent2); }
+.ct-sort-icon { font-size: .65rem; margin-left: 4px; opacity: .6; }
+
+.ct-tr { border-bottom: 1px solid #f0ede6; transition: background .1s; }
+.ct-tr:last-child { border-bottom: none; }
+.ct-tr:hover { background: #faf8f4; }
+.ct-tr-deceased { opacity: .7; }
+.ct-tr-deceased:hover { background: #f5f0ea; }
+
+.ct-td {
+  padding: 9px 14px; color: var(--text);
+  vertical-align: middle; white-space: nowrap;
+}
+.ct-td-actions {
+  display: flex; gap: 6px; align-items: center;
+  justify-content: flex-end; padding-right: 12px;
+}
+.ct-age { font-size: .72rem; color: var(--muted); }
+.ct-empty { padding: 32px; text-align: center; color: var(--muted); font-style: italic; }
+
+.ct-row-btn {
+  background: none; border: 1px solid transparent; border-radius: 5px;
+  cursor: pointer; color: #bbb; font-size: .8rem; padding: 3px 6px;
+  transition: all .15s; opacity: 0;
+}
+.ct-tr:hover .ct-row-btn { opacity: 1; }
+.ct-row-btn:hover { color: var(--accent2); border-color: var(--accent2); background: #f0f5ff; }
+.ct-row-btn-del:hover { color: var(--accent); border-color: var(--accent); background: #fff0f0; }
+
+/* Pagination */
+.ct-pager {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0; padding: 4px 2px;
+}
+.ct-pager-info { font-size: .78rem; color: var(--muted); }
+.ct-pager-btns { display: flex; align-items: center; gap: 4px; }
+.ct-pager-btn {
+  min-width: 32px; height: 30px; padding: 0 8px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--surface); color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: .8rem;
+  cursor: pointer; transition: all .15s;
+}
+.ct-pager-btn:hover:not(:disabled) { background: var(--text); color: #f4f1eb; }
+.ct-pager-btn.active { background: var(--accent2); color: #fff; border-color: var(--accent2); font-weight: 700; }
+.ct-pager-btn:disabled { opacity: .35; cursor: default; }
+.ct-pager-dots { font-size: .8rem; color: var(--muted); padding: 0 2px; }
+
+/* Contacts tab button style */
+.btn-contacts-tab { background: var(--surface) !important; }
+.btn-contacts-tab.active { background: #4a3060 !important; color: #d4b8f0 !important; border-color: #6b4a90 !important; }
+
 </style>
 </head>
 <body>
@@ -1687,6 +1804,7 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
     <div class="view-toggle">
       <button class="btn-view btn-tracker" id="btnTracker">📺 Épisodes</button>
       <button class="btn-view btn-kanban" id="btnKanban">🎯 Objectifs</button>
+      <button class="btn-view btn-contacts-tab" id="btnContacts">👥 Contacts</button>
       <button class="btn-view" id="btnAnnual">Annuel</button>
       <button class="btn-view" id="btnMonth">Mois</button>
       <button class="btn-view active" id="btnWeekly">Semaine</button>
@@ -1754,6 +1872,9 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 
 <!-- KANBAN VIEW -->
 <div id="kanbanView" style="display:none"></div>
+
+<!-- CONTACTS VIEW -->
+<div id="contactsView" style="display:none"></div>
 
 <script>
 const MONTHS_FR   = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
@@ -2722,8 +2843,8 @@ function renderWvDays(dates, wk, wdata){
 }
 
 // ── EVENTS ─────────────────────────────────────────────────────────────────
-document.getElementById('btnPrev').addEventListener('click',()=>{ CY--; storeYear(CY); render(); });
-document.getElementById('btnNext').addEventListener('click',()=>{ CY++; storeYear(CY); render(); });
+document.getElementById('btnPrev').addEventListener('click',()=>{ CY--; storeYear(CY); if(typeof kbActiveYear!=='undefined') kbActiveYear=CY; render(); });
+document.getElementById('btnNext').addEventListener('click',()=>{ CY++; storeYear(CY); if(typeof kbActiveYear!=='undefined') kbActiveYear=CY; render(); });
 document.getElementById('weekStart').addEventListener('change',e=>{ storeWS(parseInt(e.target.value)); render(); });
 document.getElementById('btnAddTask').addEventListener('click',addTask);
 document.getElementById('taskInput').addEventListener('keydown',e=>{ if(e.key==='Enter') addTask(); });
@@ -3957,42 +4078,10 @@ function renderKanban() {
 
   const statuses = kbLoadStatuses();
   const allCards = kbLoadCards();
-  const allYears = Array.from(new Set([
-    ...allCards.map(c => c.year),
-    kbActiveYear,
-    new Date().getFullYear()
-  ])).sort((a,b)=>a-b);
 
   // ── Toolbar ──
   const toolbar = document.createElement('div');
   toolbar.className = 'kb-toolbar';
-
-  // Year pills
-  const yearWrap = document.createElement('div');
-  yearWrap.className = 'kb-year-wrap';
-  const yearIcon = document.createElement('span');
-  yearIcon.textContent = '📅';
-  yearIcon.style.fontSize = '.95rem';
-  yearWrap.appendChild(yearIcon);
-
-  allYears.forEach(yr => {
-    const ybtn = document.createElement('button');
-    ybtn.className = 'kb-year-btn' + (yr === kbActiveYear ? ' active' : '');
-    ybtn.textContent = yr;
-    ybtn.addEventListener('click', () => { kbActiveYear = yr; renderKanban(); });
-    yearWrap.appendChild(ybtn);
-  });
-
-  const addYrBtn = document.createElement('button');
-  addYrBtn.className = 'kb-year-btn kb-year-add';
-  addYrBtn.textContent = '＋';
-  addYrBtn.title = 'Ajouter une année';
-  addYrBtn.addEventListener('click', () => {
-    const yr = parseInt(prompt('Année :', new Date().getFullYear() + 1));
-    if (yr && yr > 2000 && yr < 2100) { kbActiveYear = yr; renderKanban(); }
-  });
-  yearWrap.appendChild(addYrBtn);
-  toolbar.appendChild(yearWrap);
 
   // ── Completion bar for active year ──
   const yearCards = allCards.filter(c => c.year === kbActiveYear);
@@ -4005,7 +4094,7 @@ function renderKanban() {
   progressWrap.className = 'kb-progress-wrap';
   const progressLabel = document.createElement('span');
   progressLabel.className = 'kb-progress-label';
-  progressLabel.textContent = total ? `${doneCount}/${total} · ${pct}%` : '0 objectif';
+  progressLabel.textContent = total ? `${kbActiveYear} · ${doneCount}/${total} · ${pct}%` : `${kbActiveYear} · 0 objectif`;
   const progressTrack = document.createElement('div');
   progressTrack.className = 'kb-progress-track';
   const progressFill = document.createElement('div');
@@ -4020,19 +4109,18 @@ function renderKanban() {
   const spacer = document.createElement('div'); spacer.style.flex='1';
   toolbar.appendChild(spacer);
 
-  // ── View toggle (compact / full) ──
-  const viewToggle = document.createElement('button');
-  viewToggle.className = 'kb-manage-btn';
-  viewToggle.title = kbCompactView ? 'Afficher descriptions' : 'Vue compacte';
-  viewToggle.textContent = kbCompactView ? '☰ Complet' : '▤ Compact';
-  viewToggle.addEventListener('click', () => { kbCompactView = !kbCompactView; renderKanban(); });
-  toolbar.appendChild(viewToggle);
-
   const manageBtn = document.createElement('button');
   manageBtn.className = 'kb-manage-btn';
   manageBtn.textContent = '⚙ Colonnes';
   manageBtn.addEventListener('click', kbShowManageModal);
   toolbar.appendChild(manageBtn);
+
+  // ── Settings / Préférences button ──
+  const settingsBtn = document.createElement('button');
+  settingsBtn.className = 'kb-manage-btn';
+  settingsBtn.textContent = '⚙ Préférences';
+  settingsBtn.addEventListener('click', kbShowSettingsModal);
+  toolbar.appendChild(settingsBtn);
 
   view.appendChild(toolbar);
 
@@ -4388,6 +4476,70 @@ function kbShowManageModal() {
   requestAnimationFrame(() => overlay.classList.add('visible'));
 }
 
+// ── SETTINGS MODAL ───────────────────────────────────────────────────────────
+function kbShowSettingsModal() {
+  kbRemoveModal();
+  const overlay = kbMakeOverlay();
+  const modal = document.createElement('div'); modal.className = 'kb-modal'; modal.style.maxWidth = '400px';
+
+  const mhd = document.createElement('div'); mhd.className = 'kb-modal-hd';
+  const mtitle = document.createElement('div'); mtitle.className = 'kb-modal-title'; mtitle.textContent = '⚙ Préférences';
+  const mclose = kbCloseBtn(); mhd.appendChild(mtitle); mhd.appendChild(mclose);
+
+  const mbd = document.createElement('div'); mbd.className = 'kb-modal-bd';
+
+  const mkRow = (label, control) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--border);';
+    const lbl = document.createElement('span');
+    lbl.style.cssText = 'font-family:"DM Sans",sans-serif;font-size:.85rem;color:var(--text);font-weight:500;';
+    lbl.textContent = label;
+    row.appendChild(lbl); row.appendChild(control);
+    return row;
+  };
+
+  // ── Vue par défaut ──
+  const viewSel = document.createElement('select'); viewSel.className = 'kb-field-select'; viewSel.style.width = 'auto';
+  [['false','Complet (titre + description)'],['true','Compact (titre seul)']].forEach(([v,t]) => {
+    const o = document.createElement('option'); o.value = v; o.textContent = t;
+    if (String(kbCompactView) === v) o.selected = true;
+    viewSel.appendChild(o);
+  });
+  mbd.appendChild(mkRow('Vue par défaut', viewSel));
+
+  // ── Premier jour de la semaine ──
+  const wsSel = document.createElement('select'); wsSel.className = 'kb-field-select'; wsSel.style.width = 'auto';
+  const wsVal = localStorage.getItem('ap_ws') || '0';
+  [['0','Dimanche'],['1','Lundi']].forEach(([v,t]) => {
+    const o = document.createElement('option'); o.value = v; o.textContent = t;
+    if (wsVal === v) o.selected = true;
+    wsSel.appendChild(o);
+  });
+  mbd.appendChild(mkRow('Premier jour de la semaine', wsSel));
+
+  const mft = document.createElement('div'); mft.className = 'kb-modal-ft';
+  const cancelBtn = document.createElement('button'); cancelBtn.className = 'kb-btn-cancel'; cancelBtn.textContent = 'Annuler';
+  cancelBtn.addEventListener('click', kbRemoveModal);
+  const saveBtn = document.createElement('button'); saveBtn.className = 'kb-btn-save'; saveBtn.textContent = 'Enregistrer';
+  saveBtn.addEventListener('click', () => {
+    kbCompactView = viewSel.value === 'true';
+    const newWs = parseInt(wsSel.value);
+    if (newWs !== parseInt(localStorage.getItem('ap_ws') || '0')) {
+      localStorage.setItem('ap_ws', newWs);
+      // Update the header select and re-render planner if needed
+      const wsSel2 = document.getElementById('weekStart');
+      if (wsSel2) { wsSel2.value = newWs; wsSel2.dispatchEvent(new Event('change')); }
+    }
+    kbRemoveModal();
+    renderKanban();
+  });
+  mft.appendChild(cancelBtn); mft.appendChild(saveBtn);
+  modal.appendChild(mhd); modal.appendChild(mbd); modal.appendChild(mft);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function kbMakeOverlay() {
   const o = document.createElement('div'); o.className='kb-modal-overlay'; o.id='kbModalOverlay';
@@ -4418,6 +4570,16 @@ const _kbOrigSwitchView = window.switchView;
 window.switchView = function(mode) {
   const kv=document.getElementById('kanbanView'); if(kv) kv.style.display='none';
   _kbOrigSwitchView(mode);
+};
+
+// Re-render kanban when year changes (btnPrev/btnNext) if kanban tab is active
+const _kbOrigRender = window.render;
+window.render = function() {
+  _kbOrigRender();
+  if (document.getElementById('btnKanban')?.classList.contains('active')) {
+    kbActiveYear = CY;
+    renderKanban();
+  }
 };
 
 </script>
@@ -4626,6 +4788,345 @@ function ctParseCSVLine(line) {
 
   btn.addEventListener('click', () => fileInput.click());
 })();
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CONTACTS TAB VIEW
+// ═══════════════════════════════════════════════════════════════════════════
+
+let ctSortField = 'fn';   // fn | ln | bday | dday
+let ctSortAsc   = true;
+let ctFilter    = '';
+let ctPage      = 1;
+const CT_PAGE_SIZE = 25;
+
+const MONTHS_FR_CT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+
+function ctFmtDate(y, m, d) {
+  if (!m) return y ? String(y) : '—';
+  const ms = MONTHS_FR_CT[m - 1] || '';
+  return d ? `${d} ${ms} ${y || ''}` : `${ms} ${y || ''}`;
+}
+
+function ctSortedFiltered() {
+  let list = ctLoadContacts();
+  const q = ctFilter.trim().toLowerCase();
+  if (q) {
+    list = list.filter(c => {
+      const full = `${c.fn} ${c.ln}`.toLowerCase();
+      return full.includes(q);
+    });
+  }
+  list = list.slice().sort((a, b) => {
+    let va, vb;
+    if (ctSortField === 'fn') { va = (a.fn||'').toLowerCase(); vb = (b.fn||'').toLowerCase(); }
+    else if (ctSortField === 'ln') { va = (a.ln||'').toLowerCase(); vb = (b.ln||'').toLowerCase(); }
+    else if (ctSortField === 'bday') {
+      va = (a.bm||13)*100 + (a.bd||32); vb = (b.bm||13)*100 + (b.bd||32);
+    }
+    else if (ctSortField === 'dday') {
+      va = a.dy ? a.dy*10000 + (a.dm||0)*100 + (a.dd||0) : 99999999;
+      vb = b.dy ? b.dy*10000 + (b.dm||0)*100 + (b.dd||0) : 99999999;
+    }
+    if (va < vb) return ctSortAsc ? -1 : 1;
+    if (va > vb) return ctSortAsc ? 1 : -1;
+    return 0;
+  });
+  return list;
+}
+
+function renderContactsView() {
+  const view = document.getElementById('contactsView');
+  if (!view || view.style.display === 'none') return;
+  view.innerHTML = '';
+  view.className = 'ct-view';
+
+  // ── Toolbar ──
+  const toolbar = document.createElement('div');
+  toolbar.className = 'ct-toolbar';
+
+  // Title
+  const title = document.createElement('div');
+  title.className = 'ct-view-title';
+  title.textContent = '👥 Contacts';
+  toolbar.appendChild(title);
+
+  const spacer = document.createElement('div'); spacer.style.flex = '1';
+  toolbar.appendChild(spacer);
+
+  // Search input
+  const searchWrap = document.createElement('div');
+  searchWrap.className = 'ct-search-wrap';
+  const searchIn = document.createElement('input');
+  searchIn.type = 'text'; searchIn.className = 'ct-search-input';
+  searchIn.placeholder = '🔍 Rechercher…';
+  searchIn.value = ctFilter;
+  searchIn.addEventListener('input', e => {
+    ctFilter = e.target.value; ctPage = 1; renderContactsView();
+  });
+  searchWrap.appendChild(searchIn);
+  toolbar.appendChild(searchWrap);
+
+  // Add button
+  const addBtn = document.createElement('button');
+  addBtn.className = 'ct-add-btn';
+  addBtn.textContent = '＋ Ajouter';
+  addBtn.addEventListener('click', () => ctShowContactModal(null));
+  toolbar.appendChild(addBtn);
+
+  view.appendChild(toolbar);
+
+  // ── Table ──
+  const list = ctSortedFiltered();
+  const totalPages = Math.max(1, Math.ceil(list.length / CT_PAGE_SIZE));
+  ctPage = Math.min(ctPage, totalPages);
+  const pageItems = list.slice((ctPage - 1) * CT_PAGE_SIZE, ctPage * CT_PAGE_SIZE);
+
+  const tableWrap = document.createElement('div');
+  tableWrap.className = 'ct-table-wrap';
+
+  const table = document.createElement('table');
+  table.className = 'ct-table';
+
+  // Header
+  const thead = document.createElement('thead');
+  const htr = document.createElement('tr');
+  const cols = [
+    { key: 'fn',   label: 'Prénom' },
+    { key: 'ln',   label: 'Nom' },
+    { key: 'bday', label: 'Anniversaire' },
+    { key: 'dday', label: 'Décès' },
+    { key: null,   label: '' }, // actions
+  ];
+  cols.forEach(col => {
+    const th = document.createElement('th');
+    th.className = 'ct-th' + (col.key ? ' ct-th-sort' : '');
+    if (col.key) {
+      const isActive = ctSortField === col.key;
+      th.innerHTML = `${col.label} <span class="ct-sort-icon">${isActive ? (ctSortAsc ? '▲' : '▼') : '⇅'}</span>`;
+      th.addEventListener('click', () => {
+        if (ctSortField === col.key) ctSortAsc = !ctSortAsc;
+        else { ctSortField = col.key; ctSortAsc = true; }
+        ctPage = 1; renderContactsView();
+      });
+    } else {
+      th.textContent = col.label;
+    }
+    htr.appendChild(th);
+  });
+  thead.appendChild(htr);
+  table.appendChild(thead);
+
+  // Body
+  const tbody = document.createElement('tbody');
+  if (!pageItems.length) {
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = 5; td.className = 'ct-empty';
+    td.textContent = ctFilter ? 'Aucun résultat pour cette recherche.' : 'Aucun contact.';
+    tr.appendChild(td); tbody.appendChild(tr);
+  }
+  pageItems.forEach((c, i) => {
+    const tr = document.createElement('tr');
+    tr.className = 'ct-tr' + (c.dy ? ' ct-tr-deceased' : '');
+
+    const tdFn = document.createElement('td'); tdFn.className = 'ct-td'; tdFn.textContent = c.fn || '—';
+    const tdLn = document.createElement('td'); tdLn.className = 'ct-td'; tdLn.textContent = c.ln || '—';
+
+    const tdBday = document.createElement('td'); tdBday.className = 'ct-td';
+    if (c.bm) {
+      const today = new Date();
+      const age = c.by ? (today.getFullYear() - c.by) : null;
+      const bdStr = ctFmtDate(c.by, c.bm, c.bd);
+      tdBday.innerHTML = `${bdStr}${age !== null ? ` <span class="ct-age">(${age} ans)</span>` : ''}`;
+    } else { tdBday.textContent = '—'; }
+
+    const tdDday = document.createElement('td'); tdDday.className = 'ct-td';
+    tdDday.textContent = c.dy ? ctFmtDate(c.dy, c.dm, c.dd) : '—';
+
+    const tdAct = document.createElement('td'); tdAct.className = 'ct-td ct-td-actions';
+    const editBtn = document.createElement('button'); editBtn.className = 'ct-row-btn'; editBtn.textContent = '✏';
+    editBtn.title = 'Modifier';
+    editBtn.addEventListener('click', () => ctShowContactModal(c));
+    const delBtn = document.createElement('button'); delBtn.className = 'ct-row-btn ct-row-btn-del'; delBtn.textContent = '✕';
+    delBtn.title = 'Supprimer';
+    delBtn.addEventListener('click', () => {
+      const full = [c.fn, c.ln].filter(Boolean).join(' ');
+      if (confirm(`Supprimer le contact "${full}" ?`)) {
+        const contacts = ctLoadContacts().filter(x => x !== c && !(x.fn===c.fn && x.ln===c.ln && x.bm===c.bm && x.bd===c.bd && x.by===c.by));
+        ctSaveContacts(contacts);
+        renderContactsView();
+        ctInjectAllBirthdays();
+      }
+    });
+    tdAct.appendChild(editBtn); tdAct.appendChild(delBtn);
+
+    tr.appendChild(tdFn); tr.appendChild(tdLn); tr.appendChild(tdBday); tr.appendChild(tdDday); tr.appendChild(tdAct);
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  tableWrap.appendChild(table);
+  view.appendChild(tableWrap);
+
+  // ── Pagination ──
+  const pager = document.createElement('div');
+  pager.className = 'ct-pager';
+
+  const info = document.createElement('span');
+  info.className = 'ct-pager-info';
+  const start = (ctPage - 1) * CT_PAGE_SIZE + 1;
+  const end = Math.min(ctPage * CT_PAGE_SIZE, list.length);
+  info.textContent = list.length ? `${start}–${end} de ${list.length}` : '0 contact';
+  pager.appendChild(info);
+
+  const pageBtns = document.createElement('div');
+  pageBtns.className = 'ct-pager-btns';
+
+  const mkPBtn = (label, page, disabled) => {
+    const b = document.createElement('button');
+    b.className = 'ct-pager-btn' + (page === ctPage ? ' active' : '');
+    b.textContent = label; b.disabled = disabled;
+    b.addEventListener('click', () => { ctPage = page; renderContactsView(); });
+    return b;
+  };
+
+  pageBtns.appendChild(mkPBtn('‹', ctPage - 1, ctPage <= 1));
+  // Page numbers — show up to 7 around current
+  const pageRange = [];
+  for (let p = Math.max(1, ctPage - 3); p <= Math.min(totalPages, ctPage + 3); p++) pageRange.push(p);
+  if (pageRange[0] > 1) { pageBtns.appendChild(mkPBtn('1', 1, false)); if (pageRange[0] > 2) { const dots=document.createElement('span'); dots.textContent='…'; dots.className='ct-pager-dots'; pageBtns.appendChild(dots); } }
+  pageRange.forEach(p => pageBtns.appendChild(mkPBtn(p, p, false)));
+  if (pageRange[pageRange.length-1] < totalPages) { if (pageRange[pageRange.length-1] < totalPages-1) { const dots=document.createElement('span'); dots.textContent='…'; dots.className='ct-pager-dots'; pageBtns.appendChild(dots); } pageBtns.appendChild(mkPBtn(totalPages, totalPages, false)); }
+  pageBtns.appendChild(mkPBtn('›', ctPage + 1, ctPage >= totalPages));
+
+  pager.appendChild(pageBtns);
+  view.appendChild(pager);
+
+  // Focus search
+  requestAnimationFrame(() => { if (!ctFilter) searchIn.focus(); });
+}
+
+// ── CONTACT MODAL (add/edit) ──────────────────────────────────────────────────
+function ctShowContactModal(contact) {
+  ctRemoveContactModal();
+  const isEdit = !!contact;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'kb-modal-overlay'; overlay.id = 'ctModalOverlay';
+  overlay.addEventListener('click', e => { if (e.target === overlay) ctRemoveContactModal(); });
+
+  const modal = document.createElement('div'); modal.className = 'kb-modal'; modal.style.maxWidth = '440px';
+
+  const mhd = document.createElement('div'); mhd.className = 'kb-modal-hd';
+  const mtitle = document.createElement('div'); mtitle.className = 'kb-modal-title';
+  mtitle.textContent = isEdit ? '✏ Modifier le contact' : '＋ Nouveau contact';
+  const mclose = document.createElement('button'); mclose.className = 'kb-modal-close'; mclose.textContent = '✕';
+  mclose.addEventListener('click', ctRemoveContactModal);
+  mhd.appendChild(mtitle); mhd.appendChild(mclose);
+
+  const mbd = document.createElement('div'); mbd.className = 'kb-modal-bd';
+
+  const mkField = (lbl, el, hint) => {
+    const wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+    const label = document.createElement('label'); label.className = 'kb-field-label'; label.textContent = lbl;
+    wrap.appendChild(label); wrap.appendChild(el);
+    if (hint) { const h = document.createElement('span'); h.style.cssText='font-size:.7rem;color:var(--muted);'; h.textContent=hint; wrap.appendChild(h); }
+    return wrap;
+  };
+
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:12px;';
+
+  const fnIn = document.createElement('input'); fnIn.className = 'kb-field-input'; fnIn.placeholder = 'Prénom'; fnIn.value = contact?.fn || '';
+  const lnIn = document.createElement('input'); lnIn.className = 'kb-field-input'; lnIn.placeholder = 'Nom'; lnIn.value = contact?.ln || '';
+  grid.appendChild(mkField('Prénom *', fnIn));
+  grid.appendChild(mkField('Nom', lnIn));
+  mbd.appendChild(grid);
+
+  // Birthday fields
+  const bdayGrid = document.createElement('div');
+  bdayGrid.style.cssText = 'display:grid;grid-template-columns:2fr 2fr 3fr;gap:8px;margin-top:4px;';
+  const bmIn = document.createElement('input'); bmIn.className = 'kb-field-input'; bmIn.type='number'; bmIn.min=1; bmIn.max=12; bmIn.placeholder='MM'; bmIn.value = contact?.bm || '';
+  const bdIn = document.createElement('input'); bdIn.className = 'kb-field-input'; bdIn.type='number'; bdIn.min=1; bdIn.max=31; bdIn.placeholder='JJ'; bdIn.value = contact?.bd || '';
+  const byIn = document.createElement('input'); byIn.className = 'kb-field-input'; byIn.type='number'; byIn.min=1800; byIn.max=2100; byIn.placeholder='AAAA'; byIn.value = contact?.by || '';
+  bdayGrid.appendChild(mkField('Mois nais.', bmIn));
+  bdayGrid.appendChild(mkField('Jour nais.', bdIn));
+  bdayGrid.appendChild(mkField('Année nais.', byIn));
+  mbd.appendChild(bdayGrid);
+
+  // Death fields
+  const ddayGrid = document.createElement('div');
+  ddayGrid.style.cssText = 'display:grid;grid-template-columns:2fr 2fr 3fr;gap:8px;margin-top:4px;';
+  const dmIn = document.createElement('input'); dmIn.className = 'kb-field-input'; dmIn.type='number'; dmIn.min=1; dmIn.max=12; dmIn.placeholder='MM'; dmIn.value = contact?.dm || '';
+  const ddIn = document.createElement('input'); ddIn.className = 'kb-field-input'; ddIn.type='number'; ddIn.min=1; ddIn.max=31; ddIn.placeholder='JJ'; ddIn.value = contact?.dd || '';
+  const dyIn = document.createElement('input'); dyIn.className = 'kb-field-input'; dyIn.type='number'; dyIn.min=1800; dyIn.max=2100; dyIn.placeholder='AAAA'; dyIn.value = contact?.dy || '';
+  ddayGrid.appendChild(mkField('Mois décès', dmIn));
+  ddayGrid.appendChild(mkField('Jour décès', ddIn));
+  ddayGrid.appendChild(mkField('Année décès', dyIn));
+  mbd.appendChild(ddayGrid);
+
+  const mft = document.createElement('div'); mft.className = 'kb-modal-ft';
+  const cancelBtn = document.createElement('button'); cancelBtn.className = 'kb-btn-cancel'; cancelBtn.textContent = 'Annuler';
+  cancelBtn.addEventListener('click', ctRemoveContactModal);
+  const saveBtn = document.createElement('button'); saveBtn.className = 'kb-btn-save';
+  saveBtn.textContent = isEdit ? 'Enregistrer' : 'Créer';
+
+  saveBtn.addEventListener('click', () => {
+    const fn = fnIn.value.trim();
+    if (!fn) { fnIn.style.borderColor = '#e05'; fnIn.focus(); return; }
+    const newContact = {
+      fn,
+      ln: lnIn.value.trim(),
+      by: parseInt(byIn.value) || null,
+      bm: parseInt(bmIn.value) || null,
+      bd: parseInt(bdIn.value) || null,
+      dy: parseInt(dyIn.value) || null,
+      dm: parseInt(dmIn.value) || null,
+      dd: parseInt(ddIn.value) || null,
+    };
+    let contacts = ctLoadContacts();
+    if (isEdit) {
+      const idx = contacts.findIndex(x => x.fn===contact.fn && x.ln===contact.ln && x.bm===contact.bm && x.bd===contact.bd && x.by===contact.by);
+      if (idx >= 0) contacts[idx] = newContact; else contacts.push(newContact);
+    } else {
+      contacts.push(newContact);
+      contacts.sort((a,b) => (a.fn||'').localeCompare(b.fn||''));
+    }
+    ctSaveContacts(contacts);
+    ctRemoveContactModal();
+    renderContactsView();
+    ctInjectAllBirthdays();
+  });
+
+  mft.appendChild(cancelBtn); mft.appendChild(saveBtn);
+  modal.appendChild(mhd); modal.appendChild(mbd); modal.appendChild(mft);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+  fnIn.focus();
+}
+
+function ctRemoveContactModal() {
+  const m = document.getElementById('ctModalOverlay'); if (m) m.remove();
+}
+
+// ── CONTACTS TAB BUTTON ───────────────────────────────────────────────────────
+document.getElementById('btnContacts')?.addEventListener('click', () => {
+  ['trackerView','kanbanView','contactsView','scrollArea','monthView','weeklyView'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.style.display = 'none';
+  });
+  const sw = document.querySelector('.strip-wrapper'); if (sw) sw.style.display = 'none';
+  document.querySelectorAll('.btn-view').forEach(b => b.classList.remove('active'));
+  document.getElementById('btnContacts').classList.add('active');
+  document.getElementById('contactsView').style.display = 'flex';
+  renderContactsView();
+});
+
+// Hide contacts view when switching to other views
+const _ctOrigSwitchView = window.switchView;
+window.switchView = function(mode) {
+  const cv = document.getElementById('contactsView'); if (cv) cv.style.display = 'none';
+  _ctOrigSwitchView(mode);
+};
 
 </script>
 </body>
