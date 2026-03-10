@@ -2541,6 +2541,97 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 }
 .toast-icon { font-size: .9rem; line-height: 1; }
 
+/* ── OSCARS ──────────────────────────────────────────────────────────────────── */
+.tr-oscars-tab { background: #fff8e1 !important; color: #b8860b !important; border-color: #f0c040 !important; }
+.tr-oscars-tab.active { background: #f0c040 !important; color: #5a4000 !important; }
+
+.os-panel {
+  flex: 1; overflow-y: auto; padding: 12px 20px 24px;
+  background: #fafaf8; display: flex; flex-direction: column; gap: 10px;
+}
+
+/* Year row */
+.os-year-row {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding-bottom: 6px; border-bottom: 2px solid #f0ede6;
+}
+.os-year-label { font-family: 'DM Sans', sans-serif; }
+.os-year-pills { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
+.os-year-pill {
+  padding: 3px 10px; border-radius: 12px; border: 1px solid #e0dcd4;
+  background: #fff; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  font-size: .72rem; font-weight: 600; color: #666; transition: all .12s;
+}
+.os-year-pill:hover { background: #f5f0e8; }
+.os-year-pill.active { background: #f0c040; color: #5a4000; border-color: #d4a800; font-weight: 700; }
+
+/* Category filter */
+.os-cat-bar {
+  display: flex; gap: 5px; flex-wrap: wrap;
+}
+.os-cat-pill {
+  padding: 4px 11px; border-radius: 14px; border: 1px solid #e0dcd4;
+  background: #fff; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  font-size: .68rem; font-weight: 600; color: #555; transition: all .12s; white-space: nowrap;
+}
+.os-cat-pill:hover { background: #f5f0e8; }
+.os-cat-pill.active { background: #6e9e7e; color: #fff; border-color: #5a8a6a; }
+
+/* Stats */
+.os-stats-row {
+  display: flex; align-items: center; gap: 16px;
+  background: #fff; border-radius: 10px; padding: 10px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.os-stat { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.os-stat-num { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: #4a6741; line-height: 1; }
+.os-stat-lbl { font-family: 'DM Sans', sans-serif; font-size: .6rem; font-weight: 700; color: #999; letter-spacing: .06em; }
+.os-stat-bar-wrap { flex: 1; }
+.os-stat-bar { height: 8px; background: #e8e4dc; border-radius: 4px; overflow: hidden; }
+.os-stat-bar-fill { height: 100%; background: linear-gradient(90deg, #6e9e7e, #f0c040); border-radius: 4px; transition: width .4s ease; }
+
+/* Grid of category cards */
+.os-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+.os-card {
+  background: #fff; border-radius: 10px; overflow: hidden;
+  box-shadow: 0 1px 6px rgba(0,0,0,.07); display: flex; flex-direction: column;
+}
+.os-card-hdr {
+  padding: 8px 12px; background: #25231f; color: #f0ede6;
+  font-family: 'DM Sans', sans-serif; font-size: .65rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+
+/* Nominee rows */
+.os-nominee {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px; border-bottom: 1px solid #f0ede6;
+  transition: background .12s;
+}
+.os-nominee:last-child { border-bottom: none; }
+.os-nominee:hover { background: #fafaf6; }
+.os-nominee.winner { background: #fffde6; }
+.os-nominee.winner:hover { background: #fff8c0; }
+.os-nominee.seen .os-film-name { text-decoration: line-through; color: #aaa; }
+.os-nominee.seen .os-person-name { color: #bbb; }
+
+.os-cb { width: 14px; height: 14px; flex-shrink: 0; cursor: pointer; accent-color: #6e9e7e; }
+
+.os-nominee-label { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.os-film-name {
+  font-family: 'DM Sans', sans-serif; font-size: .78rem; font-weight: 600; color: #333;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.os-person-name {
+  font-family: 'DM Sans', sans-serif; font-size: .68rem; color: #777; margin-top: 1px;
+}
+.os-trophy { font-size: .9rem; flex-shrink: 0; margin-left: 4px; }
+
+.os-empty { padding: 40px; text-align: center; color: #aaa; font-family: 'DM Sans', sans-serif; font-size: .85rem; }
+
 </style>
 </head>
 <body>
@@ -4324,6 +4415,1205 @@ function gcRenderYear(root){
 
 </script>
 <script>
+// ── OSCARS DATA 2020-2025 — Toutes catégories ────────────────────────────────
+const OSCARS_DATA = [
+{
+  year: 2025, ceremony: 97,
+  categories: [
+    { id:'picture', name:'Meilleur film', nominees:[
+      {film:'Anora', winner:true},
+      {film:'The Brutalist'},
+      {film:'A Complete Unknown'},
+      {film:'Conclave'},
+      {film:'Dune: Part Two'},
+      {film:'Emilia Pérez'},
+      {film:"I'm Still Here"},
+      {film:'Nickel Boys'},
+      {film:'The Substance'},
+      {film:'Wicked'},
+    ]},
+    { id:'director', name:'Meilleure réalisation', nominees:[
+      {film:'Anora', person:'Sean Baker', winner:true},
+      {film:'The Brutalist', person:'Brady Corbet'},
+      {film:'A Complete Unknown', person:'James Mangold'},
+      {film:'Emilia Pérez', person:'Jacques Audiard'},
+      {film:'The Substance', person:'Coralie Fargeat'},
+    ]},
+    { id:'actor', name:'Meilleur acteur', nominees:[
+      {film:'The Brutalist', person:'Adrien Brody', winner:true},
+      {film:'A Complete Unknown', person:'Timothée Chalamet'},
+      {film:'Sing Sing', person:'Colman Domingo'},
+      {film:'Conclave', person:'Ralph Fiennes'},
+      {film:'The Apprentice', person:'Sebastian Stan'},
+    ]},
+    { id:'actress', name:'Meilleure actrice', nominees:[
+      {film:'Anora', person:'Mikey Madison', winner:true},
+      {film:'Wicked', person:'Cynthia Erivo'},
+      {film:'Emilia Pérez', person:'Karla Sofía Gascón'},
+      {film:'The Substance', person:'Demi Moore'},
+      {film:"I'm Still Here", person:'Fernanda Torres'},
+    ]},
+    { id:'supp_actor', name:'Acteur second rôle', nominees:[
+      {film:'A Real Pain', person:'Kieran Culkin', winner:true},
+      {film:'Anora', person:'Yura Borisov'},
+      {film:'A Complete Unknown', person:'Edward Norton'},
+      {film:'The Brutalist', person:'Guy Pearce'},
+      {film:'The Apprentice', person:'Jeremy Strong'},
+    ]},
+    { id:'supp_actress', name:'Actrice second rôle', nominees:[
+      {film:'Emilia Pérez', person:'Zoe Saldaña', winner:true},
+      {film:'A Complete Unknown', person:'Monica Barbaro'},
+      {film:'Wicked', person:'Ariana Grande'},
+      {film:'The Brutalist', person:'Felicity Jones'},
+      {film:'Conclave', person:'Isabella Rossellini'},
+    ]},
+    { id:'animated', name:'Film d\'animation', nominees:[
+      {film:'Flow', winner:true},
+      {film:'The Wild Robot'},
+      {film:'Inside Out 2'},
+      {film:'Memoir of a Snail'},
+      {film:'Wallace & Gromit: Vengeance Most Fowl'},
+    ]},
+    { id:'animated_short', name:'Court métrage animé', nominees:[
+      {film:'In the Shadow of the Cypress', winner:true},
+      {film:'Beautiful Men'},
+      {film:'Magic Candyball'},
+      {film:'Wander to Wonder'},
+      {film:'Yuck!'},
+    ]},
+    { id:'intl', name:'Film international', nominees:[
+      {film:"I'm Still Here (Brésil)", winner:true},
+      {film:'The Girl with the Needle (Danemark/Pologne)'},
+      {film:'The Seed of the Sacred Fig (Allemagne)'},
+      {film:'Flow (Lettonie)'},
+      {film:'Emilia Pérez (France)'},
+    ]},
+    { id:'documentary', name:'Documentaire long métrage', nominees:[
+      {film:'No Other Land', winner:true},
+      {film:'Black Box Diaries'},
+      {film:'Porcelain War'},
+      {film:"Soundtrack to a Coup d'Etat"},
+      {film:'Sugarcane'},
+    ]},
+    { id:'doc_short', name:'Documentaire court métrage', nominees:[
+      {film:'The Only Girl in the Orchestra', winner:true},
+      {film:"Death by Numbers"},
+      {film:'I Am Ready, Warden'},
+      {film:'Incident'},
+      {film:'Instruments of a Beating Heart'},
+    ]},
+    { id:'live_short', name:'Court métrage fiction', nominees:[
+      {film:'A Lien', winner:true},
+      {film:'Anuja'},
+      {film:'The Last Ranger'},
+      {film:'The Man Who Could Not Remain Silent'},
+      {film:'Afternoon'},
+    ]},
+    { id:'screenplay', name:'Scénario original', nominees:[
+      {film:'Anora', person:'Sean Baker', winner:true},
+      {film:'The Brutalist', person:'Brady Corbet, Mona Fastvold'},
+      {film:'A Real Pain', person:'Jesse Eisenberg'},
+      {film:'The Substance', person:'Coralie Fargeat'},
+      {film:'September 5', person:'Moritz Binder, Tim Fehlbaum'},
+    ]},
+    { id:'adapted', name:'Scénario adapté', nominees:[
+      {film:'Conclave', person:'Edward Berger', winner:true},
+      {film:'A Complete Unknown', person:'James Mangold, Jay Cocks'},
+      {film:'Emilia Pérez', person:'Jacques Audiard'},
+      {film:'Nickel Boys', person:'RaMell Ross'},
+      {film:'Sing Sing', person:'Greg Kwedar, Clint Bentley'},
+    ]},
+    { id:'cinematography', name:'Photographie', nominees:[
+      {film:'The Brutalist', person:'Lol Crawley', winner:true},
+      {film:'A Complete Unknown', person:'Phedon Papamichael'},
+      {film:'Dune: Part Two', person:'Greig Fraser'},
+      {film:'Emilia Pérez', person:'Paul Guilhaume'},
+      {film:'Maria', person:'Ed Lachman'},
+    ]},
+    { id:'editing', name:'Montage', nominees:[
+      {film:'Anora', person:'Sean Baker', winner:true},
+      {film:'The Brutalist', person:'Dávid Jancsó'},
+      {film:'Conclave', person:'Nick Emerson'},
+      {film:'Emilia Pérez', person:'Juliette Welfling'},
+      {film:'Wicked', person:'Myron Kerstein'},
+    ]},
+    { id:'score', name:'Musique originale', nominees:[
+      {film:'The Brutalist', person:'Daniel Blumberg', winner:true},
+      {film:'Conclave', person:'Volker Bertelmann'},
+      {film:'Emilia Pérez', person:'Clément Ducol, Camille'},
+      {film:'Wicked', person:'John Powell, Stephen Schwartz'},
+      {film:'The Wild Robot', person:'Kris Bowers'},
+    ]},
+    { id:'song', name:'Chanson originale', nominees:[
+      {film:'Emilia Pérez', person:'"El Mal" – Camille, Clément Ducol', winner:true},
+      {film:'The Four Seasons', person:'"Beautiful Men" – Lola Young'},
+      {film:'Elton John: Never Too Late', person:'"Never Too Late" – Elton John'},
+      {film:'Sing Sing', person:'"Like A Bird" – Abraham Alexander'},
+      {film:'Emilia Pérez', person:'"Mi Camino" – Camille, Clément Ducol'},
+    ]},
+    { id:'costume', name:'Costumes', nominees:[
+      {film:'Wicked', person:'Paul Tazewell', winner:true},
+      {film:'A Complete Unknown', person:'Arianne Phillips'},
+      {film:'Conclave', person:'Lisy Christl'},
+      {film:'Nosferatu', person:'Linda Muir'},
+      {film:'The Order', person:'Isis Mussenden'},
+    ]},
+    { id:'production', name:'Décors', nominees:[
+      {film:'Wicked', person:'Nathan Crowley, Lee Sandales', winner:true},
+      {film:'The Brutalist', person:'Judy Becker, Patricia Cuccia'},
+      {film:'Conclave', person:'Suzie Davies, Cynthia Sleiter'},
+      {film:'Dune: Part Two', person:'Patrice Vermette, Ilse Dupont'},
+      {film:'Nosferatu', person:'Craig Lathrop, Enrico Campana'},
+    ]},
+    { id:'makeup', name:'Maquillage et coiffure', nominees:[
+      {film:'The Substance', person:'Pierre-Olivier Persin et al.', winner:true},
+      {film:'A Different Man', person:'Mike Marino et al.'},
+      {film:'Emilia Pérez', person:'Julia Floch Carbonel et al.'},
+      {film:'Nosferatu', person:'David White et al.'},
+      {film:'Wicked', person:'Frances Hannon et al.'},
+    ]},
+    { id:'sound', name:'Son', nominees:[
+      {film:'Dune: Part Two', winner:true},
+      {film:'A Complete Unknown'},
+      {film:'Emilia Pérez'},
+      {film:'Wicked'},
+      {film:'The Wild Robot'},
+    ]},
+    { id:'vfx', name:'Effets visuels', nominees:[
+      {film:'Dune: Part Two', winner:true},
+      {film:'Alien: Romulus'},
+      {film:'Better Man'},
+      {film:'Kingdom of the Planet of the Apes'},
+      {film:'Wicked'},
+    ]},
+  ]
+},
+{
+  year: 2024, ceremony: 96,
+  categories: [
+    { id:'picture', name:'Meilleur film', nominees:[
+      {film:'Oppenheimer', winner:true},
+      {film:'American Fiction'},
+      {film:'Anatomy of a Fall'},
+      {film:'Barbie'},
+      {film:'The Holdovers'},
+      {film:'Killers of the Flower Moon'},
+      {film:'Maestro'},
+      {film:'Past Lives'},
+      {film:'Poor Things'},
+      {film:'The Zone of Interest'},
+    ]},
+    { id:'director', name:'Meilleure réalisation', nominees:[
+      {film:'Oppenheimer', person:'Christopher Nolan', winner:true},
+      {film:'Anatomy of a Fall', person:'Justine Triet'},
+      {film:'Killers of the Flower Moon', person:'Martin Scorsese'},
+      {film:'Poor Things', person:'Yorgos Lanthimos'},
+      {film:'The Zone of Interest', person:'Jonathan Glazer'},
+    ]},
+    { id:'actor', name:'Meilleur acteur', nominees:[
+      {film:'Oppenheimer', person:'Cillian Murphy', winner:true},
+      {film:'American Fiction', person:'Jeffrey Wright'},
+      {film:'Maestro', person:'Bradley Cooper'},
+      {film:'The Holdovers', person:'Paul Giamatti'},
+      {film:'Ferrari', person:'Adam Driver'},
+    ]},
+    { id:'actress', name:'Meilleure actrice', nominees:[
+      {film:'Poor Things', person:'Emma Stone', winner:true},
+      {film:'Anatomy of a Fall', person:'Sandra Hüller'},
+      {film:'The Color Purple', person:'Fantasia Barrino'},
+      {film:'Nyad', person:'Annette Bening'},
+      {film:'Priscilla', person:'Cailee Spaeny'},
+    ]},
+    { id:'supp_actor', name:'Acteur second rôle', nominees:[
+      {film:'Oppenheimer', person:'Robert Downey Jr.', winner:true},
+      {film:'Oppenheimer', person:'Josh Hartnett'},
+      {film:'The Holdovers', person:'Mark Ruffalo'},
+      {film:'Killers of the Flower Moon', person:'Robert De Niro'},
+      {film:'American Fiction', person:'Sterling K. Brown'},
+    ]},
+    { id:'supp_actress', name:'Actrice second rôle', nominees:[
+      {film:'The Holdovers', person:"Da'Vine Joy Randolph", winner:true},
+      {film:'Barbie', person:'America Ferrera'},
+      {film:'Nyad', person:'Jodie Foster'},
+      {film:'The Color Purple', person:'Danielle Brooks'},
+      {film:'Oppenheimer', person:'Emily Blunt'},
+    ]},
+    { id:'animated', name:'Film d\'animation', nominees:[
+      {film:'The Boy and the Heron', winner:true},
+      {film:'Elemental'},
+      {film:'Nimona'},
+      {film:'Robot Dreams'},
+      {film:'Spider-Man: Across the Spider-Verse'},
+    ]},
+    { id:'animated_short', name:'Court métrage animé', nominees:[
+      {film:'War Is Over! (Inspired by the Music of John & Yoko)', winner:true},
+      {film:'Letter to a Pig'},
+      {film:'Ninety-Five Senses'},
+      {film:'Our Uniform'},
+      {film:'Pachyderme'},
+    ]},
+    { id:'intl', name:'Film international', nominees:[
+      {film:'The Zone of Interest (Royaume-Uni)', winner:true},
+      {film:'Io Capitano (Italie)'},
+      {film:'Perfect Days (Japon)'},
+      {film:"Society of the Snow (Espagne)"},
+      {film:"The Teachers' Lounge (Allemagne)"},
+    ]},
+    { id:'documentary', name:'Documentaire long métrage', nominees:[
+      {film:'20 Days in Mariupol', winner:true},
+      {film:"Bobi Wine: The People's President"},
+      {film:'The Eternal Memory'},
+      {film:'Four Daughters'},
+      {film:'To Kill a Tiger'},
+    ]},
+    { id:'doc_short', name:'Documentaire court métrage', nominees:[
+      {film:'The Last Repair Shop', winner:true},
+      {film:'The ABCs of Book Banning'},
+      {film:'The Barber of Little Rock'},
+      {film:'Island in Between'},
+      {film:'Nǎi Nai & Wài Pó'},
+    ]},
+    { id:'live_short', name:'Court métrage fiction', nominees:[
+      {film:'The Wonderful Story of Henry Sugar', winner:true},
+      {film:'The After'},
+      {film:'Invincible'},
+      {film:'Knight of Fortune'},
+      {film:'Red, White and Blue'},
+    ]},
+    { id:'screenplay', name:'Scénario original', nominees:[
+      {film:'Anatomy of a Fall', person:'Justine Triet, Arthur Harari', winner:true},
+      {film:'The Holdovers', person:'David Hemingson'},
+      {film:'Maestro', person:'Bradley Cooper, Josh Singer'},
+      {film:'May December', person:'Samy Burch'},
+      {film:'Past Lives', person:'Celine Song'},
+    ]},
+    { id:'adapted', name:'Scénario adapté', nominees:[
+      {film:'American Fiction', person:'Cord Jefferson', winner:true},
+      {film:'Barbie', person:'Greta Gerwig, Noah Baumbach'},
+      {film:'Oppenheimer', person:'Christopher Nolan'},
+      {film:'Poor Things', person:'Tony McNamara'},
+      {film:'The Zone of Interest', person:'Jonathan Glazer'},
+    ]},
+    { id:'cinematography', name:'Photographie', nominees:[
+      {film:'Oppenheimer', person:'Hoyte van Hoytema', winner:true},
+      {film:'El Conde', person:'Edward Lachman'},
+      {film:'Killers of the Flower Moon', person:'Rodrigo Prieto'},
+      {film:'Maestro', person:'Matthew Libatique'},
+      {film:'Poor Things', person:'Robbie Ryan'},
+    ]},
+    { id:'editing', name:'Montage', nominees:[
+      {film:'Oppenheimer', person:'Jennifer Lame', winner:true},
+      {film:'Anatomy of a Fall', person:'Laurent Sénéchal'},
+      {film:'The Holdovers', person:'Kevin Tent'},
+      {film:'Killers of the Flower Moon', person:'Thelma Schoonmaker'},
+      {film:'Poor Things', person:'Yorgos Mavropsaridis'},
+    ]},
+    { id:'score', name:'Musique originale', nominees:[
+      {film:'Oppenheimer', person:'Ludwig Göransson', winner:true},
+      {film:'American Fiction', person:'Laura Karpman'},
+      {film:'Indiana Jones 5', person:'John Williams'},
+      {film:'Killers of the Flower Moon', person:'Robbie Robertson'},
+      {film:'Poor Things', person:'Jerskin Fendrix'},
+    ]},
+    { id:'song', name:'Chanson originale', nominees:[
+      {film:'Barbie', person:'"What Was I Made For?" – Billie Eilish', winner:true},
+      {film:'Barbie', person:'"I\'m Just Ken" – Mark Ronson'},
+      {film:'American Symphony', person:'"It Never Went Away" – Jon Batiste'},
+      {film:'Flamin\' Hot', person:'"The Fire Inside" – Diane Warren'},
+      {film:'Society of the Snow', person:'"Wahzhazhe (A Song for My People)" – Scott George'},
+    ]},
+    { id:'costume', name:'Costumes', nominees:[
+      {film:'Poor Things', person:'Holly Waddington', winner:true},
+      {film:'Barbie', person:'Jacqueline Durran'},
+      {film:'Killers of the Flower Moon', person:'Jacqueline West'},
+      {film:'Napoleon', person:'Janty Yates, Dave Crossman'},
+      {film:'Oppenheimer', person:'Ellen Mirojnick'},
+    ]},
+    { id:'production', name:'Décors', nominees:[
+      {film:'Poor Things', person:'James Price, Shona Heath, Zsuzsa Mihalek', winner:true},
+      {film:'Barbie', person:'Sarah Greenwood, Katie Spencer'},
+      {film:'Killers of the Flower Moon', person:'Jack Fisk, Adam Willis'},
+      {film:'Napoleon', person:'Arthur Max, Elli Griff'},
+      {film:'Oppenheimer', person:'Ruth De Jong, Claire Kaufman'},
+    ]},
+    { id:'makeup', name:'Maquillage et coiffure', nominees:[
+      {film:'Poor Things', person:'Nadia Stacey, Mark Coulier, Josh Weston', winner:true},
+      {film:'Golda', person:'Karen Hartley Thomas et al.'},
+      {film:'Maestro', person:'Kazu Hiro, Kay Georgiou, Lori McCoy-Bell'},
+      {film:'Oppenheimer', person:'Luisa Abel'},
+      {film:'Society of the Snow', person:'Ana López-Puigcerver et al.'},
+    ]},
+    { id:'sound', name:'Son', nominees:[
+      {film:'The Zone of Interest', winner:true},
+      {film:'Maestro'},
+      {film:'Mission: Impossible – Dead Reckoning'},
+      {film:'Oppenheimer'},
+      {film:'Society of the Snow'},
+    ]},
+    { id:'vfx', name:'Effets visuels', nominees:[
+      {film:'Godzilla Minus One', winner:true},
+      {film:'Guardians of the Galaxy Vol. 3'},
+      {film:'Indiana Jones 5'},
+      {film:'Mission: Impossible – Dead Reckoning'},
+      {film:'Napoleon'},
+    ]},
+  ]
+},
+{
+  year: 2023, ceremony: 95,
+  categories: [
+    { id:'picture', name:'Meilleur film', nominees:[
+      {film:'Everything Everywhere All at Once', winner:true},
+      {film:'All Quiet on the Western Front'},
+      {film:'The Banshees of Inisherin'},
+      {film:'Elvis'},
+      {film:'The Fabelmans'},
+      {film:'Tár'},
+      {film:'Top Gun: Maverick'},
+      {film:'Triangle of Sadness'},
+      {film:'Women Talking'},
+      {film:'Avatar: The Way of Water'},
+    ]},
+    { id:'director', name:'Meilleure réalisation', nominees:[
+      {film:'Everything Everywhere All at Once', person:'Daniel Kwan & Daniel Scheinert', winner:true},
+      {film:'The Banshees of Inisherin', person:'Martin McDonagh'},
+      {film:'The Fabelmans', person:'Steven Spielberg'},
+      {film:'Tár', person:'Todd Field'},
+      {film:'Triangle of Sadness', person:'Ruben Östlund'},
+    ]},
+    { id:'actor', name:'Meilleur acteur', nominees:[
+      {film:'The Whale', person:'Brendan Fraser', winner:true},
+      {film:'The Banshees of Inisherin', person:'Colin Farrell'},
+      {film:'Elvis', person:'Austin Butler'},
+      {film:'Tár', person:'Paul Mescal'},
+      {film:'The Son', person:'Hugh Jackman'},
+    ]},
+    { id:'actress', name:'Meilleure actrice', nominees:[
+      {film:'Everything Everywhere All at Once', person:'Michelle Yeoh', winner:true},
+      {film:'Tár', person:'Cate Blanchett'},
+      {film:'The Whale', person:'Andrea Riseborough'},
+      {film:'The Woman King', person:'Viola Davis'},
+      {film:'Till', person:'Danielle Deadwyler'},
+    ]},
+    { id:'supp_actor', name:'Acteur second rôle', nominees:[
+      {film:'Everything Everywhere All at Once', person:'Ke Huy Quan', winner:true},
+      {film:'The Banshees of Inisherin', person:'Barry Keoghan'},
+      {film:'The Fabelmans', person:'Judd Hirsch'},
+      {film:'Everything Everywhere All at Once', person:'Brian Tyree Henry'},
+      {film:'The Banshees of Inisherin', person:'Brendan Gleeson'},
+    ]},
+    { id:'supp_actress', name:'Actrice second rôle', nominees:[
+      {film:'Everything Everywhere All at Once', person:'Jamie Lee Curtis', winner:true},
+      {film:'The Banshees of Inisherin', person:'Kerry Condon'},
+      {film:'Everything Everywhere All at Once', person:'Stephanie Hsu'},
+      {film:'Causeway', person:'Hong Chau'},
+      {film:'Women Talking', person:'Jessie Buckley'},
+    ]},
+    { id:'animated', name:'Film d\'animation', nominees:[
+      {film:'Pinocchio de Guillermo del Toro', winner:true},
+      {film:'Marcel the Shell with Shoes On'},
+      {film:'Puss in Boots: The Last Wish'},
+      {film:'The Sea Beast'},
+      {film:'Turning Red'},
+    ]},
+    { id:'animated_short', name:'Court métrage animé', nominees:[
+      {film:'The Boy, the Mole, the Fox and the Horse', winner:true},
+      {film:'The Flying Sailor'},
+      {film:'Ice Merchants'},
+      {film:'My Year of Dicks'},
+      {film:'An Ostrich Told Me the World Is Fake and I Think I Believe It'},
+    ]},
+    { id:'intl', name:'Film international', nominees:[
+      {film:'All Quiet on the Western Front (Allemagne)', winner:true},
+      {film:'Argentina, 1985 (Argentine)'},
+      {film:'The Quiet Girl (Irlande)'},
+      {film:'EO (Pologne)'},
+      {film:'The Blue Caftan (Maroc)'},
+    ]},
+    { id:'documentary', name:'Documentaire long métrage', nominees:[
+      {film:'Navalny', winner:true},
+      {film:'All That Breathes'},
+      {film:'All the Beauty and the Bloodshed'},
+      {film:'Fire of Love'},
+      {film:'A House Made of Splinters'},
+    ]},
+    { id:'doc_short', name:'Documentaire court métrage', nominees:[
+      {film:'The Elephant Whisperers', winner:true},
+      {film:'Haulout'},
+      {film:'How Do You Measure a Year?'},
+      {film:'The Martha Mitchell Effect'},
+      {film:'Stranger at the Gate'},
+    ]},
+    { id:'live_short', name:'Court métrage fiction', nominees:[
+      {film:'An Irish Goodbye', winner:true},
+      {film:'Ivalu'},
+      {film:'Le Pupille'},
+      {film:'Night Ride'},
+      {film:'The Red Suitcase'},
+    ]},
+    { id:'screenplay', name:'Scénario original', nominees:[
+      {film:'Everything Everywhere All at Once', person:'Daniel Kwan, Daniel Scheinert', winner:true},
+      {film:'The Banshees of Inisherin', person:'Martin McDonagh'},
+      {film:'The Fabelmans', person:'Steven Spielberg, Tony Kushner'},
+      {film:'Tár', person:'Todd Field'},
+      {film:'Triangle of Sadness', person:'Ruben Östlund'},
+    ]},
+    { id:'adapted', name:'Scénario adapté', nominees:[
+      {film:'Women Talking', person:'Sarah Polley', winner:true},
+      {film:'All Quiet on the Western Front', person:'Edward Berger, Lesley Paterson, Ian Stokell'},
+      {film:'Glass Onion', person:'Rian Johnson'},
+      {film:'Living', person:'Kazuo Ishiguro'},
+      {film:'Top Gun: Maverick', person:'Ehren Kruger, Eric Warren Singer, Christopher McQuarrie'},
+    ]},
+    { id:'cinematography', name:'Photographie', nominees:[
+      {film:'All Quiet on the Western Front', person:'James Friend', winner:true},
+      {film:'Bardo', person:'Darius Khondji'},
+      {film:'Elvis', person:'Mandy Walker'},
+      {film:'Empire of Light', person:'Roger Deakins'},
+      {film:'Tár', person:'Florian Hoffmeister'},
+    ]},
+    { id:'editing', name:'Montage', nominees:[
+      {film:'Everything Everywhere All at Once', person:'Paul Rogers', winner:true},
+      {film:'The Banshees of Inisherin', person:'Mikkel E.G. Nielsen'},
+      {film:'Elvis', person:'Matt Villa, Jonathan Redmond'},
+      {film:'Tár', person:'Monika Willi'},
+      {film:'Top Gun: Maverick', person:'Eddie Hamilton'},
+    ]},
+    { id:'score', name:'Musique originale', nominees:[
+      {film:'All Quiet on the Western Front', person:'Volker Bertelmann', winner:true},
+      {film:'Babylon', person:'Justin Hurwitz'},
+      {film:'The Banshees of Inisherin', person:'Carter Burwell'},
+      {film:'Everything Everywhere All at Once', person:'Son Lux'},
+      {film:'The Fabelmans', person:'John Williams'},
+    ]},
+    { id:'song', name:'Chanson originale', nominees:[
+      {film:'RRR', person:'"Naatu Naatu" – M.M. Keeravaani', winner:true},
+      {film:'Applause', person:'"Applause" – Diane Warren'},
+      {film:'Babylon', person:'"Hold My Hand" – Lady Gaga'},
+      {film:'Everything Everywhere All at Once', person:'"This Is a Life" – Ryan Lott, David Byrne, Mitski'},
+      {film:'Women Talking', person:'"My Body is a Cage" – A.R. Rahman'},
+    ]},
+    { id:'costume', name:'Costumes', nominees:[
+      {film:'Everything Everywhere All at Once', person:'Shirley Kurata', winner:true},
+      {film:'Babylon', person:'Mary Zophres'},
+      {film:'Black Panther: Wakanda Forever', person:'Ruth E. Carter'},
+      {film:'Elvis', person:'Catherine Martin'},
+      {film:'Mrs. Harris Goes to Paris', person:'Jenny Beavan'},
+    ]},
+    { id:'production', name:'Décors', nominees:[
+      {film:'Everything Everywhere All at Once', person:'Jason Kisvarday', winner:true},
+      {film:'All Quiet on the Western Front', person:'Christian M. Goldbeck, Ernestine Hipper'},
+      {film:'Avatar: The Way of Water', person:'Dylan Cole, Ben Procter, Vanessa Cole'},
+      {film:'Babylon', person:'Florencia Martin, Anthony Carlino'},
+      {film:'Elvis', person:'Catherine Martin, Karen Murphy, Beverley Dunn'},
+    ]},
+    { id:'makeup', name:'Maquillage et coiffure', nominees:[
+      {film:'The Whale', person:'Adrien Morot, Judy Chin, Anne Marie Bradley', winner:true},
+      {film:'All Quiet on the Western Front', person:'Heike Merker, Linda Eisenhamerová'},
+      {film:'The Batman', person:'Naomi Donne, Mike Marino, Mike Fontaine'},
+      {film:'Black Panther: Wakanda Forever', person:'Camille Friend, Joel Harlow'},
+      {film:'Elvis', person:'Mark Coulier, Jason Baird, Aldo Signoretti'},
+    ]},
+    { id:'sound', name:'Son', nominees:[
+      {film:'Top Gun: Maverick', winner:true},
+      {film:'All Quiet on the Western Front'},
+      {film:'Avatar: The Way of Water'},
+      {film:'The Batman'},
+      {film:'Elvis'},
+    ]},
+    { id:'vfx', name:'Effets visuels', nominees:[
+      {film:'Avatar: The Way of Water', winner:true},
+      {film:'The Batman'},
+      {film:'Black Panther: Wakanda Forever'},
+      {film:'Elvis'},
+      {film:'Top Gun: Maverick'},
+    ]},
+  ]
+},
+{
+  year: 2022, ceremony: 94,
+  categories: [
+    { id:'picture', name:'Meilleur film', nominees:[
+      {film:'CODA', winner:true},
+      {film:'Belfast'},
+      {film:"Don't Look Up"},
+      {film:'Drive My Car'},
+      {film:'Dune'},
+      {film:'King Richard'},
+      {film:'Licorice Pizza'},
+      {film:'Nightmare Alley'},
+      {film:'The Power of the Dog'},
+      {film:'West Side Story'},
+    ]},
+    { id:'director', name:'Meilleure réalisation', nominees:[
+      {film:'The Power of the Dog', person:'Jane Campion', winner:true},
+      {film:'Belfast', person:'Kenneth Branagh'},
+      {film:'Drive My Car', person:'Ryûsuke Hamaguchi'},
+      {film:'Licorice Pizza', person:'Paul Thomas Anderson'},
+      {film:'Tick, Tick... Boom!', person:'Lin-Manuel Miranda'},
+    ]},
+    { id:'actor', name:'Meilleur acteur', nominees:[
+      {film:'King Richard', person:'Will Smith', winner:true},
+      {film:'The Tragedy of Macbeth', person:'Denzel Washington'},
+      {film:'Being the Ricardos', person:'Javier Bardem'},
+      {film:'The Power of the Dog', person:'Benedict Cumberbatch'},
+      {film:'Tick, Tick... Boom!', person:'Andrew Garfield'},
+    ]},
+    { id:'actress', name:'Meilleure actrice', nominees:[
+      {film:'The Eyes of Tammy Faye', person:'Jessica Chastain', winner:true},
+      {film:'Being the Ricardos', person:'Nicole Kidman'},
+      {film:'Spencer', person:'Kristen Stewart'},
+      {film:'Parallel Mothers', person:'Penélope Cruz'},
+      {film:'The Lost Daughter', person:'Olivia Colman'},
+    ]},
+    { id:'supp_actor', name:'Acteur second rôle', nominees:[
+      {film:'CODA', person:'Troy Kotsur', winner:true},
+      {film:'The Power of the Dog', person:'Jesse Plemons'},
+      {film:'The Power of the Dog', person:'Kodi Smit-McPhee'},
+      {film:'Belfast', person:'Ciarán Hinds'},
+      {film:'Being the Ricardos', person:'J.K. Simmons'},
+    ]},
+    { id:'supp_actress', name:'Actrice second rôle', nominees:[
+      {film:'West Side Story', person:'Ariana DeBose', winner:true},
+      {film:'The Power of the Dog', person:'Kirsten Dunst'},
+      {film:'Belfast', person:'Judi Dench'},
+      {film:'Nightmare Alley', person:'Cate Blanchett'},
+      {film:'The Lost Daughter', person:'Jessie Buckley'},
+    ]},
+    { id:'animated', name:'Film d\'animation', nominees:[
+      {film:'Encanto', winner:true},
+      {film:'Flee'},
+      {film:'Luca'},
+      {film:'The Mitchells vs. the Machines'},
+      {film:'Raya and the Last Dragon'},
+    ]},
+    { id:'animated_short', name:'Court métrage animé', nominees:[
+      {film:'The Windshield Wiper', winner:true},
+      {film:'Affairs of the Art'},
+      {film:'Bestia'},
+      {film:'Boxballet'},
+      {film:'Robin Robin'},
+    ]},
+    { id:'intl', name:'Film international', nominees:[
+      {film:'Drive My Car (Japon)', winner:true},
+      {film:'Flee (Danemark)'},
+      {film:'The Hand of God (Italie)'},
+      {film:'Lunana: A Yak in the Classroom (Bhoutan)'},
+      {film:"The Worst Person in the World (Norvège)"},
+    ]},
+    { id:'documentary', name:'Documentaire long métrage', nominees:[
+      {film:'Summer of Soul (...Or, When the Revolution Could Not Be Televised)', winner:true},
+      {film:'Ascension'},
+      {film:'Attica'},
+      {film:'Flee'},
+      {film:'Writing with Fire'},
+    ]},
+    { id:'doc_short', name:'Documentaire court métrage', nominees:[
+      {film:'The Queen of Basketball', winner:true},
+      {film:'Audible'},
+      {film:'Lead Me Home'},
+      {film:'Three Songs for Benazir'},
+      {film:'When We Were Bullies'},
+    ]},
+    { id:'live_short', name:'Court métrage fiction', nominees:[
+      {film:'The Long Goodbye', winner:true},
+      {film:'Ala Kachuu – Take and Run'},
+      {film:'On My Mind'},
+      {film:'Please Hold'},
+      {film:'The Dress'},
+    ]},
+    { id:'screenplay', name:'Scénario original', nominees:[
+      {film:'Belfast', person:'Kenneth Branagh', winner:true},
+      {film:"Don't Look Up", person:'Adam McKay'},
+      {film:'King Richard', person:'Zach Baylin'},
+      {film:'Licorice Pizza', person:'Paul Thomas Anderson'},
+      {film:"The Worst Person in the World", person:'Eskil Vogt, Joachim Trier'},
+    ]},
+    { id:'adapted', name:'Scénario adapté', nominees:[
+      {film:'CODA', person:'Siân Heder', winner:true},
+      {film:'Drive My Car', person:'Ryûsuke Hamaguchi, Takamasa Oe'},
+      {film:'Dune', person:'Jon Spaihts, Denis Villeneuve, Eric Roth'},
+      {film:'The Lost Daughter', person:'Maggie Gyllenhaal'},
+      {film:'The Power of the Dog', person:'Jane Campion'},
+    ]},
+    { id:'cinematography', name:'Photographie', nominees:[
+      {film:'Dune', person:'Greig Fraser', winner:true},
+      {film:'Nightmare Alley', person:'Dan Laustsen'},
+      {film:'The Power of the Dog', person:'Ari Wegner'},
+      {film:'The Tragedy of Macbeth', person:'Bruno Delbonnel'},
+      {film:'West Side Story', person:'Janusz Kaminski'},
+    ]},
+    { id:'editing', name:'Montage', nominees:[
+      {film:'The Power of the Dog', person:'Peter Sciberras', winner:true},
+      {film:'Dune', person:'Joe Walker'},
+      {film:'King Richard', person:'Pamela Martin'},
+      {film:'Tick, Tick... Boom!', person:'Myron Kerstein, Andrew Weisblum'},
+      {film:'West Side Story', person:'Michael Kahn, Monika Willi'},
+    ]},
+    { id:'score', name:'Musique originale', nominees:[
+      {film:'Dune', person:'Hans Zimmer', winner:true},
+      {film:"Don't Look Up", person:'Nicholas Britell'},
+      {film:'Encanto', person:'Germaine Franco'},
+      {film:'Parallel Mothers', person:'Alberto Iglesias'},
+      {film:'The Power of the Dog', person:'Jonny Greenwood'},
+    ]},
+    { id:'song', name:'Chanson originale', nominees:[
+      {film:'Encanto', person:'"No Time to Die" – Billie Eilish, Finneas O\'Connell', winner:true},
+      {film:"Be Alive", person:'"Be Alive" – Beyoncé, DIXSON'},
+      {film:'Four Good Days', person:'"Somehow You Do" – Diane Warren'},
+      {film:'Belfast', person:'"Down to Joy" – Van Morrison'},
+      {film:'Encanto', person:'"Dos Oruguitas" – Lin-Manuel Miranda'},
+    ]},
+    { id:'costume', name:'Costumes', nominees:[
+      {film:'Cruella', person:'Jenny Beavan', winner:true},
+      {film:'Cyrano', person:'Massimo Cantini Parrini, Jacqueline Durran'},
+      {film:'Dune', person:'Jacqueline West, Robert Morgan'},
+      {film:'Nightmare Alley', person:'Luis Sequeira'},
+      {film:'West Side Story', person:'Paul Tazewell'},
+    ]},
+    { id:'production', name:'Décors', nominees:[
+      {film:'Dune', person:'Patrice Vermette, Zsuzsanna Sipos', winner:true},
+      {film:'Nightmare Alley', person:'Tamara Deverell, Shane Vieau'},
+      {film:'The Power of the Dog', person:'Grant Major, Amber Richards'},
+      {film:'The Tragedy of Macbeth', person:'Stefan Dechant, Nancy Haigh'},
+      {film:'West Side Story', person:'Adam Stockhausen, Rena DeAngelo'},
+    ]},
+    { id:'makeup', name:'Maquillage et coiffure', nominees:[
+      {film:'The Eyes of Tammy Faye', person:'Linda Dowds, Stephanie Ingram, Justin Raleigh', winner:true},
+      {film:'Coming 2 America', person:'Mike Marino, Stacey Morris, Carla Farmer'},
+      {film:'Cruella', person:'Nadia Stacey, Naomi Donne'},
+      {film:'Dune', person:'Donald Mowat, Love Larson, Eva von Bahr'},
+      {film:'House of Gucci', person:'Göran Lundström, Anna Carin Lock, Frederic Aspiras'},
+    ]},
+    { id:'sound', name:'Son', nominees:[
+      {film:'Dune', winner:true},
+      {film:'Belfast'},
+      {film:'No Time to Die'},
+      {film:'The Power of the Dog'},
+      {film:'West Side Story'},
+    ]},
+    { id:'vfx', name:'Effets visuels', nominees:[
+      {film:'Dune', winner:true},
+      {film:'Free Guy'},
+      {film:'No Time to Die'},
+      {film:'Shang-Chi and the Legend of the Ten Rings'},
+      {film:'Spider-Man: No Way Home'},
+    ]},
+  ]
+},
+{
+  year: 2021, ceremony: 93,
+  categories: [
+    { id:'picture', name:'Meilleur film', nominees:[
+      {film:'Nomadland', winner:true},
+      {film:'The Father'},
+      {film:'Judas and the Black Messiah'},
+      {film:'Mank'},
+      {film:'Minari'},
+      {film:'Promising Young Woman'},
+      {film:'Sound of Metal'},
+      {film:'The Trial of the Chicago 7'},
+    ]},
+    { id:'director', name:'Meilleure réalisation', nominees:[
+      {film:'Nomadland', person:'Chloé Zhao', winner:true},
+      {film:'Mank', person:'David Fincher'},
+      {film:'Promising Young Woman', person:'Emerald Fennell'},
+      {film:'Sound of Metal', person:'Darius Marder'},
+      {film:'The Trial of the Chicago 7', person:'Aaron Sorkin'},
+    ]},
+    { id:'actor', name:'Meilleur acteur', nominees:[
+      {film:'The Father', person:'Anthony Hopkins', winner:true},
+      {film:"Ma Rainey's Black Bottom", person:'Chadwick Boseman'},
+      {film:'Mank', person:'Gary Oldman'},
+      {film:'Judas and the Black Messiah', person:'Steven Yeun'},
+      {film:'The Trial of the Chicago 7', person:'Riz Ahmed'},
+    ]},
+    { id:'actress', name:'Meilleure actrice', nominees:[
+      {film:'Nomadland', person:'Frances McDormand', winner:true},
+      {film:'Promising Young Woman', person:'Carey Mulligan'},
+      {film:"Ma Rainey's Black Bottom", person:'Viola Davis'},
+      {film:'Minari', person:'Youn Yuh-jung'},
+      {film:'The United States vs. Billie Holiday', person:'Andra Day'},
+    ]},
+    { id:'supp_actor', name:'Acteur second rôle', nominees:[
+      {film:'Judas and the Black Messiah', person:'Daniel Kaluuya', winner:true},
+      {film:'Borat Subsequent Moviefilm', person:'Sacha Baron Cohen'},
+      {film:'The Trial of the Chicago 7', person:'Sacha Baron Cohen'},
+      {film:'Sound of Metal', person:'Paul Raci'},
+      {film:'One Night in Miami', person:'Leslie Odom Jr.'},
+    ]},
+    { id:'supp_actress', name:'Actrice second rôle', nominees:[
+      {film:'Minari', person:'Youn Yuh-jung', winner:true},
+      {film:'Judas and the Black Messiah', person:'Dominique Fishback'},
+      {film:'Promising Young Woman', person:'Laverne Cox'},
+      {film:'News of the World', person:'Helena Zengel'},
+      {film:'Hillbilly Elegy', person:'Glenn Close'},
+    ]},
+    { id:'animated', name:'Film d\'animation', nominees:[
+      {film:'Soul', winner:true},
+      {film:'Onward'},
+      {film:'Over the Moon'},
+      {film:'A Shaun the Sheep Movie: Farmageddon'},
+      {film:'Wolfwalkers'},
+    ]},
+    { id:'animated_short', name:'Court métrage animé', nominees:[
+      {film:'If Anything Happens I Love You', winner:true},
+      {film:'Burrow'},
+      {film:'Genius Loci'},
+      {film:'Opera'},
+      {film:'Yes-People'},
+    ]},
+    { id:'intl', name:'Film international', nominees:[
+      {film:'Another Round (Danemark)', winner:true},
+      {film:'Better Days (Hong Kong)'},
+      {film:'Collective (Roumanie)'},
+      {film:'The Man Who Sold His Skin (Tunisie)'},
+      {film:'Quo Vadis, Aida? (Bosnie-Herzégovine)'},
+    ]},
+    { id:'documentary', name:'Documentaire long métrage', nominees:[
+      {film:'My Octopus Teacher', winner:true},
+      {film:'Collective'},
+      {film:'Crip Camp'},
+      {film:'The Mole Agent'},
+      {film:'Time'},
+    ]},
+    { id:'doc_short', name:'Documentaire court métrage', nominees:[
+      {film:'Colette', winner:true},
+      {film:'A Concerto Is a Conversation'},
+      {film:'Do Not Split'},
+      {film:'Hunger Ward'},
+      {film:'A Love Song for Latasha'},
+    ]},
+    { id:'live_short', name:'Court métrage fiction', nominees:[
+      {film:'Two Distant Strangers', winner:true},
+      {film:'Feeling Through'},
+      {film:'The Letter Room'},
+      {film:'The Present'},
+      {film:'White Eye'},
+    ]},
+    { id:'screenplay', name:'Scénario original', nominees:[
+      {film:'Promising Young Woman', person:'Emerald Fennell', winner:true},
+      {film:'Judas and the Black Messiah', person:'Will Berson, Shaka King'},
+      {film:'Minari', person:'Lee Isaac Chung'},
+      {film:'Sound of Metal', person:'Darius Marder, Abraham Marder'},
+      {film:'The Trial of the Chicago 7', person:'Aaron Sorkin'},
+    ]},
+    { id:'adapted', name:'Scénario adapté', nominees:[
+      {film:'The Father', person:'Christopher Hampton, Florian Zeller', winner:true},
+      {film:'Borat Subsequent Moviefilm', person:'Sacha Baron Cohen et al.'},
+      {film:'The Life Ahead', person:'Ugo Chiti, Edoardo Ponti'},
+      {film:'Nomadland', person:'Chloé Zhao'},
+      {film:'One Night in Miami', person:'Kemp Powers'},
+    ]},
+    { id:'cinematography', name:'Photographie', nominees:[
+      {film:'Mank', person:'Erik Messerschmidt', winner:true},
+      {film:'Judas and the Black Messiah', person:'Sean Bobbitt'},
+      {film:'News of the World', person:'Dariusz Wolski'},
+      {film:'Nomadland', person:'Joshua James Richards'},
+      {film:'The Trial of the Chicago 7', person:'Phedon Papamichael'},
+    ]},
+    { id:'editing', name:'Montage', nominees:[
+      {film:'Sound of Metal', person:'Mikkel E.G. Nielsen', winner:true},
+      {film:'The Father', person:'Yorgos Lamprinos'},
+      {film:'Nomadland', person:'Chloé Zhao'},
+      {film:'Promising Young Woman', person:'Frédéric Thoraval'},
+      {film:'The Trial of the Chicago 7', person:'Alan Baumgarten'},
+    ]},
+    { id:'score', name:'Musique originale', nominees:[
+      {film:'Soul', person:'Trent Reznor, Atticus Ross, Jon Batiste', winner:true},
+      {film:'Da 5 Bloods', person:'Terence Blanchard'},
+      {film:'Mank', person:'Trent Reznor, Atticus Ross'},
+      {film:'Minari', person:'Emile Mosseri'},
+      {film:'News of the World', person:'James Newton Howard'},
+    ]},
+    { id:'song', name:'Chanson originale', nominees:[
+      {film:'Fight for You', person:'"Fight for You" – H.E.R.', winner:true},
+      {film:'Hear My Voice', person:'"Hear My Voice" – Daniel Pemberton, Celeste'},
+      {film:'Husavik', person:'"Husavik" – Savan Kotecha, Fat Max Gsus, Rickard Göransson'},
+      {film:'Io Sì (Seen)', person:'"Io Sì (Seen)" – Diane Warren, Laura Pausini'},
+      {film:'Speak Now', person:'"Speak Now" – Leslie Odom Jr., Sam Ashworth'},
+    ]},
+    { id:'costume', name:'Costumes', nominees:[
+      {film:"Ma Rainey's Black Bottom", person:'Ann Roth', winner:true},
+      {film:'Emma', person:'Alexandra Byrne'},
+      {film:'Mank', person:'Trish Summerville'},
+      {film:'Mulan', person:'Bina Daigeler'},
+      {film:'Pinocchio', person:'Massimo Cantini Parrini'},
+    ]},
+    { id:'production', name:'Décors', nominees:[
+      {film:"Ma Rainey's Black Bottom", person:'Mark Ricker, Karen O\'Hara, Diana Stoughton', winner:true},
+      {film:'The Father', person:'Peter Francis, Cathy Featherstone'},
+      {film:'Mank', person:'Donald Graham Burt, Jan Pascale'},
+      {film:'News of the World', person:'David Crank, Elizabeth Keenan'},
+      {film:'Tenet', person:'Nathan Crowley, Kathy Lucas'},
+    ]},
+    { id:'makeup', name:'Maquillage et coiffure', nominees:[
+      {film:'Ma Rainey\'s Black Bottom', person:'Sergio Lopez-Rivera, Mia Neal, Jamika Wilson', winner:true},
+      {film:'Emma', person:'Marese Langan, Laura Allen, Claudia Stolze'},
+      {film:'Hillbilly Elegy', person:'Eryn Krueger Mekash, Patricia Dehaney, Matthew Mungle'},
+      {film:'Mank', person:'Gigi Williams, Kimberley Spiteri'},
+      {film:'Pinocchio', person:'Dalia Colli, Francesco Pegoretti'},
+    ]},
+    { id:'sound', name:'Son', nominees:[
+      {film:'Sound of Metal', winner:true},
+      {film:'Greyhound'},
+      {film:'Mank'},
+      {film:'News of the World'},
+      {film:'Soul'},
+    ]},
+    { id:'vfx', name:'Effets visuels', nominees:[
+      {film:'Tenet', winner:true},
+      {film:'Love and Monsters'},
+      {film:'The Midnight Sky'},
+      {film:'Mulan'},
+      {film:'The One and Only Ivan'},
+    ]},
+  ]
+},
+{
+  year: 2020, ceremony: 92,
+  categories: [
+    { id:'picture', name:'Meilleur film', nominees:[
+      {film:'Parasite', winner:true},
+      {film:'Ford v Ferrari'},
+      {film:'The Irishman'},
+      {film:'Jojo Rabbit'},
+      {film:'Joker'},
+      {film:'Little Women'},
+      {film:'Marriage Story'},
+      {film:'1917'},
+      {film:'Once Upon a Time in Hollywood'},
+    ]},
+    { id:'director', name:'Meilleure réalisation', nominees:[
+      {film:'Parasite', person:'Bong Joon-ho', winner:true},
+      {film:'The Irishman', person:'Martin Scorsese'},
+      {film:'Joker', person:'Todd Phillips'},
+      {film:'1917', person:'Sam Mendes'},
+      {film:'Once Upon a Time in Hollywood', person:'Quentin Tarantino'},
+    ]},
+    { id:'actor', name:'Meilleur acteur', nominees:[
+      {film:'Joker', person:'Joaquin Phoenix', winner:true},
+      {film:'Marriage Story', person:'Adam Driver'},
+      {film:'The Two Popes', person:'Jonathan Pryce'},
+      {film:'Ford v Ferrari', person:'Christian Bale'},
+      {film:'Once Upon a Time in Hollywood', person:'Leonardo DiCaprio'},
+    ]},
+    { id:'actress', name:'Meilleure actrice', nominees:[
+      {film:'Judy', person:'Renée Zellweger', winner:true},
+      {film:'Little Women', person:'Saoirse Ronan'},
+      {film:'Marriage Story', person:'Scarlett Johansson'},
+      {film:'Bombshell', person:'Charlize Theron'},
+      {film:'Harriet', person:'Cynthia Erivo'},
+    ]},
+    { id:'supp_actor', name:'Acteur second rôle', nominees:[
+      {film:'Once Upon a Time in Hollywood', person:'Brad Pitt', winner:true},
+      {film:'The Irishman', person:'Al Pacino'},
+      {film:'The Irishman', person:'Joe Pesci'},
+      {film:'Jojo Rabbit', person:'Sam Rockwell'},
+      {film:'Marriage Story', person:'Tom Hanks'},
+    ]},
+    { id:'supp_actress', name:'Actrice second rôle', nominees:[
+      {film:'Marriage Story', person:'Laura Dern', winner:true},
+      {film:'Bombshell', person:'Margot Robbie'},
+      {film:'Little Women', person:'Florence Pugh'},
+      {film:'Jojo Rabbit', person:'Scarlett Johansson'},
+      {film:'Dolemite Is My Name', person:'Jennifer Lopez'},
+    ]},
+    { id:'animated', name:'Film d\'animation', nominees:[
+      {film:'Toy Story 4', winner:true},
+      {film:'How to Train Your Dragon: The Hidden World'},
+      {film:'I Lost My Body'},
+      {film:'Klaus'},
+      {film:'Missing Link'},
+    ]},
+    { id:'animated_short', name:'Court métrage animé', nominees:[
+      {film:'Hair Love', winner:true},
+      {film:'Dcera (Daughter)'},
+      {film:'He Who Eats Alone in a Restaurant Will Die'},
+      {film:'Kitbull'},
+      {film:'Sister'},
+    ]},
+    { id:'intl', name:'Film international', nominees:[
+      {film:'Parasite (Corée du Sud)', winner:true},
+      {film:'Corpus Christi (Pologne)'},
+      {film:'Honeyland (Macédoine du Nord)'},
+      {film:'Les Misérables (France)'},
+      {film:'Pain and Glory (Espagne)'},
+    ]},
+    { id:'documentary', name:'Documentaire long métrage', nominees:[
+      {film:'American Factory', winner:true},
+      {film:'The Cave'},
+      {film:'The Edge of Democracy'},
+      {film:'For Sama'},
+      {film:'Honeyland'},
+    ]},
+    { id:'doc_short', name:'Documentaire court métrage', nominees:[
+      {film:'Learning to Skateboard in a Warzone (If You\'re a Girl)', winner:true},
+      {film:'In the Absence'},
+      {film:'Life Overtakes Me'},
+      {film:'St. Louis Superman'},
+      {film:'Walk Run Cha-Cha'},
+    ]},
+    { id:'live_short', name:'Court métrage fiction', nominees:[
+      {film:'The Neighbors\' Window', winner:true},
+      {film:'Brotherhood'},
+      {film:'Nefta Football Club'},
+      {film:'The Sickness of June'},
+      {film:'A Sister'},
+    ]},
+    { id:'screenplay', name:'Scénario original', nominees:[
+      {film:'Parasite', person:'Bong Joon-ho, Han Jin-won', winner:true},
+      {film:'Knives Out', person:'Rian Johnson'},
+      {film:'Marriage Story', person:'Noah Baumbach'},
+      {film:'1917', person:'Sam Mendes, Krysty Wilson-Cairns'},
+      {film:'Once Upon a Time in Hollywood', person:'Quentin Tarantino'},
+    ]},
+    { id:'adapted', name:'Scénario adapté', nominees:[
+      {film:'Jojo Rabbit', person:'Taika Waititi', winner:true},
+      {film:'The Irishman', person:'Steven Zaillian'},
+      {film:'Joker', person:'Todd Phillips, Scott Silver'},
+      {film:'Little Women', person:'Greta Gerwig'},
+      {film:'The Two Popes', person:'Anthony McCarten'},
+    ]},
+    { id:'cinematography', name:'Photographie', nominees:[
+      {film:'1917', person:'Roger Deakins', winner:true},
+      {film:'The Irishman', person:'Rodrigo Prieto'},
+      {film:'Joker', person:'Lawrence Sher'},
+      {film:'The Lighthouse', person:'Jarin Blaschke'},
+      {film:'Once Upon a Time in Hollywood', person:'Robert Richardson'},
+    ]},
+    { id:'editing', name:'Montage', nominees:[
+      {film:'Ford v Ferrari', person:'Andrew Buckland, Michael McCusker', winner:true},
+      {film:'The Irishman', person:'Thelma Schoonmaker'},
+      {film:'Jojo Rabbit', person:'Tom Eagles'},
+      {film:'Joker', person:'Jeff Groth'},
+      {film:'Parasite', person:'Yang Jinmo'},
+    ]},
+    { id:'score', name:'Musique originale', nominees:[
+      {film:'Joker', person:'Hildur Guðnadóttir', winner:true},
+      {film:'Little Women', person:'Alexandre Desplat'},
+      {film:'Marriage Story', person:'Randy Newman'},
+      {film:'1917', person:'Thomas Newman'},
+      {film:'Star Wars: The Rise of Skywalker', person:'John Williams'},
+    ]},
+    { id:'song', name:'Chanson originale', nominees:[
+      {film:'Rocketman', person:'"(I\'m Gonna) Love Me Again" – Elton John, Bernie Taupin', winner:true},
+      {film:"I Can\'t Let You Throw Yourself Away", person:'"I Can\'t Let You Throw Yourself Away" – Randy Newman'},
+      {film:'Harriet', person:'"Stand Up" – Joshuah Brian Campbell, Cynthia Erivo'},
+      {film:'Wild Rose', person:'"Glasgow (No Place Like Home)" – Mary Steenburgen, Rodney Crowell'},
+      {film:'Breakthrough', person:'"I\'m Standing With You" – Diane Warren'},
+    ]},
+    { id:'costume', name:'Costumes', nominees:[
+      {film:'Little Women', person:'Jacqueline Durran', winner:true},
+      {film:'The Irishman', person:'Sandy Powell, Christopher Peterson'},
+      {film:'Jojo Rabbit', person:'Mayes C. Rubeo'},
+      {film:'Joker', person:'Mark Bridges'},
+      {film:'Once Upon a Time in Hollywood', person:'Arianne Phillips'},
+    ]},
+    { id:'production', name:'Décors', nominees:[
+      {film:'Once Upon a Time in Hollywood', person:'Barbara Ling, Nancy Haigh', winner:true},
+      {film:'The Irishman', person:'Bob Shaw, Regina Graves'},
+      {film:'Jojo Rabbit', person:'Ra Vincent, Nora Sopková'},
+      {film:'Joker', person:'Mark Friedberg, Kathy Lucas'},
+      {film:'Little Women', person:'Jess Gonchor, Claire Kaufman'},
+    ]},
+    { id:'makeup', name:'Maquillage et coiffure', nominees:[
+      {film:'Bombshell', person:'Kazu Hiro, Anne Morgan, Vivian Baker', winner:true},
+      {film:'Joker', person:'Nicki Ledermann, Kay Georgiou'},
+      {film:'Judy', person:'Jeremy Woodhead'},
+      {film:'Maleficent: Mistress of Evil', person:'Paul Gooch, Arjen Tuiten, David White'},
+      {film:'1917', person:'Naomi Donne, Tristan Versluis'},
+    ]},
+    { id:'sound', name:'Son', nominees:[
+      {film:'Ford v Ferrari', winner:true},
+      {film:'Joker'},
+      {film:'1917'},
+      {film:'Once Upon a Time in Hollywood'},
+      {film:'Star Wars: The Rise of Skywalker'},
+    ]},
+    { id:'vfx', name:'Effets visuels', nominees:[
+      {film:'1917', winner:true},
+      {film:'Avengers: Endgame'},
+      {film:'The Irishman'},
+      {film:'The Lion King'},
+      {film:'Star Wars: The Rise of Skywalker'},
+    ]},
+  ]
+},
+];
+
+
+// ── OSCARS STATE ──────────────────────────────────────────────────────────────
+let oscarsYear = 2025;
+let oscarsCatFilter = 'all';
+const OSCARS_WATCHED_KEY = 'ap_oscars_watched'; // {year_filmTitle: true}
+
+function oscarsLoadWatched() {
+  try { return JSON.parse(localStorage.getItem(OSCARS_WATCHED_KEY)||'{}'); } catch(e){ return {}; }
+}
+function oscarsSaveWatched(w) { localStorage.setItem(OSCARS_WATCHED_KEY, JSON.stringify(w)); }
+function oscarsKey(year, film) { return `${year}__${film}`; }
+
+// ── MAIN RENDER ───────────────────────────────────────────────────────────────
+function renderOscarsSection(container) {
+  // Clear tracker-specific content below header, insert oscars panel
+  const panel = document.createElement('div');
+  panel.className = 'os-panel';
+  container.appendChild(panel);
+
+  const data = OSCARS_DATA.find(d => d.year === oscarsYear);
+
+  // ── Year selector ──
+  const yearRow = document.createElement('div'); yearRow.className = 'os-year-row';
+
+  const prevBtn = document.createElement('button'); prevBtn.className = 'gc-nav-btn'; prevBtn.innerHTML = '&#8249;';
+  prevBtn.onclick = () => { const idx = OSCARS_DATA.findIndex(d=>d.year===oscarsYear); if(idx<OSCARS_DATA.length-1){ oscarsYear=OSCARS_DATA[idx+1].year; renderOscarsSection(null, panel); } };
+
+  const nextBtn = document.createElement('button'); nextBtn.className = 'gc-nav-btn'; nextBtn.innerHTML = '&#8250;';
+  nextBtn.onclick = () => { const idx = OSCARS_DATA.findIndex(d=>d.year===oscarsYear); if(idx>0){ oscarsYear=OSCARS_DATA[idx-1].year; renderOscarsSection(null, panel); } };
+
+  const yearLabel = document.createElement('span'); yearLabel.className = 'os-year-label';
+  yearLabel.innerHTML = `<span style="font-family:'DM Serif Display',serif;font-size:1.5rem;">${oscarsYear}</span> <span style="font-size:.8rem;color:#999;">— ${data?.ceremony}e cérémonie</span>`;
+
+  yearRow.appendChild(prevBtn);
+  yearRow.appendChild(yearLabel);
+  yearRow.appendChild(nextBtn);
+
+  // Year pills
+  const yearPills = document.createElement('div'); yearPills.className = 'os-year-pills';
+  OSCARS_DATA.forEach(d => {
+    const pill = document.createElement('button');
+    pill.className = 'os-year-pill' + (d.year === oscarsYear ? ' active' : '');
+    pill.textContent = d.year;
+    pill.onclick = () => { oscarsYear = d.year; panel.innerHTML=''; _buildOscarsContent(panel); };
+    yearPills.appendChild(pill);
+  });
+
+  yearRow.appendChild(yearPills);
+  panel.appendChild(yearRow);
+
+  _buildOscarsContent(panel);
+}
+
+function _buildOscarsContent(panel) {
+  // Remove everything except year-row
+  Array.from(panel.children).forEach(el => { if(!el.classList.contains('os-year-row')) el.remove(); });
+
+  const data = OSCARS_DATA.find(d => d.year === oscarsYear);
+  if(!data) { panel.appendChild(Object.assign(document.createElement('div'),{textContent:'Données non disponibles', className:'os-empty'})); return; }
+
+  const watched = oscarsLoadWatched();
+
+  // ── Category filter pills ──
+  const catBar = document.createElement('div'); catBar.className = 'os-cat-bar';
+  const allCats = [{id:'all', name:'Toutes'}].concat(data.categories.map(c=>({id:c.id, name:c.name})));
+  allCats.forEach(cat => {
+    const p = document.createElement('button'); p.className='os-cat-pill'+(oscarsCatFilter===cat.id?' active':'');
+    p.textContent = cat.name;
+    p.onclick = () => { oscarsCatFilter=cat.id; panel.innerHTML=''; const yr=panel._yr; panel._yr=yr; _rebuildOscarsYearRow(panel); _buildOscarsContent(panel); };
+    catBar.appendChild(p);
+  });
+  panel.appendChild(catBar);
+
+  // ── Stats bar ──
+  let totalFilms=0, watchedFilms=0;
+  const allFilmsSet = new Set();
+  data.categories.forEach(cat => cat.nominees.forEach(n => allFilmsSet.add(n.film)));
+  allFilmsSet.forEach(film => {
+    totalFilms++;
+    if(watched[oscarsKey(oscarsYear,film)]) watchedFilms++;
+  });
+  const pct = totalFilms ? Math.round(watchedFilms/totalFilms*100) : 0;
+
+  const statsRow = document.createElement('div'); statsRow.className = 'os-stats-row';
+  statsRow.innerHTML = `
+    <div class="os-stat"><span class="os-stat-num">${watchedFilms}/${totalFilms}</span><span class="os-stat-lbl">Films vus</span></div>
+    <div class="os-stat"><span class="os-stat-num">${pct}%</span><span class="os-stat-lbl">Progression</span></div>
+    <div class="os-stat-bar-wrap"><div class="os-stat-bar"><div class="os-stat-bar-fill" style="width:${pct}%"></div></div></div>`;
+  panel.appendChild(statsRow);
+
+  // ── Categories grid ──
+  const grid = document.createElement('div'); grid.className = 'os-grid';
+
+  const catsToShow = oscarsCatFilter==='all' ? data.categories : data.categories.filter(c=>c.id===oscarsCatFilter);
+
+  catsToShow.forEach(cat => {
+    const card = document.createElement('div'); card.className = 'os-card';
+
+    const cardHdr = document.createElement('div'); cardHdr.className = 'os-card-hdr';
+    cardHdr.textContent = cat.name;
+    card.appendChild(cardHdr);
+
+    cat.nominees.forEach(nom => {
+      const filmKey = oscarsKey(oscarsYear, nom.film);
+      const isWatched = !!watched[filmKey];
+      const row = document.createElement('div');
+      row.className = 'os-nominee' + (nom.winner ? ' winner' : '') + (isWatched ? ' seen' : '');
+
+      const cb = document.createElement('input'); cb.type='checkbox'; cb.className='os-cb'; cb.checked=isWatched;
+      cb.addEventListener('change', () => {
+        const w = oscarsLoadWatched();
+        if(cb.checked) w[filmKey]=true; else delete w[filmKey];
+        oscarsSaveWatched(w);
+        row.classList.toggle('seen', cb.checked);
+        if(typeof showToast==='function') showToast((cb.checked?'✓ ':'✗ ')+nom.film,'',1600);
+        // refresh stats without full re-render
+        _refreshOscarsStats(panel, oscarsYear);
+      });
+
+      const label = document.createElement('div'); label.className = 'os-nominee-label';
+
+      const filmSpan = document.createElement('span'); filmSpan.className = 'os-film-name';
+      filmSpan.textContent = nom.film;
+
+      label.appendChild(filmSpan);
+
+      if(nom.person) {
+        const personSpan = document.createElement('span'); personSpan.className = 'os-person-name';
+        personSpan.textContent = nom.person;
+        label.appendChild(personSpan);
+      }
+
+      if(nom.winner) {
+        const trophy = document.createElement('span'); trophy.className = 'os-trophy'; trophy.textContent = '🏆';
+        row.appendChild(cb); row.appendChild(label); row.appendChild(trophy);
+      } else {
+        row.appendChild(cb); row.appendChild(label);
+      }
+
+      card.appendChild(row);
+    });
+
+    grid.appendChild(card);
+  });
+
+  panel.appendChild(grid);
+}
+
+function _rebuildOscarsYearRow(panel) {
+  // Rebuild year row for re-render after cat filter
+  const existing = panel.querySelector('.os-year-row');
+  if(existing) return; // already there
+}
+
+function _refreshOscarsStats(panel, year) {
+  const watched = oscarsLoadWatched();
+  const data = OSCARS_DATA.find(d=>d.year===year); if(!data) return;
+  const allFilms = new Set();
+  data.categories.forEach(cat=>cat.nominees.forEach(n=>allFilms.add(n.film)));
+  let tot=allFilms.size, wat=0;
+  allFilms.forEach(f=>{ if(watched[oscarsKey(year,f)]) wat++; });
+  const pct = tot ? Math.round(wat/tot*100) : 0;
+  const statNum = panel.querySelector('.os-stats-row .os-stat-num');
+  if(statNum) statNum.textContent = `${wat}/${tot}`;
+  const statNum2 = panel.querySelectorAll('.os-stats-row .os-stat-num')[1];
+  if(statNum2) statNum2.textContent = pct+'%';
+  const fill = panel.querySelector('.os-stat-bar-fill');
+  if(fill) fill.style.width = pct+'%';
+}
+
+</script>
+<script>
 // ── EPISODE TRACKER ────────────────────────────────────────────────────────
 
 // ── SHOW DATA ──────────────────────────────────────────────────────────────
@@ -4968,6 +6258,7 @@ function trSaveSched(d) {
 // ── STATE ──────────────────────────────────────────────────────────────────
 let trCurrentShow = 'startrek';
 let trCurrentSeries = 'tng';
+let trShowOscars = false;
 let trShowTitles = true;
 const trOpenSeasons = new Set(); // tracks 'seriesId_sn' keys
 
@@ -5013,6 +6304,11 @@ function renderTracker() {
     tb.addEventListener('click', () => { trCurrentShow = show.id; trCurrentSeries = show.series[0].id; renderTracker(); });
     tabs.appendChild(tb);
   });
+  const oscarsTab = document.createElement('button');
+  oscarsTab.className = 'tr-tab tr-oscars-tab' + (trShowOscars ? ' active' : '');
+  oscarsTab.textContent = '🏆 Oscars';
+  oscarsTab.addEventListener('click', () => { trShowOscars = !trShowOscars; renderTracker(); });
+  tabs.appendChild(oscarsTab);
   ctrlRow.appendChild(tabs);
 
   const toggleTitlesBtn = document.createElement('button');
@@ -5023,6 +6319,8 @@ function renderTracker() {
 
   hdr.appendChild(ctrlRow);
   view.appendChild(hdr);
+
+  if (trShowOscars) { renderOscarsSection(view); return; }
 
   const show = TRACKER_SHOWS.find(s => s.id === trCurrentShow);
   if (!show) return;
