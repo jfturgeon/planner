@@ -8690,9 +8690,12 @@ async function syncDataFromSupabase() {
 
 // Initialize auth on page load
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log('🚀 DOMContentLoaded fired');
+  
   // Wait for Supabase SDK to be available
   let retries = 0;
   while (!window.supabase && retries < 10) {
+    console.log(`⏳ Waiting for Supabase SDK... (${retries + 1}/10)`);
     await new Promise(r => setTimeout(r, 100));
     retries++;
   }
@@ -8702,12 +8705,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
   
+  console.log('✅ Supabase SDK loaded');
+  
   // Initialize Supabase client
   await initSupabaseClient();
+  console.log('✅ Supabase client initialized');
   
   // Then initialize auth
   await initAuth();
+  console.log('✅ Auth initialized');
+  
   setupLoginForm();
+  console.log('✅ Login form setup done');
 });
 
 function showLoginView() {
@@ -8737,25 +8746,42 @@ function setupLoginForm() {
   const signupError = document.getElementById('signupError');
   const logoutBtn = document.getElementById('btnLogout');
 
+  // Debug logging
+  console.log('✅ setupLoginForm() called');
+  console.log('loginForm:', loginForm);
+  console.log('signupForm:', signupForm);
+  console.log('toggleForm:', toggleForm);
+  console.log('logoutBtn:', logoutBtn);
+
+  if (!loginForm || !signupForm || !toggleForm) {
+    console.error('❌ Required form elements not found!');
+    return;
+  }
+
   let isSignup = false;
 
   // Toggle between login and signup
-  toggleForm.addEventListener('click', (e) => {
-    e.preventDefault();
-    isSignup = !isSignup;
-    
-    if (isSignup) {
-      loginForm.style.display = 'none';
-      signupForm.style.display = 'flex';
-      toggleText.textContent = 'Déjà inscrit?';
-      toggleForm.textContent = 'Se connecter';
-    } else {
-      loginForm.style.display = 'flex';
-      signupForm.style.display = 'none';
-      toggleText.textContent = 'Pas encore inscrit?';
-      toggleForm.textContent = 'Créer un compte';
-    }
-  });
+  if (toggleForm) {
+    toggleForm.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Toggle clicked, isSignup:', !isSignup);
+      isSignup = !isSignup;
+      
+      if (isSignup) {
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'flex';
+        toggleText.textContent = 'Déjà inscrit?';
+        toggleForm.textContent = 'Se connecter';
+        console.log('✅ Switched to signup form');
+      } else {
+        loginForm.style.display = 'flex';
+        signupForm.style.display = 'none';
+        toggleText.textContent = 'Pas encore inscrit?';
+        toggleForm.textContent = 'Créer un compte';
+        console.log('✅ Switched to login form');
+      }
+    });
+  }
 
   // Handle login
   loginForm.addEventListener('submit', async (e) => {
@@ -8833,17 +8859,43 @@ function setupLoginForm() {
   });
 
   // Handle logout
-  logoutBtn.addEventListener('click', async () => {
-    const result = await signOut();
-    if (result.success) {
-      // Clear forms
-      loginForm.reset();
-      signupForm.reset();
-      loginError.textContent = '';
-      signupError.textContent = '';
-      showLoginView();
-    }
-  });
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      console.log('Logout clicked');
+      const result = await signOut();
+      if (result.success) {
+        // Clear forms
+        loginForm.reset();
+        signupForm.reset();
+        loginError.textContent = '';
+        signupError.textContent = '';
+        signupError.style.color = '#c0392b';
+        showLoginView();
+        console.log('✅ Logged out successfully');
+      }
+    });
+  } else {
+    console.warn('⚠️ Logout button not found, will be set up later');
+    // Try to find it later when appView is ready
+    setTimeout(() => {
+      const btnLogout = document.getElementById('btnLogout');
+      if (btnLogout) {
+        btnLogout.addEventListener('click', async () => {
+          console.log('Logout clicked (delayed)');
+          const result = await signOut();
+          if (result.success) {
+            loginForm.reset();
+            signupForm.reset();
+            loginError.textContent = '';
+            signupError.textContent = '';
+            signupError.style.color = '#c0392b';
+            showLoginView();
+            console.log('✅ Logged out successfully');
+          }
+        });
+      }
+    }, 1000);
+  }
 }
 
 // Override save functions to sync with Supabase

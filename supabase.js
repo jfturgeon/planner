@@ -69,9 +69,14 @@ async function initAuth() {
 
 async function signUp(email, password) {
   try {
+    console.log(`👤 Attempting sign up with email: ${email}`);
+    
     if (!supabase) {
+      console.error('❌ Supabase client not initialized');
       return { success: false, error: 'Supabase not initialized' };
     }
+    
+    console.log('📡 Calling supabase.auth.signUp...');
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -79,36 +84,57 @@ async function signUp(email, password) {
         emailRedirectTo: window.location.origin
       }
     });
-    if (error) throw error;
+    
+    if (error) {
+      console.error('❌ Sign up error:', error);
+      throw error;
+    }
+
+    console.log('✅ Sign up successful!', data);
 
     // Create user preferences record
     if (data.user) {
+      console.log('📝 Creating user preferences...');
       await supabase.from('user_preferences').insert({
         user_id: data.user.id,
         current_year: new Date().getFullYear(),
         week_start: 0,
         left_panel_visible: true
       }).throwOnError();
+      console.log('✅ User preferences created');
     }
 
     return { success: true, data };
   } catch (error) {
+    console.error('❌ Sign up exception:', error.message);
     return { success: false, error: error.message };
   }
 }
 
 async function signIn(email, password) {
   try {
+    console.log(`🔐 Attempting sign in with email: ${email}`);
+    
     if (!supabase) {
+      console.error('❌ Supabase client not initialized');
       return { success: false, error: 'Supabase not initialized' };
     }
+    
+    console.log('📡 Calling supabase.auth.signInWithPassword...');
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
-    if (error) throw error;
+    
+    if (error) {
+      console.error('❌ Sign in error:', error);
+      throw error;
+    }
+    
+    console.log('✅ Sign in successful!', data);
     return { success: true, data };
   } catch (error) {
+    console.error('❌ Sign in exception:', error.message);
     return { success: false, error: error.message };
   }
 }
