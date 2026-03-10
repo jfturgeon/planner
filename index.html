@@ -8690,6 +8690,22 @@ async function syncDataFromSupabase() {
 
 // Initialize auth on page load
 document.addEventListener('DOMContentLoaded', async () => {
+  // Wait for Supabase SDK to be available
+  let retries = 0;
+  while (!window.supabase && retries < 10) {
+    await new Promise(r => setTimeout(r, 100));
+    retries++;
+  }
+  
+  if (!window.supabase) {
+    console.error('❌ Supabase SDK failed to load');
+    return;
+  }
+  
+  // Initialize Supabase client
+  await initSupabaseClient();
+  
+  // Then initialize auth
   await initAuth();
   setupLoginForm();
 });

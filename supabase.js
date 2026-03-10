@@ -5,8 +5,8 @@
 const SUPABASE_URL = 'https://heifenuzqaybzvmketmy.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhlaWZlbnV6cWF5Ynp2bWtldG15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxODA1ODcsImV4cCI6MjA4ODc1NjU4N30.CWJOkmf8_SXP7KZ1SG-e6xxD4TEXcaH5fIQsBURRdUw';
 
-// Initialize Supabase client
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Initialize Supabase client (will be set when DOM is ready)
+let supabase = null;
 
 // ==========================================
 // Auth Status
@@ -14,8 +14,34 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
 
+// Initialize Supabase when SDK is loaded
+async function initSupabaseClient() {
+  if (!supabase && window.supabase) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return true;
+  }
+  return false;
+}
+
 async function initAuth() {
   try {
+    // Make sure Supabase client is initialized
+    if (!supabase) {
+      const success = await initSupabaseClient();
+      if (!success) {
+        console.warn('Supabase SDK not loaded yet, retrying...');
+        await new Promise(r => setTimeout(r, 500));
+        return initAuth(); // Retry
+      }
+    }
+
+    // Check if Supabase client is initialized
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      showLoginView();
+      return;
+    }
+
     // Check if user is already logged in
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
@@ -43,6 +69,9 @@ async function initAuth() {
 
 async function signUp(email, password) {
   try {
+    if (!supabase) {
+      return { success: false, error: 'Supabase not initialized' };
+    }
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -70,6 +99,9 @@ async function signUp(email, password) {
 
 async function signIn(email, password) {
   try {
+    if (!supabase) {
+      return { success: false, error: 'Supabase not initialized' };
+    }
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
@@ -83,6 +115,9 @@ async function signIn(email, password) {
 
 async function signOut() {
   try {
+    if (!supabase) {
+      return { success: false, error: 'Supabase not initialized' };
+    }
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     currentUser = null;
