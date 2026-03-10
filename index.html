@@ -2673,7 +2673,7 @@ function renderColumns(){
 
       // label cell — soft edit
       const labelCell=document.createElement('div'); labelCell.className='ann-label';
-      if(hasData) labelCell.style.cssText=`color:${today?palTodayText:we?palWeText:palText};font-weight:${today||firstTask?.priority==='urgent'?'600':'400'};`;
+      if(hasData) labelCell.style.cssText=`color:${today?'#92400e':we?palWeText:palText};font-weight:${today||firstTask?.priority==='urgent'?'600':'400'};`;
       else labelCell.style.color='transparent'; // empty, show on hover
 
       const labelSpan=document.createElement('span');
