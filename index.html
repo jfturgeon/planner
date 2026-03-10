@@ -2517,6 +2517,30 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 
 .ht-left  { border-right: none; border-bottom: 1px solid #e8e8e8; }
 
+/* ── TOAST ───────────────────────────────────────────────────────────────────── */
+#appToast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px);
+  background: #2a2824; color: #f0ede6;
+  font-family: 'DM Sans', sans-serif; font-size: .82rem; font-weight: 500;
+  padding: 9px 18px; border-radius: 20px;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.22);
+  pointer-events: none; z-index: 9999;
+  opacity: 0; transition: opacity .15s ease, transform .15s ease;
+}
+#appToast.toast-show {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+#appToast.toast-hide {
+  opacity: 0; transform: translateX(-50%) translateY(8px);
+}
+/* Compact mode for checkboxes — smaller pill, no text */
+#appToast.toast-compact {
+  padding: 7px 14px; font-size: 1rem; gap: 0;
+  background: rgba(42,40,36,.85); backdrop-filter: blur(4px);
+}
+.toast-icon { font-size: .9rem; line-height: 1; }
+
 </style>
 </head>
 <body>
@@ -2621,6 +2645,30 @@ const MONTH_PALETTE = [
 // ── PERSISTENCE ────────────────────────────────────────────────────────────
 function loadData()      { try{ return JSON.parse(localStorage.getItem('ap_data')||'{}'); }catch{ return {}; } }
 function saveData(d)     { localStorage.setItem('ap_data', JSON.stringify(d)); }
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+let _toastTimer = null;
+function showToast(msg, icon='✓', duration=1800){
+  let el = document.getElementById('appToast');
+  if(!el){
+    el = document.createElement('div'); el.id='appToast';
+    document.body.appendChild(el);
+  }
+  // Compact mode for checkboxes (msg IS the icon, no label text)
+  const isCompact = (msg==='✓' || msg==='○');
+  if(isCompact){
+    el.classList.add('toast-compact');
+    el.innerHTML = `<span class="toast-icon">${msg}</span>`;
+  } else {
+    el.classList.remove('toast-compact');
+    el.innerHTML = `<span class="toast-icon">${icon}</span><span>${msg}</span>`;
+  }
+  el.classList.remove('toast-hide');
+  el.classList.add('toast-show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(()=>{ el.classList.remove('toast-show'); el.classList.add('toast-hide'); }, duration);
+}
+
 function getYear()       { return parseInt(localStorage.getItem('ap_year')||new Date().getFullYear()); }
 function storeYear(y)    { localStorage.setItem('ap_year', y); }
 function getWS()         { return parseInt(localStorage.getItem('ap_ws')||'0'); }
@@ -2634,6 +2682,7 @@ const TODAY = new Date();
 
 // ── HELPERS ────────────────────────────────────────────────────────────────
 function dkey(y,m,d) { return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function dkDow(dk){ const [y,mo,d]=dk.split('-').map(Number); return new Date(y,mo-1,d).getDay(); } // parse local, no UTC shift
 function dim(m)      { return new Date(CY,m+1,0).getDate(); }
 function isToday(m,d){ return TODAY.getFullYear()===CY&&TODAY.getMonth()===m&&TODAY.getDate()===d; }
 function isWE(dow)   { return dow===0||dow===6; }
@@ -2810,7 +2859,7 @@ function renderColumns(){
               else if(all[key].tasks) all[key].tasks=all[key].tasks.slice(1);
             }
           }
-          saveData(all); appData=all; renderColumns();
+          saveData(all); appData=all; renderColumns(); if(txt) showToast('Étiquette mise à jour');
         };
         inp.addEventListener('blur',commit);
         inp.addEventListener('keydown',e2=>{ if(e2.key==='Enter'){inp.blur();} if(e2.key==='Escape'){labelCell.innerHTML=''; labelCell.appendChild(labelSpan); } });
@@ -3455,7 +3504,8 @@ function renderWvLeft(dates, wk, wdata){
         const commit=()=>{
           const txt=inp.value.trim();
           const h=loadHabits();
-          if(txt) h[hi].name=txt; else h.splice(hi,1);
+          if(txt){ if(h[hi].name!==txt){ h[hi].name=txt; showToast('Habitude renommée'); } }
+          else { h.splice(hi,1); showToast('Habitude supprimée','🗑'); }
           saveHabits(h); renderHabitRows();
         };
         inp.addEventListener('blur',commit);
@@ -3478,6 +3528,7 @@ function renderWvLeft(dates, wk, wdata){
           if(!wdata.habitChecks[dk]) wdata.habitChecks[dk]={};
           wdata.habitChecks[dk][hi]=cb.checked;
           saveWeekly(wk,wdata);
+          showToast((cb.checked?'✓ ':'✗ ')+hab.name+', '+GC_DAYS_LONG[dkDow(dk)], '', 1600);
         });
         span.appendChild(cb); row.appendChild(span);
       });
@@ -3485,7 +3536,9 @@ function renderWvLeft(dates, wk, wdata){
       // Delete button
       const delBtn=document.createElement('button'); delBtn.className='wv-todo-del'; delBtn.textContent='✕'; delBtn.title='Supprimer';
       delBtn.addEventListener('click',()=>{
+        const _hn=hab.name;
         const h=loadHabits(); h.splice(hi,1); saveHabits(h); renderHabitRows();
+        showToast('🗑 '+_hn, '', 1600);
       });
       row.appendChild(delBtn);
       habList.appendChild(row);
@@ -3501,7 +3554,7 @@ function renderWvLeft(dates, wk, wdata){
   addHab.appendChild(habInput); addHab.appendChild(habBtn);
   const doAddHabit=()=>{
     const txt=habInput.value.trim(); if(!txt) return;
-    const h=loadHabits(); h.push({name:txt}); saveHabits(h);
+    const h=loadHabits(); h.push({name:txt}); saveHabits(h); showToast('Habitude ajoutée','＋');
     habInput.value=''; renderHabitRows(); habInput.focus();
   };
   habBtn.addEventListener('click', doAddHabit);
@@ -3526,6 +3579,7 @@ function renderWvLeft(dates, wk, wdata){
       cb.addEventListener('change',()=>{
         wdata.weekTodos[ti].done=cb.checked;
         saveWeekly(wk,wdata); renderTodoRows();
+        showToast((cb.checked?'✓ ':'✗ ')+t.text, '', 1600);
       });
 
       const labelSpan=document.createElement('span'); labelSpan.className='wv-todo-text';
@@ -3537,8 +3591,8 @@ function renderWvLeft(dates, wk, wdata){
         inp.focus(); inp.select();
         const commit=()=>{
           const txt=inp.value.trim();
-          if(txt) wdata.weekTodos[ti].text=txt;
-          else wdata.weekTodos.splice(ti,1);
+          if(txt){ if(wdata.weekTodos[ti].text!==txt){ wdata.weekTodos[ti].text=txt; showToast('Tâche renommée'); } }
+          else { wdata.weekTodos.splice(ti,1); showToast('Tâche supprimée','🗑'); }
           saveWeekly(wk,wdata); renderTodoRows();
         };
         inp.addEventListener('blur',commit);
@@ -3547,8 +3601,10 @@ function renderWvLeft(dates, wk, wdata){
 
       const delBtn=document.createElement('button'); delBtn.className='wv-todo-del'; delBtn.dataset.ti=ti; delBtn.textContent='✕';
       delBtn.addEventListener('click',()=>{
+        const _tn=t.text;
         wdata.weekTodos.splice(ti,1);
         saveWeekly(wk,wdata); renderTodoRows();
+        showToast('🗑 '+_tn, '', 1600);
       });
 
       item.appendChild(cb); item.appendChild(labelSpan); item.appendChild(delBtn);
@@ -3567,7 +3623,7 @@ function renderWvLeft(dates, wk, wdata){
     const txt=todoInput.value.trim(); if(!txt) return;
     if(!wdata.weekTodos) wdata.weekTodos=[];
     wdata.weekTodos.push({text:txt,done:false});
-    saveWeekly(wk,wdata); todoInput.value=''; renderTodoRows(); todoInput.focus();
+    saveWeekly(wk,wdata); todoInput.value=''; showToast('Tâche ajoutée','＋'); renderTodoRows(); todoInput.focus();
   };
   todoBtn.addEventListener('click', doAddTodo);
   todoInput.addEventListener('keydown',e=>{ if(e.key==='Enter') doAddTodo(); });
@@ -3786,12 +3842,15 @@ function renderWvDays(dates, wk, wdata){
           cb.addEventListener('change',()=>{
             tasks[ri].done=cb.checked;
             saveTasks(); renderTaskRows();
+            showToast((cb.checked?'✓ ':'✗ ')+t.text+', '+GC_DAYS_LONG[dkDow(dk)], '', 1600);
           });
           delBtn.addEventListener('click',e=>{
             e.stopPropagation();
+            const _delLabel=t.text;
             tasks.splice(ri,1);
             deleteSaveTasks();
             renderTaskRows();
+            showToast('🗑 '+_delLabel, '', 1600);
           });
         }
 
@@ -3811,10 +3870,11 @@ function renderWvDays(dates, wk, wdata){
           const commit=()=>{
             const txt=labelIn.value.trim();
             if(t){
-              if(txt) tasks[ri].text=txt;
-              else { tasks.splice(ri,1); }
+              if(txt){ if(tasks[ri]&&tasks[ri].text!==txt){ tasks[ri].text=txt; showToast('Tâche renommée'); } }
+              else { tasks.splice(ri,1); showToast('Tâche supprimée','🗑'); }
             } else if(txt){
               tasks.push({text:txt,priority:'normal',done:false});
+              showToast('Tâche ajoutée','＋');
             }
             deleteSaveTasks();
             renderTaskRows();
@@ -3865,6 +3925,7 @@ function renderWvDays(dates, wk, wdata){
             renderTaskRows();
             const srcTaskList=document.querySelector(`[data-taskrows="${data.srcDk}"]`);
             if(srcTaskList) srcTaskList.dispatchEvent(new CustomEvent('wv-rerender',{bubbles:false}));
+            showToast('↗ '+removed.text+' → '+GC_DAYS_LONG[dkDow(dk)],'',2000);
           }
         } catch(err){ console.warn('drop error',err); }
       });
@@ -5110,8 +5171,12 @@ function renderTracker() {
           progSpan.textContent = `${curWat}/${tot}`;
           bar.style.width = curPct + '%';
           checkAllBtn.textContent = curWat === tot ? '☐ Tout décocher' : '☑ Tout cocher';
+          // Toast
+          const _epLabel = `S${String(sn.n).padStart(2,'0')}E${String(ep.e).padStart(2,'0')}${ep.t?' – '+ep.t.substring(0,28):''}`;
+          if(typeof showToast==='function') showToast((nowW?'✓ ':'✗ ')+_epLabel, '', 1800);
         };
-        epDiv.addEventListener('click', toggle);
+        cb.addEventListener('change', toggle);
+        epDiv.addEventListener('click', e=>{ if(e.target!==cb) toggle(); });
         grid.appendChild(epDiv);
       });
 
@@ -5246,6 +5311,10 @@ function renderDayScheduleInTasks(taskListEl, dk, dow, dayColor) {
       if (titleSpan) titleSpan.style.cssText = nowW
         ? 'text-decoration:line-through;color:var(--muted);'
         : `color:${ep.labelColor};opacity:.9;`;
+      if(typeof showToast==='function'){
+        const _lbl = ep.title ? ep.title.substring(0,32) : ep.key;
+        showToast((nowW?'✓ ':'✗ ')+_lbl, '', 1800);
+      }
     };
     cb.addEventListener('change', toggle);
     row.addEventListener('click', e => { if (e.target !== cb) toggle(); });
@@ -7028,7 +7097,8 @@ function htBuildGrid(right){
       const commit=()=>{
         const txt=inp.value.trim();
         const h=loadHabits();
-        if(txt) h[hi].name=txt; else h.splice(hi,1);
+        if(txt){ if(h[hi].name!==txt){ h[hi].name=txt; if(typeof showToast==='function') showToast('Habitude renommée'); } }
+        else { h.splice(hi,1); if(typeof showToast==='function') showToast('Habitude supprimée','🗑'); }
         saveHabits(h); renderHabitsTracker();
       };
       inp.addEventListener('blur',commit);
@@ -7062,7 +7132,9 @@ function htBuildGrid(right){
         if(!wd2.habitChecks[dk]) wd2.habitChecks[dk]={};
         wd2.habitChecks[dk][hi]=cb.checked;
         saveWeekly(wk,wd2);
-        // Refresh stats without full re-render for performance
+        const _habDay = new Date(y, m, d).getDay();
+        const _DAYS = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+        if(typeof showToast==='function') showToast((cb.checked?'✓ ':'✗ ')+hab.name+', '+_DAYS[_habDay], '', 1600);
         renderHabitsTracker();
       });
       cell.appendChild(cb);
