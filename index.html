@@ -2384,6 +2384,135 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 }
 .gcy-today.gcy-has-data::after { background: rgba(255,255,255,.7); }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   HABITS TRACKER VIEW
+   ══════════════════════════════════════════════════════════════════════════ */
+.ht-root {
+  display: flex; flex-direction: column;
+  height: calc(100vh - 92px); background: #f9f7f4; overflow: hidden;
+}
+.ht-content {
+  display: grid; grid-template-columns: 1fr; flex: 1; overflow: hidden;
+}
+
+/* ── Left: goal + chart + stats ── */
+.ht-left {
+  display: flex; flex-direction: column; gap: 0;
+  overflow-y: auto; padding: 16px 20px; min-width: 0;
+}
+
+.ht-goal-badge {
+  display: flex; align-items: center; gap: 14px;
+  background: #e8f5e9; border: 2px solid #a5d6a7;
+  border-radius: 12px; padding: 12px 18px;
+  margin-bottom: 14px; width: fit-content;
+}
+.ht-goal-plant  { font-size: 2rem; line-height: 1; }
+.ht-goal-label  { font-family:'DM Sans',sans-serif; font-size:.65rem; font-weight:700; color:#2e7d32; letter-spacing:.08em; }
+.ht-goal-count  { font-family:'DM Serif Display',serif; font-size:2rem; color:#2e7d32; line-height:1; min-width:32px; text-align:center; }
+
+.ht-chart-wrap { background:#fff; border-radius:12px; padding:14px 16px 8px; margin-bottom:12px; box-shadow:0 1px 6px rgba(0,0,0,.06); }
+.ht-chart-title { font-family:'DM Sans',sans-serif; font-size:.65rem; font-weight:700; color:#999; letter-spacing:.1em; margin-bottom:6px; text-align:center; }
+.ht-canvas { display:block; width:100%; }
+
+/* ── Stats rows ── */
+.ht-stats-wrap { margin-bottom: 10px; overflow-x: auto; }
+.ht-stats-row  { display: flex; align-items: stretch; margin-bottom: 2px; }
+.ht-stats-label {
+  width: 120px; min-width: 120px; flex-shrink: 0;
+  font-family:'DM Sans',sans-serif; font-size:.6rem; font-weight:700;
+  color:#555; letter-spacing:.06em; display:flex; align-items:center;
+  padding: 0 10px; border-radius:4px 0 0 4px;
+}
+.ht-stats-cells { display:flex; }
+.ht-stats-cell {
+  width:28px; min-width:28px; height:26px;
+  font-family:'DM Sans',sans-serif; font-size:.62rem; font-weight:600; color:#444;
+  display:flex; align-items:center; justify-content:center;
+  border-left:1px solid rgba(255,255,255,.6);
+}
+
+/* ── Plants row ── */
+.ht-plants-row {
+  display:flex; align-items:center; gap:0; overflow-x:auto;
+  padding: 6px 0; margin-bottom:4px;
+}
+.ht-plant-cell {
+  width:28px; min-width:28px; font-size:1rem; text-align:center;
+  cursor:default; transition: transform .15s;
+}
+.ht-plant-cell:hover { transform:scale(1.3); }
+
+/* ── Right: habit grid ── */
+.ht-right {
+  overflow: auto; padding: 0 20px 20px;
+}
+.ht-grid-wrap {
+  display: flex; flex-direction: column; min-width: fit-content;
+}
+
+.ht-grid-top { display:flex; align-items:stretch; margin-bottom:0; }
+.ht-hab-header {
+  width:160px; min-width:160px; flex-shrink:0;
+  font-family:'DM Sans',sans-serif; font-size:.6rem; font-weight:700;
+  color:#fff; background:#6e9e7e; letter-spacing:.08em;
+  display:flex; align-items:center; padding:0 10px;
+  border-radius:6px 0 0 0;
+}
+.ht-weeks-row { display:flex; }
+.ht-week-cell {
+  font-family:'DM Sans',sans-serif; font-size:.6rem; font-weight:700;
+  color:#555; background:#e8f5e9; letter-spacing:.06em;
+  text-align:center; padding:6px 4px;
+  border-left:2px solid #fff; display:flex; align-items:center; justify-content:center;
+}
+.ht-week-cell:first-child { border-left: none; }
+
+/* Day numbers row */
+.ht-day-num-row { display:flex; align-items:center; margin-bottom:2px; }
+.ht-hab-spacer  { width:160px; min-width:160px; flex-shrink:0; }
+.ht-day-num {
+  width:28px; min-width:28px; height:22px;
+  font-family:'DM Sans',sans-serif; font-size:.65rem; font-weight:600; color:#777;
+  display:flex; align-items:center; justify-content:center;
+}
+.ht-day-num.we    { color:#e0a0b0; }
+.ht-day-num.today { background:#fde68a; color:#92400e; border-radius:4px; font-weight:800; }
+
+/* Habit rows */
+.ht-hab-row  { display:flex; align-items:center; margin-bottom:2px; }
+.ht-hab-name {
+  width:160px; min-width:160px; flex-shrink:0;
+  font-family:'DM Sans',sans-serif; font-size:.75rem; color:#444;
+  padding:0 10px; height:28px; display:flex; align-items:center;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  background:#f0f0ec; border-radius:4px 0 0 4px;
+}
+.ht-check-cell {
+  width:28px; min-width:28px; height:28px;
+  display:flex; align-items:center; justify-content:center;
+  border-left:1px solid rgba(255,255,255,.7);
+}
+.ht-check-cell.today { outline:2px solid #f59e0b; outline-offset:-2px; border-radius:2px; }
+.ht-cb {
+  width:14px; height:14px; cursor:pointer; accent-color:#6e9e7e;
+  border-radius:3px;
+}
+
+.ht-empty {
+  font-family:'DM Sans',sans-serif; font-size:.85rem; color:#aaa;
+  font-style:italic; padding:24px 10px; text-align:center;
+}
+
+/* Layout: left + right side by side when viewport is wide enough */
+@media (min-width: 900px){
+  .ht-content {
+    grid-template-columns: minmax(300px, 420px) 1fr;
+    gap: 0;
+  }
+  .ht-left { border-right: 1px solid #e8e8e8; }
+}
+
 </style>
 </head>
 <body>
@@ -2445,6 +2574,7 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 
 <!-- GCAL VIEW -->
 <div id="gcalView" style="display:none"></div>
+<div id="habitsView" style="display:none"></div>
 
 <!-- MODAL -->
 <div class="overlay" id="overlay">
@@ -2809,7 +2939,8 @@ let vueStyle = 'classic';
 
 // Map scope+style → internal viewMode
 function scopeStyleToMode(scope, style){
-  if(scope==='day')   return 'gcal';           // always calendar
+  if(scope==='day' && style==='habits') return 'habits';
+  if(scope==='day')   return 'gcal';
   if(scope==='week')  return style==='classic' ? 'weekly' : 'gcal';
   if(scope==='month') return style==='classic' ? 'month'  : 'gcal';
   if(scope==='year')  return style==='classic' ? 'annual' : 'gcal';
@@ -2827,13 +2958,13 @@ function modeToScope(mode){
 
 // Available styles for each scope
 const SCOPE_STYLES = {
-  day:   [{ val:'calendar', label:'Calendrier' }],
-  week:  [{ val:'classic',  label:'Classique'  }, { val:'calendar', label:'Calendrier' }],
-  month: [{ val:'classic',  label:'Classique'  }, { val:'calendar', label:'Calendrier' }],
-  year:  [{ val:'classic',  label:'Classique'  }, { val:'calendar', label:'Calendrier' }],
+  day:   [{ val:'calendar', label:'Vue jour'   }, { val:'habits',   label:'Habitudes'  }],
+  week:  [{ val:'classic',  label:'Planning'   }, { val:'calendar', label:'Calendrier' }],
+  month: [{ val:'classic',  label:'Planning'   }, { val:'calendar', label:'Calendrier' }],
+  year:  [{ val:'classic',  label:'Annuel'     }, { val:'calendar', label:'Calendrier' }],
 };
 
-const SCOPE_LABELS = { day:'Jour', week:'Semaine', month:'Mois', year:'Année' };
+const SCOPE_LABELS = { day:'Jour', week:'Semaine', month:'Mois', year:'Année' }; // period names
 
 function updateStyleDropdown(scope){
   const menu = document.getElementById('subStyleMenu'); if(!menu) return;
@@ -2922,9 +3053,12 @@ function switchView(mode){
   document.getElementById('weeklyView').style.display   = mode==='weekly'  ? '' : 'none';
   const gcalEl = document.getElementById('gcalView');
   if(gcalEl) gcalEl.style.display = mode==='gcal' ? '' : 'none';
+  const habEl = document.getElementById('habitsView');
+  if(habEl) habEl.style.display = mode==='habits' ? '' : 'none';
   if(mode==='annual')  { render(); }
   if(mode==='month')   { renderMonthView(); }
   if(mode==='weekly')  { renderWeeklyView(); }
+  if(mode==='habits')  { if(typeof renderHabitsTracker==='function') renderHabitsTracker(); }
   // gcal: renderGcal is called by applyVueScope after gcView is set — don't double-call here
 }
 
@@ -2995,10 +3129,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
 function buildBarDropdowns(barEl, scope, style){
   const SCOPE_LABELS = {year:'Année', month:'Mois', week:'Semaine', day:'Jour'};
   const STYLES_BY_SCOPE = {
-    day:   [{val:'calendar', label:'Calendrier'}],
-    week:  [{val:'classic', label:'Classique'}, {val:'calendar', label:'Calendrier'}],
-    month: [{val:'classic', label:'Classique'}, {val:'calendar', label:'Calendrier'}],
-    year:  [{val:'classic', label:'Classique'}, {val:'calendar', label:'Calendrier'}],
+    day:   [{val:'calendar', label:'Vue jour'  }, {val:'habits',   label:'Habitudes' }],
+    week:  [{val:'classic',  label:'Planning'  }, {val:'calendar', label:'Calendrier'}],
+    month: [{val:'classic',  label:'Planning'  }, {val:'calendar', label:'Calendrier'}],
+    year:  [{val:'classic',  label:'Annuel'    }, {val:'calendar', label:'Calendrier'}],
   };
   const styleOptions = STYLES_BY_SCOPE[scope]||[];
   const showStyle = styleOptions.length > 1;
@@ -3257,11 +3391,11 @@ function renderWeeklyView(){
 
   // Shared classic bar — week label in bar, toggle button appended to bar-left
   renderClassicBar('weeklyView', 'week', weekLabel);
-  // Add panel toggle button into the gc-bar-left
+  // Add panel toggle button BEFORE Aujourd'hui in gc-bar-left
   const barLeft = document.querySelector('#weeklyView .gc-bar-left');
   const toggleBtn = document.createElement('button');
   toggleBtn.className='gc-nav-btn wv-toggle-left-btn'; toggleBtn.id='wvToggleLeft';
-  if(barLeft) barLeft.appendChild(toggleBtn);
+  if(barLeft) barLeft.insertBefore(toggleBtn, barLeft.firstChild);
 
   let leftVisible = localStorage.getItem('ap_left_panel')!=='0';
   const wvLeft=document.getElementById('wvLeft');
@@ -6688,6 +6822,359 @@ document.getElementById('btnContacts').addEventListener('click', () => {
 
 // Expose globally for use by planner
 window.ctInjectAllBirthdays = ctInjectAllBirthdays;
+
+</script>
+<script>
+// ── HABITS TRACKER ───────────────────────────────────────────────────────────
+// Full-month habits dashboard: chart + plant progress + 31-day grid
+
+let habitsMonth = TODAY.getMonth();
+let habitsYear  = TODAY.getFullYear();
+
+function renderHabitsTracker(){
+  const root = document.getElementById('habitsView');
+  if(!root) return;
+  root.innerHTML = '';
+  root.className = 'ht-root';
+
+  // ── Bar (same gc-bar style) ──────────────────────────────────────────────
+  const bar = document.createElement('div'); bar.className='gc-bar';
+  const y = habitsYear, m = habitsMonth;
+  const label = MONTHS_FR[m]+' '+y;
+  bar.innerHTML=`
+    <div class="gc-bar-left">
+      <button class="gc-btn-today" id="htToday">Aujourd'hui</button>
+      <button class="gc-nav-btn" id="htPrev">&#8249;</button>
+      <button class="gc-nav-btn" id="htNext">&#8250;</button>
+      <span class="gc-bar-label">${label}</span>
+    </div>
+    <div class="gc-bar-right"></div>`;
+  root.appendChild(bar);
+  buildBarDropdowns(bar, 'day', 'habits');
+  document.getElementById('htToday').onclick=()=>{ habitsMonth=TODAY.getMonth(); habitsYear=TODAY.getFullYear(); renderHabitsTracker(); };
+  document.getElementById('htPrev').onclick=()=>{ habitsMonth--; if(habitsMonth<0){habitsMonth=11;habitsYear--;} renderHabitsTracker(); };
+  document.getElementById('htNext').onclick=()=>{ habitsMonth++; if(habitsMonth>11){habitsMonth=0;habitsYear++;} renderHabitsTracker(); };
+
+  // ── Main content ─────────────────────────────────────────────────────────
+  const content = document.createElement('div'); content.className='ht-content';
+  root.appendChild(content);
+
+  // Left panel: goal badge + chart
+  const left = document.createElement('div'); left.className='ht-left';
+  content.appendChild(left);
+
+  // Right panel: grid
+  const right = document.createElement('div'); right.className='ht-right';
+  content.appendChild(right);
+
+  htBuildLeft(left);
+  htBuildGrid(right);
+}
+
+// ── DATA HELPERS ─────────────────────────────────────────────────────────────
+function htGetChecks(hi, year, month){
+  // Returns array of booleans [day1..dayN] for habit index hi
+  const days = new Date(year, month+1, 0).getDate();
+  const result = [];
+  for(let d=1; d<=days; d++){
+    const dk = dkey(year, month, d);
+    // Find which week this day belongs to
+    const wk = htWeekKey(year, month, d);
+    const wdata = loadWeekly(wk)||{};
+    const checked = !!(wdata.habitChecks && wdata.habitChecks[dk] && wdata.habitChecks[dk][hi]);
+    result.push(checked);
+  }
+  return result;
+}
+
+function htWeekKey(year, month, day){
+  const d = new Date(year, month, day);
+  // Find Monday of week
+  const dow = d.getDay();
+  const ws = getWS ? getWS() : 1;
+  const diff = ws===0 ? dow : (dow===0?6:dow-1);
+  const mon = new Date(d); mon.setDate(d.getDate()-diff);
+  const wy = mon.getFullYear();
+  // ISO week number approx
+  const jan1 = new Date(wy,0,1);
+  const wn = Math.ceil(((mon-jan1)/86400000+1)/7);
+  return `${wy}-W${String(wn).padStart(2,'0')}`;
+}
+
+function htDoneNotDone(year, month){
+  const habits = loadHabits();
+  const days = new Date(year, month+1, 0).getDate();
+  const done = [], notDone = [], pct = [];
+  for(let d=1; d<=days; d++){
+    let dc=0, nc=0;
+    habits.forEach((_,hi)=>{
+      const dk = dkey(year, month, d);
+      const wk = htWeekKey(year, month, d);
+      const wdata = loadWeekly(wk)||{};
+      const checked = !!(wdata.habitChecks && wdata.habitChecks[dk] && wdata.habitChecks[dk][hi]);
+      if(checked) dc++; else nc++;
+    });
+    done.push(dc);
+    notDone.push(nc);
+    pct.push(habits.length ? Math.round(dc/habits.length*100) : 0);
+  }
+  return {done, notDone, pct};
+}
+
+function htGoalAchievedCount(year, month){
+  const habits = loadHabits();
+  if(!habits.length) return 0;
+  const days = new Date(year, month+1, 0).getDate();
+  let count = 0;
+  for(let d=1; d<=days; d++){
+    let dc=0;
+    habits.forEach((_,hi)=>{
+      const dk = dkey(year, month, d);
+      const wk = htWeekKey(year, month, d);
+      const wdata = loadWeekly(wk)||{};
+      if(wdata.habitChecks?.[dk]?.[hi]) dc++;
+    });
+    if(dc === habits.length) count++;
+  }
+  return count;
+}
+
+// ── LEFT PANEL ───────────────────────────────────────────────────────────────
+function htBuildLeft(left){
+  const y = habitsYear, m = habitsMonth;
+  const habits = loadHabits();
+  const days = new Date(y, m+1, 0).getDate();
+  const {pct} = htDoneNotDone(y, m);
+  const goalCount = htGoalAchievedCount(y, m);
+
+  // Goal badge
+  const badge = document.createElement('div'); badge.className='ht-goal-badge';
+  badge.innerHTML=`
+    <div class="ht-goal-plant">${htPlantEmoji(100)}</div>
+    <div class="ht-goal-label">OBJECTIF ATTEINT</div>
+    <div class="ht-goal-count">${goalCount}</div>`;
+  left.appendChild(badge);
+
+  // Chart
+  const chartWrap = document.createElement('div'); chartWrap.className='ht-chart-wrap';
+  const chartTitle = document.createElement('div'); chartTitle.className='ht-chart-title';
+  chartTitle.textContent='POURCENTAGE COMPLÉTÉ';
+  chartWrap.appendChild(chartTitle);
+
+  const canvas = document.createElement('canvas'); canvas.className='ht-canvas';
+  canvas.id='htCanvas';
+  chartWrap.appendChild(canvas);
+  left.appendChild(chartWrap);
+
+  // Draw chart after append
+  requestAnimationFrame(()=>htDrawChart(canvas, pct, days));
+
+  // Stats rows
+  const {done, notDone} = htDoneNotDone(y, m);
+  const statsWrap = document.createElement('div'); statsWrap.className='ht-stats-wrap';
+
+  const rowLabels = ['FAIT', 'PAS FAIT', '% COMPLÉTÉ'];
+  const rowData   = [done, notDone, pct.map(p=>p+'%')];
+  const rowColors = ['#a8e6cf','#ffb3ba','#b8d4f0'];
+
+  rowLabels.forEach((lbl,ri)=>{
+    const row = document.createElement('div'); row.className='ht-stats-row';
+    const labelCell = document.createElement('div');
+    labelCell.className='ht-stats-label';
+    labelCell.style.background = rowColors[ri];
+    labelCell.textContent = lbl;
+    row.appendChild(labelCell);
+    const cellsWrap = document.createElement('div'); cellsWrap.className='ht-stats-cells';
+    for(let d=0; d<days; d++){
+      const cell = document.createElement('div'); cell.className='ht-stats-cell';
+      cell.style.background = rowColors[ri];
+      cell.textContent = rowData[ri][d];
+      cellsWrap.appendChild(cell);
+    }
+    row.appendChild(cellsWrap);
+    statsWrap.appendChild(row);
+  });
+  left.appendChild(statsWrap);
+
+  // Plants row
+  const plantsRow = document.createElement('div'); plantsRow.className='ht-plants-row';
+  for(let d=0; d<days; d++){
+    const cell = document.createElement('div'); cell.className='ht-plant-cell';
+    cell.textContent = htPlantEmoji(pct[d]);
+    cell.title = `Jour ${d+1}: ${pct[d]}%`;
+    plantsRow.appendChild(cell);
+  }
+  left.appendChild(plantsRow);
+}
+
+function htPlantEmoji(pct){
+  if(pct >= 100) return '🌹';
+  if(pct >= 75)  return '🌷';
+  if(pct >= 50)  return '🌱';
+  if(pct >= 25)  return '🪴';
+  return '🌱';
+}
+
+// ── CHART ─────────────────────────────────────────────────────────────────────
+function htDrawChart(canvas, pct, days){
+  const dpr = window.devicePixelRatio||1;
+  const w = canvas.parentElement.clientWidth||600;
+  const h = 180;
+  canvas.width  = w*dpr;
+  canvas.height = h*dpr;
+  canvas.style.width  = w+'px';
+  canvas.style.height = h+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+
+  const pad = {top:20, right:16, bottom:30, left:40};
+  const cw = w - pad.left - pad.right;
+  const ch = h - pad.top  - pad.bottom;
+
+  // Y gridlines
+  ctx.strokeStyle='#e8e8e8'; ctx.lineWidth=1;
+  [0,25,50,75,100].forEach(v=>{
+    const y = pad.top + ch*(1-v/100);
+    ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(pad.left+cw,y); ctx.stroke();
+    ctx.fillStyle='#aaa'; ctx.font='10px DM Sans,sans-serif'; ctx.textAlign='right';
+    ctx.fillText(v+'%', pad.left-6, y+4);
+  });
+
+  if(!pct.length) return;
+  const xStep = cw/(pct.length-1||1);
+
+  // Area fill
+  const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top+ch);
+  grad.addColorStop(0,'rgba(100,180,255,0.35)');
+  grad.addColorStop(1,'rgba(100,180,255,0.02)');
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top+ch);
+  pct.forEach((v,i)=>{ const x=pad.left+i*xStep; const y=pad.top+ch*(1-v/100); i===0?ctx.lineTo(x,y):ctx.lineTo(x,y); });
+  ctx.lineTo(pad.left+(pct.length-1)*xStep, pad.top+ch);
+  ctx.closePath();
+  ctx.fillStyle=grad; ctx.fill();
+
+  // Line
+  ctx.beginPath(); ctx.strokeStyle='#64b4ff'; ctx.lineWidth=2;
+  pct.forEach((v,i)=>{ const x=pad.left+i*xStep; const y=pad.top+ch*(1-v/100); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+  ctx.stroke();
+
+  // Dots + X-axis labels
+  pct.forEach((v,i)=>{
+    const x=pad.left+i*xStep, y=pad.top+ch*(1-v/100);
+    ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2);
+    ctx.fillStyle='#64b4ff'; ctx.fill();
+    if((i+1)%5===0 || i===0){
+      ctx.fillStyle='#999'; ctx.font='10px DM Sans,sans-serif'; ctx.textAlign='center';
+      ctx.fillText(i+1, x, pad.top+ch+18);
+    }
+  });
+}
+
+// ── GRID ─────────────────────────────────────────────────────────────────────
+function htBuildGrid(right){
+  const y = habitsYear, m = habitsMonth;
+  const habits = loadHabits();
+  const days = new Date(y, m+1, 0).getDate();
+
+  const wrap = document.createElement('div'); wrap.className='ht-grid-wrap';
+  right.appendChild(wrap);
+
+  // Header: "HABITUDES QUOTIDIENNES" + week headers
+  const topRow = document.createElement('div'); topRow.className='ht-grid-top';
+
+  const habHeader = document.createElement('div'); habHeader.className='ht-hab-header';
+  habHeader.textContent='HABITUDES QUOTIDIENNES';
+  topRow.appendChild(habHeader);
+
+  // Week groups
+  const weeksRow = document.createElement('div'); weeksRow.className='ht-weeks-row';
+  let wStart=1, wNum=1;
+  while(wStart <= days){
+    const wEnd = Math.min(wStart+6, days);
+    const wCell = document.createElement('div'); wCell.className='ht-week-cell';
+    wCell.style.width = ((wEnd-wStart+1)*28)+'px';
+    wCell.textContent = `SEMAINE ${wNum}`;
+    weeksRow.appendChild(wCell);
+    wStart+=7; wNum++;
+  }
+  topRow.appendChild(weeksRow);
+  wrap.appendChild(topRow);
+
+  // Day numbers row
+  const dayNumRow = document.createElement('div'); dayNumRow.className='ht-day-num-row';
+  const spacer = document.createElement('div'); spacer.className='ht-hab-spacer'; dayNumRow.appendChild(spacer);
+  for(let d=1; d<=days; d++){
+    const cell = document.createElement('div'); cell.className='ht-day-num';
+    const dow = new Date(y,m,d).getDay();
+    if(dow===0||dow===6) cell.classList.add('we');
+    if(isToday(m,d)) cell.classList.add('today');
+    cell.textContent=d;
+    dayNumRow.appendChild(cell);
+  }
+  wrap.appendChild(dayNumRow);
+
+  // Empty state
+  if(!habits.length){
+    const empty = document.createElement('div'); empty.className='ht-empty';
+    empty.textContent='Aucune habitude définie. Ajoutez-en dans la vue Semaine → panneau gauche.';
+    wrap.appendChild(empty);
+    return;
+  }
+
+  // Habit rows
+  const WEEK_COLORS = ['#f8d7e3','#e8d5f0','#d5e8d4','#d5e4f0','#fde8c8','#e8f0d5'];
+
+  habits.forEach((hab, hi)=>{
+    const row = document.createElement('div'); row.className='ht-hab-row';
+    const nameCell = document.createElement('div'); nameCell.className='ht-hab-name';
+    nameCell.textContent = hab.name;
+    row.appendChild(nameCell);
+
+    for(let d=1; d<=days; d++){
+      const dk = dkey(y, m, d);
+      const wk = htWeekKey(y, m, d);
+      const wdata = loadWeekly(wk)||{};
+      const checked = !!(wdata.habitChecks?.[dk]?.[hi]);
+      const dow = new Date(y,m,d).getDay();
+      const isWe = dow===0||dow===6;
+      const isTod = isToday(m,d);
+
+      // Week color index
+      const weekIdx = Math.floor((d-1)/7);
+      const weekColor = WEEK_COLORS[weekIdx % WEEK_COLORS.length];
+
+      const cell = document.createElement('div');
+      cell.className='ht-check-cell'+(isWe?' we':'')+(isTod?' today':'');
+      cell.style.background = isWe ? htDarken(weekColor,0.07) : (isTod?'#fde68a':weekColor);
+
+      const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=checked;
+      cb.className='ht-cb';
+      cb.addEventListener('change',()=>{
+        const wd2 = loadWeekly(wk)||{habitChecks:{}};
+        if(!wd2.habitChecks) wd2.habitChecks={};
+        if(!wd2.habitChecks[dk]) wd2.habitChecks[dk]={};
+        wd2.habitChecks[dk][hi]=cb.checked;
+        saveWeekly(wk,wd2);
+        // Refresh stats without full re-render for performance
+        renderHabitsTracker();
+      });
+      cell.appendChild(cb);
+      row.appendChild(cell);
+    }
+    wrap.appendChild(row);
+  });
+}
+
+function htDarken(hex, amt){
+  // Simple darkening of pastel hex color
+  let c=hex.replace('#','');
+  if(c.length===3) c=c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+  const r=Math.max(0,parseInt(c.slice(0,2),16)-Math.round(amt*255));
+  const g=Math.max(0,parseInt(c.slice(2,4),16)-Math.round(amt*255));
+  const b=Math.max(0,parseInt(c.slice(4,6),16)-Math.round(amt*255));
+  return `rgb(${r},${g},${b})`;
+}
 
 </script>
 </body>
