@@ -4428,6 +4428,44 @@ function kbBuildColumn(status, cards) {
 }
 
 // ── COLUMN CONTEXT MENU ──────────────────────────────────────────────────────
+function kbConfirm(colLabel, onYes) {
+  kbRemoveModal();
+  const overlay = kbMakeOverlay();
+  const modal = document.createElement('div'); modal.className = 'kb-modal'; modal.style.maxWidth = '400px';
+
+  // Header
+  const hd = document.createElement('div'); hd.className = 'kb-modal-hd';
+  const hdTitle = document.createElement('span'); hdTitle.className = 'kb-modal-title';
+  hdTitle.textContent = 'Supprimer la colonne';
+  hd.appendChild(hdTitle); hd.appendChild(kbCloseBtn());
+
+  // Body
+  const bd = document.createElement('div'); bd.className = 'kb-modal-bd';
+  bd.style.gap = '6px';
+  const line1 = document.createElement('p');
+  line1.style.cssText = 'margin:0;font-size:.88rem;color:var(--text);line-height:1.6;';
+  line1.innerHTML = 'Voulez-vous supprimer la colonne <strong>' + colLabel + '</strong> ?';
+  const line2 = document.createElement('p');
+  line2.style.cssText = 'margin:0;font-size:.82rem;color:var(--muted);line-height:1.5;';
+  line2.textContent = 'Les objectifs dans cette colonne seront déplacés vers la première colonne.';
+  bd.appendChild(line1); bd.appendChild(line2);
+
+  // Footer
+  const ft = document.createElement('div'); ft.className = 'kb-modal-ft';
+  const cancelBtn = document.createElement('button'); cancelBtn.className = 'kb-modal-cancel';
+  cancelBtn.textContent = 'Annuler';
+  cancelBtn.addEventListener('click', kbRemoveModal);
+  const delBtn = document.createElement('button'); delBtn.className = 'kb-modal-save';
+  delBtn.style.cssText = 'background:#c0392b;';
+  delBtn.textContent = 'Supprimer';
+  delBtn.addEventListener('click', () => { kbRemoveModal(); onYes(); });
+  ft.appendChild(cancelBtn); ft.appendChild(delBtn);
+
+  modal.appendChild(hd); modal.appendChild(bd); modal.appendChild(ft);
+  overlay.appendChild(modal); document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+
 function kbShowColMenu(anchor, status) {
   document.querySelectorAll('.kb-col-dropdown').forEach(d => d.remove());
   const menu = document.createElement('div'); menu.className = 'kb-col-dropdown';
@@ -4437,25 +4475,26 @@ function kbShowColMenu(anchor, status) {
   const mkItem = (icon, label, cb) => {
     const item = document.createElement('button'); item.className = 'kb-dropdown-item';
     item.innerHTML = `<span>${icon}</span> ${label}`;
-    item.addEventListener('click', () => { menu.remove(); cb(); });
+    item.addEventListener('click', e => { e.stopPropagation(); menu.remove(); cb(); });
     menu.appendChild(item);
   };
-  mkItem('✏', 'Renommer / couleur', () => kbShowEditStatusModal(status));
-  mkItem('✕', 'Supprimer la colonne', (e) => {
+  mkItem('\u270F', 'Renommer / couleur', () => kbShowEditStatusModal(status));
+  mkItem('\u2715', 'Supprimer la colonne', () => {
     const statuses = kbLoadStatuses();
-    if (statuses.length <= 1) { alert('Il faut au moins une colonne.'); return; }
-    if (confirm(`Supprimer "${status.label}" ? Les objectifs seront déplacés vers la première colonne.`)) {
-      const idx = statuses.findIndex(s => s.id === status.id);
-      if (idx >= 0) statuses.splice(idx, 1);
-      const first = statuses[0];
+    if (statuses.length <= 1) { kbConfirm('Il faut au moins une colonne.', () => {}); return; }
+    kbConfirm(status.label, () => {
+      const fresh = kbLoadStatuses();
+      const idx = fresh.findIndex(s => s.id === status.id);
+      if (idx >= 0) fresh.splice(idx, 1);
+      const first = fresh[0];
       const allCards = kbLoadCards();
-      allCards.forEach(c => { if (c.statusId === status.id) c.statusId = first?.id; });
-      kbSaveCards(allCards); kbSaveStatuses(statuses); renderKanban();
-    }
+      allCards.forEach(c => { if (c.statusId === status.id) c.statusId = first ? first.id : null; });
+      kbSaveCards(allCards); kbSaveStatuses(fresh); renderKanban();
+    });
   });
   document.body.appendChild(menu);
-  // Use setTimeout so the click that opened the menu doesn't immediately close it
-  setTimeout(() => document.addEventListener('click', () => menu.remove(), { once: true }), 50);
+  const closeMenu = e => { if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener('click', closeMenu); } };
+  setTimeout(() => document.addEventListener('click', closeMenu), 0);
 }
 
 function kbShowEditStatusModal(status) {
