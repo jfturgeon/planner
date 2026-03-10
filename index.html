@@ -2047,41 +2047,76 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 }
 
 /* ── Inner bar ── */
+/* ── gc-bar (shared by classic + calendar views) ── */
 .gc-bar {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 16px 8px;
+  padding: 8px 16px;
   border-bottom: 1px solid #e8e8e8;
-  flex-shrink: 0;
+  flex-shrink: 0; gap: 8px;
+  background: #fff;
 }
-.gc-bar-left { display: flex; align-items: center; gap: 6px; }
+.gc-bar-left  { display: flex; align-items: center; gap: 6px; flex: 1; }
+.gc-bar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
 .gc-btn-today {
-  padding: 6px 14px; border: 1px solid #d0d0d0; border-radius: 6px;
+  padding: 5px 13px; border: 1px solid #d0d0d0; border-radius: 6px;
   background: #fff; font-size: .82rem; font-weight: 500; cursor: pointer;
-  font-family: 'DM Sans', sans-serif; transition: background .12s;
+  font-family: 'DM Sans', sans-serif; color: #3c4043; transition: all .12s;
 }
-.gc-btn-today:hover { background: #f5f5f5; }
+.gc-btn-today:hover { background: #f5f5f5; border-color: #bbb; }
+
 .gc-nav-btn {
-  width: 30px; height: 30px; border-radius: 50%;
+  width: 28px; height: 28px; border-radius: 50%;
   border: none; background: transparent; font-size: 1.2rem;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: #555; transition: background .12s;
+  color: #555; transition: background .12s; line-height: 1;
 }
 .gc-nav-btn:hover { background: #f0f0f0; }
+
 .gc-bar-label {
-  font-size: 1.1rem; font-weight: 600; color: #3c4043;
-  letter-spacing: -.01em; margin-left: 4px;
+  font-size: 1rem; font-weight: 600; color: #3c4043;
+  letter-spacing: -.01em; margin-left: 2px; white-space: nowrap;
 }
-.gc-view-toggle {
-  display: flex; border: 1px solid #d0d0d0; border-radius: 8px; overflow: hidden;
+
+/* ── gc-bar dropdowns (Vue + Style) ── */
+.gc-dd-wrap { position: relative; }
+
+.gc-dd-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: #fff; border: 1px solid #d0d0d0; border-radius: 7px;
+  padding: 5px 11px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: .8rem; font-weight: 600;
+  color: #3c4043; transition: all .15s; white-space: nowrap; line-height: 1;
 }
-.gc-vbtn {
-  padding: 6px 14px; border: none; background: #fff; font-size: .8rem;
-  font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif;
-  color: #555; border-right: 1px solid #d0d0d0; transition: background .12s;
+.gc-dd-btn:hover { background: #f5f5f5; border-color: #bbb; }
+
+.gc-dd-arrow {
+  width: 8px; height: 5px; flex-shrink: 0; opacity: .5;
+  transition: transform .15s;
 }
-.gc-vbtn:last-child { border-right: none; }
-.gc-vbtn:hover { background: #f5f5f5; }
-.gc-vbtn.active { background: #6659d4; color: #fff; }
+.gc-dd-menu.open ~ .gc-dd-btn .gc-dd-arrow,
+.gc-dd-wrap:has(.gc-dd-menu.open) .gc-dd-arrow { transform: rotate(180deg); }
+
+.gc-dd-menu {
+  display: none; position: absolute; right: 0; top: calc(100% + 5px);
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.12); min-width: 130px;
+  z-index: 600; overflow: hidden; padding: 4px 0;
+}
+.gc-dd-menu.open { display: block; animation: gcDdFadeIn .12s ease; }
+
+@keyframes gcDdFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.gc-dd-item {
+  padding: 8px 16px; font-size: .82rem; color: #3c4043;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  transition: background .1s; white-space: nowrap;
+}
+.gc-dd-item:hover  { background: #f5f5f5; }
+.gc-dd-item.active { color: #6659d4; font-weight: 700; }
 
 
 .gc-content { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
@@ -2395,10 +2430,11 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   </div>
 </header>
 
-<div class="strip-wrapper"><div class="strip" id="strip"></div></div>
-
-<div class="scroll-area" id="scrollArea" style="display:none">
-  <div class="columns-wrap" id="colWrap"></div>
+<div id="annualView" style="display:none">
+  <div class="strip-wrapper"><div class="strip" id="strip"></div></div>
+  <div class="scroll-area" id="scrollArea">
+    <div class="columns-wrap" id="colWrap"></div>
+  </div>
 </div>
 
 <!-- MONTH VIEW -->
@@ -2514,6 +2550,7 @@ function monthOffset(m){
 function render(){
   const ydEl=document.getElementById('yearDisp'); if(ydEl) ydEl.textContent=CY;
   const wsEl=document.getElementById('weekStart'); if(wsEl) wsEl.value=getWS();
+  renderClassicBar('annualView', 'year', String(CY));
   renderStrip();
   renderColumns();
   bindScrollSync();
@@ -2880,8 +2917,7 @@ function switchView(mode){
   if(subHdr) subHdr.style.display = isAgenda ? '' : 'none';
   // Hide all agenda views, then show the right one
   const views = ['strip-wrapper','scrollArea','monthView','weeklyView'];
-  document.querySelector('.strip-wrapper').style.display = mode==='annual' ? '' : 'none';
-  document.getElementById('scrollArea').style.display   = mode==='annual' ? '' : 'none';
+  document.getElementById('annualView')?.style.setProperty('display', mode==='annual' ? '' : 'none');
   document.getElementById('monthView').style.display    = mode==='month'   ? '' : 'none';
   document.getElementById('weeklyView').style.display   = mode==='weekly'  ? '' : 'none';
   const gcalEl = document.getElementById('gcalView');
@@ -2950,6 +2986,120 @@ document.addEventListener('DOMContentLoaded', ()=>{
 });
 
 // ── MONTH VIEW ─────────────────────────────────────────────────────────────
+
+// ── SHARED CLASSIC BAR ────────────────────────────────────────────────────
+// Builds the same gc-bar style header for all classic views
+// ── SHARED BAR DROPDOWN BUILDER ─────────────────────────────────────────────
+// Used by both renderClassicBar (classic views) and renderGcal (calendar view)
+// scope: 'year'|'month'|'week'|'day'   style: 'classic'|'calendar'
+function buildBarDropdowns(barEl, scope, style){
+  const SCOPE_LABELS = {year:'Année', month:'Mois', week:'Semaine', day:'Jour'};
+  const STYLES_BY_SCOPE = {
+    day:   [{val:'calendar', label:'Calendrier'}],
+    week:  [{val:'classic', label:'Classique'}, {val:'calendar', label:'Calendrier'}],
+    month: [{val:'classic', label:'Classique'}, {val:'calendar', label:'Calendrier'}],
+    year:  [{val:'classic', label:'Classique'}, {val:'calendar', label:'Calendrier'}],
+  };
+  const styleOptions = STYLES_BY_SCOPE[scope]||[];
+  const showStyle = styleOptions.length > 1;
+
+  const right = barEl.querySelector('.gc-bar-right');
+  if(!right) return;
+  right.innerHTML = '';
+
+  // ── Vue dropdown ──
+  const vueWrap = document.createElement('div'); vueWrap.className='gc-dd-wrap';
+  const vueBtn  = document.createElement('button'); vueBtn.className='gc-dd-btn';
+  vueBtn.innerHTML=`<span class="gc-dd-label">${SCOPE_LABELS[scope]||scope}</span><svg class="gc-dd-arrow" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>`;
+  const vueMenu = document.createElement('div'); vueMenu.className='gc-dd-menu';
+  ['year','month','week','day'].forEach(s=>{
+    const item=document.createElement('div');
+    item.className='gc-dd-item'+(s===scope?' active':'');
+    item.textContent=SCOPE_LABELS[s];
+    item.addEventListener('click',()=>{
+      closeBarDropdowns(barEl);
+      const newStyle = s==='day'?'calendar':style;
+      applyVueScope(s, newStyle);
+    });
+    vueMenu.appendChild(item);
+  });
+  vueBtn.addEventListener('click',e=>{ e.stopPropagation(); toggleBarDropdown(barEl, vueMenu); });
+  vueWrap.appendChild(vueBtn); vueWrap.appendChild(vueMenu);
+  right.appendChild(vueWrap);
+
+  // ── Style dropdown (only if >1 option) ──
+  if(showStyle){
+    const styleWrap = document.createElement('div'); styleWrap.className='gc-dd-wrap';
+    const styleBtn  = document.createElement('button'); styleBtn.className='gc-dd-btn';
+    const curStyleLabel = styleOptions.find(o=>o.val===style)?.label || styleOptions[0].label;
+    styleBtn.innerHTML=`<span class="gc-dd-label">${curStyleLabel}</span><svg class="gc-dd-arrow" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>`;
+    const styleMenu = document.createElement('div'); styleMenu.className='gc-dd-menu';
+    styleOptions.forEach(opt=>{
+      const item=document.createElement('div');
+      item.className='gc-dd-item'+(opt.val===style?' active':'');
+      item.textContent=opt.label;
+      item.addEventListener('click',()=>{
+        closeBarDropdowns(barEl);
+        applyVueScope(scope, opt.val);
+      });
+      styleMenu.appendChild(item);
+    });
+    styleBtn.addEventListener('click',e=>{ e.stopPropagation(); toggleBarDropdown(barEl, styleMenu); });
+    styleWrap.appendChild(styleBtn); styleWrap.appendChild(styleMenu);
+    right.appendChild(styleWrap);
+  }
+
+  // Close on outside click (scoped to document, deduped)
+  if(!barEl._barClickHandler){
+    barEl._barClickHandler=()=>closeBarDropdowns(barEl);
+    document.addEventListener('click', barEl._barClickHandler);
+  }
+}
+
+function toggleBarDropdown(barEl, menu){
+  const isOpen=menu.classList.contains('open');
+  closeBarDropdowns(barEl);
+  if(!isOpen) menu.classList.add('open');
+}
+function closeBarDropdowns(barEl){
+  barEl?.querySelectorAll('.gc-dd-menu').forEach(m=>m.classList.remove('open'));
+}
+
+function renderClassicBar(containerId, scope, label){
+  const container = document.getElementById(containerId);
+  if(!container) return;
+  const existing = container.querySelector('.gc-bar');
+  if(existing) existing.remove();
+  const bar = document.createElement('div'); bar.className='gc-bar';
+  bar.innerHTML=`
+    <div class="gc-bar-left">
+      <button class="gc-btn-today" id="clToday">Aujourd'hui</button>
+      <button class="gc-nav-btn" id="clPrev">&#8249;</button>
+      <button class="gc-nav-btn" id="clNext">&#8250;</button>
+      <span class="gc-bar-label">${label}</span>
+    </div>
+    <div class="gc-bar-right"></div>`;
+  container.insertBefore(bar, container.firstChild);
+
+  buildBarDropdowns(bar, scope, 'classic');
+
+  document.getElementById('clToday').onclick=()=>{
+    if(scope==='year'){ CY=TODAY.getFullYear(); storeYear(CY); render(); }
+    else if(scope==='month'){ monthViewMonth=TODAY.getMonth(); monthViewYear=TODAY.getFullYear(); renderMonthView(); }
+    else if(scope==='week'){ weekOffset=0; calOffset=0; renderWeeklyView(); }
+  };
+  document.getElementById('clPrev').onclick=()=>{
+    if(scope==='year'){ CY--; storeYear(CY); render(); }
+    else if(scope==='month'){ monthViewMonth--; if(monthViewMonth<0){monthViewMonth=11;monthViewYear--;} renderMonthView(); }
+    else if(scope==='week'){ weekOffset--; calOffset=0; renderWeeklyView(); }
+  };
+  document.getElementById('clNext').onclick=()=>{
+    if(scope==='year'){ CY++; storeYear(CY); render(); }
+    else if(scope==='month'){ monthViewMonth++; if(monthViewMonth>11){monthViewMonth=0;monthViewYear++;} renderMonthView(); }
+    else if(scope==='week'){ weekOffset++; calOffset=0; renderWeeklyView(); }
+  };
+}
+
 function renderMonthView(){
   const mv = document.getElementById('monthView');
   const ws = getWS();
@@ -2961,14 +3111,6 @@ function renderMonthView(){
   const dowLabels = ws===0 ? DAYS_SUN : [...DAYS_SUN.slice(1), DAYS_SUN[0]];
 
   mv.innerHTML = `
-    <div class="mv-header">
-      <div class="mv-title">${MONTHS_FR[m]}<span>${y}</span></div>
-      <div class="mv-nav-btns">
-        <button class="mv-nav-btn" id="mvPrev">‹</button>
-        <button class="mv-nav-btn today-btn" id="mvToday">Aujourd'hui</button>
-        <button class="mv-nav-btn" id="mvNext">›</button>
-      </div>
-    </div>
     <div class="mv-body">
       <div class="mv-cal-wrap" id="mvCal"></div>
       <div class="mv-list-wrap" id="mvList">
@@ -2976,15 +3118,8 @@ function renderMonthView(){
       </div>
     </div>`;
 
-  document.getElementById('mvPrev').onclick=()=>{
-    monthViewMonth--; if(monthViewMonth<0){monthViewMonth=11;monthViewYear--;} renderMonthView();
-  };
-  document.getElementById('mvNext').onclick=()=>{
-    monthViewMonth++; if(monthViewMonth>11){monthViewMonth=0;monthViewYear++;} renderMonthView();
-  };
-  document.getElementById('mvToday').onclick=()=>{
-    monthViewMonth=TODAY.getMonth(); monthViewYear=TODAY.getFullYear(); renderMonthView();
-  };
+  // Shared classic bar
+  renderClassicBar('monthView', 'month', MONTHS_FR[m]+' '+y);
 
   // ── Big calendar ──
   const cal = document.getElementById('mvCal');
@@ -3115,45 +3250,25 @@ function renderWeeklyView(){
   const weekLabel=`${fmt(startD)} – ${fmt(endD)} ${endD.getFullYear()}`;
 
   wv.innerHTML=`
-  <div class="wv-week-nav">
-    <div class="wv-week-label-wrap">
-      <button class="wv-nav-btn wv-toggle-left-btn" id="wvToggleLeft" title="Afficher / masquer le panneau">◀</button>
-      <div class="wv-week-label" id="wvWeekLabel">${weekLabel}</div>
-    </div>
-    <div class="wv-nav-btns">
-      <button class="wv-nav-btn" id="wvPrev">‹ Semaine préc.</button>
-      <button class="wv-nav-btn today-btn" id="wvToday">Aujourd'hui</button>
-      <button class="wv-nav-btn" id="wvNext">Semaine suiv. ›</button>
-    </div>
-  </div>
   <div class="wv-layout">
     <div class="wv-left" id="wvLeft"></div>
     <div class="wv-right"><div class="wv-days-strip" id="wvDays"></div></div>
   </div>`;
 
-  // Nav
-  document.getElementById('wvPrev').onclick=()=>{ weekOffset--; calOffset=0; renderWeeklyView(); };
-  document.getElementById('wvNext').onclick=()=>{ weekOffset++; calOffset=0; renderWeeklyView(); };
-  document.getElementById('wvToday').onclick=()=>{ weekOffset=0; calOffset=0; renderWeeklyView(); };
+  // Shared classic bar — week label in bar, toggle button appended to bar-left
+  renderClassicBar('weeklyView', 'week', weekLabel);
+  // Add panel toggle button into the gc-bar-left
+  const barLeft = document.querySelector('#weeklyView .gc-bar-left');
+  const toggleBtn = document.createElement('button');
+  toggleBtn.className='gc-nav-btn wv-toggle-left-btn'; toggleBtn.id='wvToggleLeft';
+  if(barLeft) barLeft.appendChild(toggleBtn);
+
   let leftVisible = localStorage.getItem('ap_left_panel')!=='0';
   const wvLeft=document.getElementById('wvLeft');
-  const toggleBtn=document.getElementById('wvToggleLeft');
-  const wvWeekLabel=document.getElementById('wvWeekLabel');
   const applyLeftState=()=>{
     wvLeft.style.display=leftVisible?'':'none';
-    if(leftVisible){
-      toggleBtn.textContent='◀';
-      toggleBtn.title='Masquer le panneau';
-      // Move button to be before the label (left side)
-      const wrap=document.querySelector('.wv-week-label-wrap');
-      wrap.insertBefore(toggleBtn, wvWeekLabel);
-    } else {
-      toggleBtn.textContent='▶';
-      toggleBtn.title='Afficher le panneau';
-      // Move button to be before the label (left side, same position)
-      const wrap=document.querySelector('.wv-week-label-wrap');
-      wrap.insertBefore(toggleBtn, wvWeekLabel);
-    }
+    toggleBtn.textContent=leftVisible?'◀':'▶';
+    toggleBtn.title=leftVisible?'Masquer le panneau':'Afficher le panneau';
     toggleBtn.classList.toggle('active', !leftVisible);
     document.querySelector('.wv-layout').style.gridTemplateColumns=leftVisible?'auto 1fr':'1fr';
   };
@@ -3810,26 +3925,18 @@ function renderGcal(){
       <button class="gc-nav-btn" id="gcNext">&#8250;</button>
       <span class="gc-bar-label" id="gcLabel"></span>
     </div>
-    <div class="gc-bar-right">
-      <div class="gc-view-toggle">
-        <button class="gc-vbtn" id="gcBtnYear">Année</button>
-        <button class="gc-vbtn" id="gcBtnMonth">Mois</button>
-        <button class="gc-vbtn" id="gcBtnWeek">Semaine</button>
-        <button class="gc-vbtn" id="gcBtnDay">Jour</button>
-      </div>
-    </div>`;
+    <div class="gc-bar-right"></div>`;
   root.appendChild(bar);
 
-  const content=document.createElement('div'); content.className='gc-content'; content.id='gcContent';
-  root.appendChild(content);
+  const contentEl=document.createElement('div'); contentEl.className='gc-content'; contentEl.id='gcContent';
+  root.appendChild(contentEl);
+
+  // Build dropdowns using shared builder
+  if(typeof buildBarDropdowns==='function') buildBarDropdowns(bar, gcView, 'calendar');
 
   document.getElementById('gcToday').onclick=()=>{ gcDate=new Date(); gcDate.setHours(0,0,0,0); gcRender(); };
   document.getElementById('gcPrev').onclick=()=>gcNavigate(-1);
   document.getElementById('gcNext').onclick=()=>gcNavigate(1);
-  document.getElementById('gcBtnYear').onclick=()=>{ gcView='year'; gcRender(); };
-  document.getElementById('gcBtnMonth').onclick=()=>{ gcView='month'; gcRender(); };
-  document.getElementById('gcBtnWeek').onclick=()=>{ gcView='week'; gcRender(); };
-  document.getElementById('gcBtnDay').onclick=()=>{ gcView='day'; gcRender(); };
 
   gcRender();
 }
@@ -3860,14 +3967,10 @@ function gcUpdateBar(){
   // Also update the sub-header period label
   const periodLbl=document.getElementById('subPeriodLabel');
   if(periodLbl) periodLbl.textContent=text;
-  // Active view buttons
-  ['gcBtnYear','gcBtnMonth','gcBtnWeek','gcBtnDay'].forEach(id=>{
-    const b=document.getElementById(id); if(!b) return;
-    b.classList.toggle('active',
-      (id==='gcBtnYear'&&gcView==='year')||(id==='gcBtnMonth'&&gcView==='month')||
-      (id==='gcBtnWeek'&&gcView==='week')||(id==='gcBtnDay'&&gcView==='day'));
-  });
-  // Sync sub-header dropdowns too
+  // Rebuild gc-bar dropdowns to reflect new gcView
+  const gcBarEl=document.querySelector('#gcalView .gc-bar');
+  if(gcBarEl && typeof buildBarDropdowns==='function') buildBarDropdowns(gcBarEl, gcView, 'calendar');
+  // Sync sub-header dropdowns
   const GC_SCOPE_LABELS={day:'Jour',week:'Semaine',month:'Mois',year:'Année'};
   const subVueLbl=document.getElementById('subVueLabel');
   if(subVueLbl) subVueLbl.textContent=GC_SCOPE_LABELS[gcView]||gcView;
