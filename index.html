@@ -3209,7 +3209,11 @@ footer {
           <button class="user-dd-item" id="menuProfile">👤 Mon Profil</button>
           <button class="user-dd-item" id="menuPreferences">⚙ Préférences</button>
           <div class="dropdown-separator"></div>
+          <button class="user-dd-item" id="menuExport">💾 Exporter Données</button>
+          <button class="user-dd-item" id="menuImport">📂 Importer Données</button>
+          <div class="dropdown-separator"></div>
           <button class="user-dd-item logout-item" id="menuLogout">🚪 Déconnexion</button>
+          <input type="file" id="importFileInput" style="display:none;" accept=".json"/>
         </div>
       </div>
     </div>
@@ -7841,12 +7845,12 @@ document.getElementById('btnKanban').addEventListener('click', () => {
 
 // Wire Préférences button — always visible, always opens settings
 document.addEventListener('DOMContentLoaded', () => {
-  const pb = document.getElementById('btnPreferences');
+  const pb = document.getElementById('menuPreferences');
   if (pb) pb.addEventListener('click', kbShowSettingsModal);
 });
 // Fallback if DOMContentLoaded already fired
 (function() {
-  const pb = document.getElementById('btnPreferences');
+  const pb = document.getElementById('menuPreferences');
   if (pb && !pb._kbWired) { pb._kbWired = true; pb.addEventListener('click', kbShowSettingsModal); }
 })();
 
@@ -9142,6 +9146,34 @@ function setupUserMenu() {
     });
   }
 
+  // Export data
+  const menuExport = document.getElementById('menuExport');
+  if (menuExport) {
+    menuExport.addEventListener('click', () => {
+      userDropdown.classList.remove('open');
+      exportAllData();
+    });
+  }
+
+  // Import data
+  const menuImport = document.getElementById('menuImport');
+  if (menuImport) {
+    menuImport.addEventListener('click', () => {
+      userDropdown.classList.remove('open');
+      document.getElementById('importFileInput').click();
+    });
+  }
+
+  const importFileInput = document.getElementById('importFileInput');
+  if (importFileInput) {
+    importFileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        importAllData(e.target.files[0]);
+      }
+      e.target.value = '';
+    });
+  }
+
   if (menuLogout) {
     menuLogout.addEventListener('click', async () => {
       userDropdown.classList.remove('open');
@@ -9333,8 +9365,62 @@ function saveLoginToHistory() {
 
 // Show preferences modal (placeholder)
 function showPreferencesModal() {
-  console.log('📋 Preferences modal - to be implemented');
-  // TODO: Implement full preferences modal with app settings
+  kbShowSettingsModal();
+}
+
+// Export all localStorage data
+function exportAllData() {
+  const dataToExport = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('ap_')) {
+      dataToExport[key] = localStorage.getItem(key);
+    }
+  }
+  
+  const jsonStr = JSON.stringify(dataToExport, null, 2);
+  const blob = new Blob([jsonStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `planner-backup-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  
+  console.log('✅ Données exportées avec succès');
+}
+
+// Import all localStorage data
+function importAllData(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      let count = 0;
+      
+      for (const key in importedData) {
+        if (key === '_version') continue;
+        if (importedData.hasOwnProperty(key)) {
+          localStorage.setItem(key, importedData[key]);
+          count++;
+        }
+      }
+      
+      console.log(`✅ ${count} éléments importés avec succès`);
+      alert(`✅ Importation réussie!\n${count} éléments ont été restaurés.\nVeuillez rafraîchir la page.`);
+      
+      // Optional: reload page after import
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'importation:', error);
+      alert('❌ Erreur lors de l\'importation. Vérifiez que le fichier est valide.');
+    }
+  };
+  reader.readAsText(file);
 }
 
 // Initialize auth on page load
