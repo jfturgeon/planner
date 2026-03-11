@@ -1,0 +1,9 @@
+{
+  "version": "1.0.1",
+  "buildNumber": 2,
+  "lastUpdate": "2026-03-10",
+  "changelog": [
+    "1.0.1 (Build 2): Add version management system",
+    "1.0.0 (Build 1): Initial release with Supabase authentication"
+  ]
+}
