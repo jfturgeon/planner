@@ -3758,10 +3758,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
   // Close dropdowns on outside click
   document.addEventListener('click', ()=>closeAllDropdowns());
 
-  // Main Agenda button → restore last scope
-  document.getElementById('btnWeekly2')?.addEventListener('click',()=>{
-    applyVueScope(vueScope, vueStyle);
-  });
+  // Main Agenda button → restore last scope (will be handled by attachWeekly2ButtonEvent after header loads)
+  // document.getElementById('btnWeekly2')?.addEventListener('click',()=>{
+  //   applyVueScope(vueScope, vueStyle);
+  // });
 
   // Initial state
   applyVueScope('week','classic');
@@ -7600,34 +7600,53 @@ function importAllData(file) {
 }
 
 // Hidden file input for import
+let importFileInput = null;
 (function setupImportInput() {
-  let input = document.getElementById('importFileInput');
-  if (!input) {
-    input = document.createElement('input');
-    input.type = 'file'; input.accept = '.json'; input.id = 'importFileInput';
-    input.style.display = 'none';
-    document.body.appendChild(input);
-    input.addEventListener('change', e => {
+  importFileInput = document.getElementById('importFileInput');
+  if (!importFileInput) {
+    importFileInput = document.createElement('input');
+    importFileInput.type = 'file'; importFileInput.accept = '.json'; importFileInput.id = 'importFileInput';
+    importFileInput.style.display = 'none';
+    document.body.appendChild(importFileInput);
+    importFileInput.addEventListener('change', e => {
       if (e.target.files[0]) { importAllData(e.target.files[0]); e.target.value = ''; }
     });
   }
-  // Wire header buttons (always visible)
-  document.getElementById('btnExportData')?.addEventListener('click', exportAllData);
-  document.getElementById('btnImportData')?.addEventListener('click', () => input.click());
+  // Wire header buttons moved to attachAllHeaderEvents() to ensure they attach after header loads
 })();
 
 // Tracker button
-document.getElementById('btnTracker').addEventListener('click', () => {
-  ['kanbanView','contactsView','scrollArea','monthView','weeklyView'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.style.display='none';
+function attachTrackerButtonEvent() {
+  const btnTracker = document.getElementById('btnTracker');
+  if (!btnTracker) return;
+  
+  btnTracker.addEventListener('click', () => {
+    ['kanbanView','contactsView','scrollArea','monthView','weeklyView'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.style.display='none';
+    });
+    document.querySelector('.strip-wrapper').style.display = 'none';
+    document.querySelectorAll('.btn-view,.btn-subview').forEach(b => b.classList.remove('active'));
+    document.getElementById('btnTracker').classList.add('active');
+    const subHdr=document.querySelector('.header-sub'); if(subHdr) subHdr.style.display='none';
+    document.getElementById('trackerView').style.display = 'block';
+    renderTracker();
   });
-  document.querySelector('.strip-wrapper').style.display = 'none';
-  document.querySelectorAll('.btn-view,.btn-subview').forEach(b => b.classList.remove('active'));
-  document.getElementById('btnTracker').classList.add('active');
-  const subHdr=document.querySelector('.header-sub'); if(subHdr) subHdr.style.display='none';
-  document.getElementById('trackerView').style.display = 'block';
-  renderTracker();
-});
+}
+
+// Export/Import buttons
+function attachExportImportButtonEvents() {
+  const btnExportData = document.getElementById('btnExportData');
+  const btnImportData = document.getElementById('btnImportData');
+  const input = importFileInput;
+  
+  if (btnExportData) {
+    btnExportData.addEventListener('click', exportAllData);
+  }
+  
+  if (btnImportData) {
+    btnImportData.addEventListener('click', () => input.click());
+  }
+}
 
 </script>
 <script>
@@ -8043,15 +8062,20 @@ function kbCloseBtn(){ const b=document.createElement('button'); b.className='kb
 function kbRemoveModal(){ const m=document.getElementById('kbModalOverlay'); if(m) m.remove(); }
 
 // ── HOOK ─────────────────────────────────────────────────────────────────────
-document.getElementById('btnKanban').addEventListener('click', () => {
-  ['trackerView','kanbanView','contactsView','scrollArea','monthView','weeklyView'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
-  const sw=document.querySelector('.strip-wrapper'); if(sw) sw.style.display='none';
-  document.querySelectorAll('.btn-view,.btn-subview').forEach(b=>b.classList.remove('active'));
-  document.getElementById('btnKanban').classList.add('active');
-  const subHdr=document.querySelector('.header-sub'); if(subHdr) subHdr.style.display='none';
-  document.getElementById('kanbanView').style.display='flex';
-  renderKanban();
-});
+function attachKanbanButtonEvent() {
+  const btnKanban = document.getElementById('btnKanban');
+  if (!btnKanban) return;
+  
+  btnKanban.addEventListener('click', () => {
+    ['trackerView','kanbanView','contactsView','scrollArea','monthView','weeklyView'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+    const sw=document.querySelector('.strip-wrapper'); if(sw) sw.style.display='none';
+    document.querySelectorAll('.btn-view,.btn-subview').forEach(b=>b.classList.remove('active'));
+    document.getElementById('btnKanban').classList.add('active');
+    const subHdr=document.querySelector('.header-sub'); if(subHdr) subHdr.style.display='none';
+    document.getElementById('kanbanView').style.display='flex';
+    renderKanban();
+  });
+}
 
 // Wire Préférences button — always visible, always opens settings
 document.addEventListener('DOMContentLoaded', () => {
@@ -8866,18 +8890,23 @@ function ctShowContactModal(contact) {
 }
 
 // ── CONTACTS TAB BUTTON ───────────────────────────────────────────────────────
-document.getElementById('btnContacts').addEventListener('click', () => {
-  ['trackerView','kanbanView','scrollArea','monthView','weeklyView'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.style.display='none';
+function attachContactsButtonEvent() {
+  const btnContacts = document.getElementById('btnContacts');
+  if (!btnContacts) return;
+  
+  btnContacts.addEventListener('click', () => {
+    ['trackerView','kanbanView','scrollArea','monthView','weeklyView'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.style.display='none';
+    });
+    const sw=document.querySelector('.strip-wrapper'); if(sw) sw.style.display='none';
+    document.querySelectorAll('.btn-view,.btn-subview').forEach(b=>b.classList.remove('active'));
+    document.getElementById('btnContacts').classList.add('active');
+    const subHdr=document.querySelector('.header-sub'); if(subHdr) subHdr.style.display='none';
+    const cv=document.getElementById('contactsView'); cv.style.display='flex';
+    ctInitView();
+    ctRenderPills(); ctRenderBody(); ctRenderPager();
   });
-  const sw=document.querySelector('.strip-wrapper'); if(sw) sw.style.display='none';
-  document.querySelectorAll('.btn-view,.btn-subview').forEach(b=>b.classList.remove('active'));
-  document.getElementById('btnContacts').classList.add('active');
-  const subHdr=document.querySelector('.header-sub'); if(subHdr) subHdr.style.display='none';
-  const cv=document.getElementById('contactsView'); cv.style.display='flex';
-  ctInitView();
-  ctRenderPills(); ctRenderBody(); ctRenderPager();
-});
+}
 
 // Expose globally for use by planner
 window.ctInjectAllBirthdays = ctInjectAllBirthdays;
@@ -9901,9 +9930,41 @@ window.saveHabitsWithSync = async (h) => {
   setupComponentLoaderEvents();
 })();
 
+// Fonction pour attacher tous les événements des boutons du header
+function attachAllHeaderEvents() {
+  console.log('Attaching all header button events...');
+  
+  // Attacher les événements des boutons de vue (Tracker, Kanban, Contacts)
+  attachTrackerButtonEvent();
+  attachKanbanButtonEvent();
+  attachContactsButtonEvent();
+  
+  // Attacher Weekly2 button event
+  attachWeekly2ButtonEvent();
+  
+  // Attacher Export/Import buttons
+  attachExportImportButtonEvents();
+  
+  console.log('✓ All header events attached successfully');
+}
+
+// Weekly view button
+function attachWeekly2ButtonEvent() {
+  const btnWeekly2 = document.getElementById('btnWeekly2');
+  if (!btnWeekly2) return;
+  
+  btnWeekly2.addEventListener('click', () => {
+    // Restore last vue scope
+    applyVueScope(vueScope, vueStyle);
+  });
+}
+
 // Configuration des événements de test du component loader
 function setupComponentLoaderEvents() {
   console.log('Setting up component loader events...');
+  
+  // Attacher les événements du header une fois qu'il est chargé
+  attachAllHeaderEvents();
   
   const btnTest = document.getElementById('btnTestComponent');
   console.log('btnTest found:', btnTest ? '✓ Yes' : '✗ No');
