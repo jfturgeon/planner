@@ -4845,15 +4845,59 @@ function renderWvDays(dates, wk, wdata){
 }
 
 // ── EVENTS ─────────────────────────────────────────────────────────────────
-document.getElementById('btnPrev')?.addEventListener('click',()=>{ CY--; storeYear(CY); if(typeof kbActiveYear!=='undefined') kbActiveYear=CY; render(); });
-document.getElementById('btnNext')?.addEventListener('click',()=>{ CY++; storeYear(CY); if(typeof kbActiveYear!=='undefined') kbActiveYear=CY; render(); });
-document.getElementById('weekStart')?.addEventListener('change',e=>{ storeWS(parseInt(e.target.value)); render(); });
-document.getElementById('btnAddTask').addEventListener('click',addTask);
-document.getElementById('taskInput').addEventListener('keydown',e=>{ if(e.key==='Enter') addTask(); });
-document.getElementById('btnSave').addEventListener('click',saveModal);
-document.getElementById('btnCancel').addEventListener('click',closeModal);
-document.getElementById('modalClose').addEventListener('click',closeModal);
-document.getElementById('overlay').addEventListener('click',e=>{ if(e.target===document.getElementById('overlay')) closeModal(); });
+// Moved to attachAllViewEvents() for deferred attachment after DOM is fully ready
+
+// Attach all monthly/yearly calendar view event listeners
+function attachAllViewEvents() {
+  console.log('Attaching all view event listeners...');
+  
+  const btnPrev = document.getElementById('btnPrev');
+  if (btnPrev) {
+    btnPrev.addEventListener('click', () => { CY--; storeYear(CY); if(typeof kbActiveYear!=='undefined') kbActiveYear=CY; render(); });
+  }
+  
+  const btnNext = document.getElementById('btnNext');
+  if (btnNext) {
+    btnNext.addEventListener('click', () => { CY++; storeYear(CY); if(typeof kbActiveYear!=='undefined') kbActiveYear=CY; render(); });
+  }
+  
+  const weekStart = document.getElementById('weekStart');
+  if (weekStart) {
+    weekStart.addEventListener('change', e => { storeWS(parseInt(e.target.value)); render(); });
+  }
+  
+  const btnAddTask = document.getElementById('btnAddTask');
+  if (btnAddTask) {
+    btnAddTask.addEventListener('click', addTask);
+  }
+  
+  const taskInput = document.getElementById('taskInput');
+  if (taskInput) {
+    taskInput.addEventListener('keydown', e => { if(e.key==='Enter') addTask(); });
+  }
+  
+  const btnSave = document.getElementById('btnSave');
+  if (btnSave) {
+    btnSave.addEventListener('click', saveModal);
+  }
+  
+  const btnCancel = document.getElementById('btnCancel');
+  if (btnCancel) {
+    btnCancel.addEventListener('click', closeModal);
+  }
+  
+  const modalClose = document.getElementById('modalClose');
+  if (modalClose) {
+    modalClose.addEventListener('click', closeModal);
+  }
+  
+  const overlay = document.getElementById('overlay');
+  if (overlay) {
+    overlay.addEventListener('click', e => { if(e.target===document.getElementById('overlay')) closeModal(); });
+  }
+  
+  console.log('✓ All view event listeners attached successfully');
+}
 
 // ── INIT ─────────────────────────────────────────────────────────────────
 // applyVueScope('week','classic') is called inside DOMContentLoaded above
@@ -8077,16 +8121,15 @@ function attachKanbanButtonEvent() {
   });
 }
 
-// Wire Préférences button — always visible, always opens settings
-document.addEventListener('DOMContentLoaded', () => {
+// Wire Préférences button — moved to attachPreferencesButtonEvent for deferred attachment
+
+// Attach preferences button event
+function attachPreferencesButtonEvent() {
   const pb = document.getElementById('menuPreferences');
-  if (pb) pb.addEventListener('click', kbShowSettingsModal);
-});
-// Fallback if DOMContentLoaded already fired
-(function() {
-  const pb = document.getElementById('menuPreferences');
-  if (pb && !pb._kbWired) { pb._kbWired = true; pb.addEventListener('click', kbShowSettingsModal); }
-})();
+  if (pb) {
+    pb.addEventListener('click', kbShowSettingsModal);
+  }
+}
 
 const _kbOrigSwitchView = window.switchView;
 window.switchView = function(mode) {
@@ -9965,6 +10008,12 @@ function setupComponentLoaderEvents() {
   
   // Attacher les événements du header une fois qu'il est chargé
   attachAllHeaderEvents();
+  
+  // Attacher les événements des vues (Monthly/Yearly/Tracker)
+  attachAllViewEvents();
+  
+  // Attacher les événements du bouton Préférences
+  attachPreferencesButtonEvent();
   
   const btnTest = document.getElementById('btnTestComponent');
   console.log('btnTest found:', btnTest ? '✓ Yes' : '✗ No');
