@@ -1,0 +1,130 @@
+/* ═══════════════════════════════════════════════════════════════════
+   BASE STYLES — Variables, Reset, Global Typography
+═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  --bg: #f0ede6;
+  --surface: #ffffff;
+  --border: #ddd8cf;
+  --text: #25231f;
+  --muted: #8a8478;
+  --accent: #c85a3a;
+  --accent2: #2d6bbf;
+  --today-bg: #fef3c7;
+  --today-ring: #f59e0b;
+  --weekend-bg: #fdf5f3;
+  --weekend-num: #c85a3a;
+  --col-w: 220px;
+  
+  /* Day colors */
+  --day0: #e8a87c;
+  --day1: #7cb9e8;
+  --day2: #8dd4a0;
+  --day3: #c4a8e8;
+  --day4: #e8d47c;
+  --day5: #e889b8;
+  --day6: #7ce8d4;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Month palette for monthly view coloring */
+.m-0 { background: #e8f0fb; }
+.m-1 { background: #fdeef6; }
+.m-2 { background: #e4f5ec; }
+.m-3 { background: #fefce8; }
+.m-4 { background: #fef0e4; }
+.m-5 { background: #e8f6fd; }
+.m-6 { background: #f2effe; }
+.m-7 { background: #fdecea; }
+.m-8 { background: #e4fbf5; }
+.m-9 { background: #fefce8; }
+.m-10 { background: #fdeef6; }
+.m-11 { background: #e8f0fb; }
+
+/* Buttons — Basic resets */
+button {
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Standard form inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="time"],
+textarea,
+select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text);
+  background: #fafaf8;
+  transition: border-color 0.15s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent2);
+  background: #fff;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 65px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5bfb4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b5aea3;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(45, 107, 191, 0.2);
+  color: inherit;
+}
