@@ -276,7 +276,8 @@ function updateViewVisibility() {
     'habits': 'habitsView',
     'tracker': 'trackerView',
     'kanban': 'kanbanView',
-    'contacts': 'contactsView'
+    'contacts': 'contactsView',
+    'agenda': 'agendaView'
   };
 
   // Hide all views
@@ -359,6 +360,12 @@ function renderCurrentView() {
         onContactSelect: handleContactSelect,
         onContactAdd: handleContactAdd,
         onGroupFilter: handleGroupFilter
+      });
+      break;
+
+    case 'agenda':
+      renderAgendaView({
+        appData: appState.appData
       });
       break;
 
@@ -481,6 +488,33 @@ function handleGroupFilter(group) {
     onContactAdd: handleContactAdd,
     onGroupFilter: handleGroupFilter
   });
+}
+
+/**
+ * Render agenda view
+ */
+function renderAgendaView(opts = {}) {
+  const { appData = {} } = opts;
+  const agendaView = document.getElementById('agendaView');
+  if (!agendaView) return;
+
+  agendaView.innerHTML = '';
+
+  // Header
+  const header = document.createElement('div');
+  header.className = 'ag-header';
+  const title = document.createElement('div');
+  title.className = 'ag-title';
+  title.textContent = '📅 Agenda';
+  header.appendChild(title);
+  agendaView.appendChild(header);
+
+  // Placeholder content
+  const content = document.createElement('div');
+  content.className = 'ag-content';
+  content.style.cssText = 'padding: 20px; text-align: center; color: #999;';
+  content.innerHTML = '<p>Vue Agenda - À développer</p>';
+  agendaView.appendChild(content);
 }
 
 // ── DOM READY INITIALIZATION ──────────────────────────────────────────────
