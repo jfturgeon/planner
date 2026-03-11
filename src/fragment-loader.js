@@ -80,6 +80,18 @@ const FragmentLoader = {
     
     document.body.insertBefore(appView, document.body.querySelector('footer'));
     
+    // Setup login form (from supabase-auth-ui.js)
+    if (typeof setupLoginForm === 'function') {
+      setupLoginForm();
+      console.log('✅ Login form setup complete');
+    }
+    
+    // Initialize auth (from supabase.js)
+    if (typeof initAuth === 'function') {
+      initAuth();
+      console.log('✅ Auth initialized');
+    }
+    
     // Dispatch custom event to signal that fragments are loaded
     document.dispatchEvent(new CustomEvent('fragmentsLoaded'));
   }

@@ -1,9 +1,10 @@
 {
-    "version": "1.2.0",
-    "buildNumber": 15,
+    "version": "1.2.1",
+    "buildNumber": 16,
     "lastUpdate": "2026-03-11",
     "changelog": [
-    "1.2.0 (Build 15): Phase 6 - HTML refactorization into modular fragments",
+        "1.2.1 (Build 16): Fix fragment loading and login form initialization",
+        "1.2.0 (Build 15): Phase 6 - HTML refactorization into modular fragments",
         "1.1.11 (Build 14): Phase 5 - Add view buttons and navigation controls",
         "1.1.10 (Build 13): Updated",
         "1.1.9 (Build 12): Updated",
