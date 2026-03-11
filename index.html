@@ -3828,6 +3828,27 @@ function buildBarDropdowns(barEl, scope, style){
   ddWrap.appendChild(ddBtn); ddWrap.appendChild(ddMenu);
   right.appendChild(ddWrap);
 
+  // Add Event button
+  const addEventBtn = document.createElement('button');
+  addEventBtn.textContent = '+ Événement';
+  addEventBtn.style.cssText = `
+    padding: 8px 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+  `;
+  addEventBtn.addEventListener('click', () => {
+    // Import and call showEventModal from calendars-system.js
+    if (typeof showEventModal === 'function') {
+      showEventModal();
+    }
+  });
+  right.appendChild(addEventBtn);
+
   // Close on outside click (scoped to document, deduped)
   if(!barEl._barClickHandler){
     barEl._barClickHandler=()=>closeBarDropdowns(barEl);

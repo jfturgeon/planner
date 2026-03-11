@@ -52,6 +52,8 @@ function createEvent(data) {
     allDay: data.allDay !== false,
     date: data.date || new Date().toISOString().split('T')[0],
     time: data.time || '09:00',
+    endTime: data.endTime || '10:00',
+    endDate: data.endDate || null,
     deadline: data.deadline || null,
     repeat: data.repeat || 'never', // never, daily, weekly, monthly, annually, custom
     repeatConfig: data.repeatConfig || {},
@@ -61,6 +63,22 @@ function createEvent(data) {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
+}
+
+// Generate time options (15-minute intervals)
+function generateTimeOptions() {
+  const options = [];
+  for (let h = 0; h < 24; h++) {
+    for (let m = 0; m < 60; m += 15) {
+      const hStr = String(h).padStart(2, '0');
+      const mStr = String(m).padStart(2, '0');
+      const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+      const ampm = h < 12 ? 'am' : 'pm';
+      const label = `${String(hour12).padStart(2, '0')}:${mStr}${ampm}`;
+      options.push({ value: `${hStr}:${mStr}`, label });
+    }
+  }
+  return options;
 }
 
 // Show event creation modal
@@ -110,8 +128,10 @@ function showEventModal(initialData = {}) {
       ['task', '✓ Tâche'],
     ]),
     date: createField('date', 'Date', 'date', initialData.date || new Date().toISOString().split('T')[0]),
-    time: createField('time', 'Heure', 'time', initialData.time || '09:00'),
+    timeStart: createField('timeStart', 'Heure de début', 'time-dropdown', initialData.time || '09:00'),
+    timeEnd: createField('timeEnd', 'Heure de fin', 'time-dropdown', initialData.endTime || '10:00'),
     allDay: createField('allDay', 'Journée entière', 'checkbox', initialData.allDay !== false),
+    endDate: createField('endDate', 'Date de fin', 'date', initialData.endDate || ''),
     repeat: createField('repeat', 'Répétition', 'select', initialData.repeat || 'never', [
       ['never', 'Ne se répète pas'],
       ['daily', 'Quotidien'],
@@ -129,6 +149,31 @@ function showEventModal(initialData = {}) {
 
   // Add all fields to content
   Object.values(fields).forEach(field => content.appendChild(field));
+  
+  // Setup all-day toggle
+  const allDayCheck = fields.allDay.querySelector('input');
+  const timeStartField = fields.timeStart;
+  const timeEndField = fields.timeEnd;
+  const endDateField = fields.endDate;
+  
+  // Show/hide fields based on all-day status
+  function updateFieldsVisibility() {
+    if (allDayCheck.checked) {
+      timeStartField.style.display = 'none';
+      timeEndField.style.display = 'none';
+      endDateField.style.display = 'block';
+    } else {
+      timeStartField.style.display = 'block';
+      timeEndField.style.display = 'block';
+      endDateField.style.display = 'none';
+    }
+  }
+  
+  // Set initial visibility
+  updateFieldsVisibility();
+  
+  // Listen to all-day checkbox changes
+  allDayCheck.addEventListener('change', updateFieldsVisibility);
 
   // Notifications section
   const notifSection = document.createElement('div');
@@ -218,12 +263,21 @@ function showEventModal(initialData = {}) {
     font-weight: 600;
   `;
   saveBtn.addEventListener('click', () => {
-    const eventData = {
-      title: fields.title.querySelector('input').value,
-      type: fields.type.querySelector('select').value,
-      date: fields.date.querySelector('input').value,
-      time: fields.time.querySelector('input').value,
-      allDay: fields.allDay.querySelector('input').checked,
+    const title = fields.title.querySelector('input').value;
+    const type = fields.type.querySelector('select').value;
+    const date = fields.date.querySelector('input').value;
+    const allDay = fields.allDay.querySelector('input').checked;
+    
+    if (!title || !date) {
+      alert('⚠️ Veuillez remplir le titre et la date');
+      return;
+    }
+    
+    let eventData = {
+      title,
+      type,
+      date,
+      allDay,
       repeat: fields.repeat.querySelector('select').value,
       deadline: fields.deadline.querySelector('input').value || null,
       description: fields.description.querySelector('textarea').value,
@@ -235,6 +289,14 @@ function showEventModal(initialData = {}) {
         return { type: 'minutes', value: parseInt(val) };
       }),
     };
+    
+    if (allDay) {
+      eventData.endDate = fields.endDate.querySelector('input').value || date;
+      eventData.time = '00:00';
+    } else {
+      eventData.time = fields.timeStart.querySelector('select').value;
+      eventData.endTime = fields.timeEnd.querySelector('select').value;
+    }
 
     const event = createEvent(eventData);
     const events = loadEvents();
@@ -281,7 +343,19 @@ function createField(name, label, type, value, options = []) {
   wrapper.appendChild(labelEl);
 
   let input;
-  if (type === 'select') {
+  
+  if (type === 'time-dropdown') {
+    // Create dropdown with 15-minute intervals
+    input = document.createElement('select');
+    const timeOptions = generateTimeOptions();
+    timeOptions.forEach(opt => {
+      const optEl = document.createElement('option');
+      optEl.value = opt.value;
+      optEl.textContent = opt.label;
+      if (opt.value === value) optEl.selected = true;
+      input.appendChild(optEl);
+    });
+  } else if (type === 'select') {
     input = document.createElement('select');
     options.forEach(([val, text]) => {
       const opt = document.createElement('option');
@@ -315,8 +389,9 @@ function createField(name, label, type, value, options = []) {
     font-family: inherit;
     box-sizing: border-box;
   `;
-  if (type !== 'checkbox') {
-    input.style.color = 'var(--text)';
+  if (type === 'checkbox') {
+    input.style.width = 'auto';
+    input.style.marginRight = '8px';
   }
 
   wrapper.appendChild(input);
