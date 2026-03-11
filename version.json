@@ -1,8 +1,9 @@
 {
-    "version": "1.2.7",
-    "buildNumber": 22,
+    "version": "1.2.8",
+    "buildNumber": 23,
     "lastUpdate": "2026-03-11",
     "changelog": [
+        "1.2.8 (Build 23): COMPLETE CONTACTS VIEW - Full CRUD, pagination, sorting, filtering, and modal from localStorage ap_contacts key",
         "1.2.7 (Build 22): FIX CRITICAL TIMING ISSUE - Call initApp() directly instead of relying on event listeners",
         "1.2.6 (Build 21): Add comprehensive logging to debug view rendering issues",
         "1.2.5 (Build 20): Fix missing setupUserMenu() and agenda fragment loading",
