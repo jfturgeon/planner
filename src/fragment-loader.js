@@ -3,16 +3,15 @@
  * Dynamically loads and injects HTML fragments into the document
  */
 
-class FragmentLoader {
-  static
-  static cache = {};
+const FragmentLoader = {
+  cache: {},
   
   /**
    * Load an HTML fragment
    * @param {string} path - Path to the HTML fragment
    * @returns {Promise<string>} - HTML content
    */
-  static async load(path) {
+  async load(path) {
     if (this.cache[path]) {
       return this.cache[path];
     }
@@ -27,13 +26,13 @@ class FragmentLoader {
       console.error(`Error loading fragment: ${path}`, error);
       return '';
     }
-  }
+  },
   
   /**
    * Load and inject multiple fragments
    * @param {Object} fragments - { selector: path, ... }
    */
-  static async loadAll(fragments) {
+  async loadAll(fragments) {
     const promises = Object.entries(fragments).map(async ([selector, path]) => {
       const content = await this.load(path);
       const container = document.querySelector(selector);
@@ -43,12 +42,12 @@ class FragmentLoader {
     });
     
     await Promise.all(promises);
-  }
+  },
   
   /**
    * Convenience method: load common fragments
    */
-  static async loadCommonFragments() {
+  async loadCommonFragments() {
     // Load footer and login to body
     const footerHTML = await this.load('./public/html/fragments/footer.html');
     const loginHTML = await this.load('./public/html/fragments/login.html');
@@ -84,6 +83,6 @@ class FragmentLoader {
     // Dispatch custom event to signal that fragments are loaded
     document.dispatchEvent(new CustomEvent('fragmentsLoaded'));
   }
-}
+};
 
 export default FragmentLoader;
