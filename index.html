@@ -105,18 +105,36 @@
     import FragmentLoader from './src/fragment-loader.js';
     
     // Listen for fragments to be loaded, then initialize the app
-    document.addEventListener('fragmentsLoaded', () => {
+    document.addEventListener('fragmentsLoaded', async () => {
+      console.log('🎯 index.html: fragmentsLoaded event received');
+      
       // Hide loader
       const loader = document.getElementById('appLoader');
-      if (loader) loader.style.display = 'none';
+      if (loader) {
+        loader.style.display = 'none';
+        console.log('✅ Loader hidden');
+      }
       
       // Import and initialize main app module
-      import('./src/index.js').catch(err => {
-        console.error('Failed to load app module:', err);
-      });
+      try {
+        const appModule = await import('./src/index.js');
+        console.log('✅ index.js module imported');
+        
+        // Call initApp directly
+        if (appModule.initApp) {
+          console.log('⏳ Calling initApp() directly from index.html');
+          await appModule.initApp();
+          console.log('✅ initApp() completed successfully');
+        } else {
+          console.error('❌ initApp function not found in index.js');
+        }
+      } catch (err) {
+        console.error('❌ Failed to load app module:', err);
+      }
     });
     
     // Start loading fragments
+    console.log('🚀 Starting fragment loading...');
     FragmentLoader.loadCommonFragments().catch(err => {
       console.error('Failed to load fragments:', err);
     });

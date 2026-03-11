@@ -40,22 +40,37 @@ const appState = {
  * Initialize application on DOM ready
  */
 export async function initApp() {
+  console.log('🚀 ===== initApp() STARTED =====');
   try {
     // Load data from storage and external sources
+    console.log('📂 Loading application data...');
     await loadApplicationData();
+    console.log('✅ Data loaded');
 
     // Set up event listeners
+    console.log('🔧 Setting up view switching...');
     setupViewSwitching();
+    console.log('✅ View switching setup');
+    
     setupNavigationControls();
+    console.log('✅ Navigation controls setup');
+    
     setupViewCallbacks();
+    console.log('✅ View callbacks setup');
 
     // Initialize view visibility and render initial view
+    console.log('👁️  Updating view visibility...');
     updateViewVisibility();
+    console.log('✅ View visibility updated');
+    
+    console.log('🎨 Rendering current view...');
     renderCurrentView();
+    console.log('✅ Current view rendered');
 
     showSuccess('Application démarrée');
+    console.log('🚀 ===== initApp() COMPLETED SUCCESSFULLY =====');
   } catch (error) {
-    console.error('App initialization failed:', error);
+    console.error('❌ App initialization failed:', error);
     showError('Erreur au démarrage de l\'application');
   }
 }
@@ -530,19 +545,8 @@ function renderAgendaView(opts = {}) {
 }
 
 // ── DOM READY INITIALIZATION ──────────────────────────────────────────────
-// ── INITIALIZATION ON APP START ──────────────────────────────────────────
-// Wait for fragments to be loaded before initializing the app
-document.addEventListener('fragmentsLoaded', () => {
-  initApp();
-});
-
-// Fallback: Also initialize on DOMContentLoaded in case fragments are already loaded
-document.addEventListener('DOMContentLoaded', () => {
-  // Only init if not already initialized (check if appView is present)
-  if (document.getElementById('appView') && appState.currentView === 'month') {
-    initApp();
-  }
-});
+// Note: initApp() is now called directly from index.html after fragments are loaded
+// These listeners are kept as fallback for manual testing
 
 // Export for testing and external access
 export {

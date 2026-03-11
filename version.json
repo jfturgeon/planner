@@ -1,8 +1,9 @@
 {
-    "version": "1.2.6",
-    "buildNumber": 21,
+    "version": "1.2.7",
+    "buildNumber": 22,
     "lastUpdate": "2026-03-11",
     "changelog": [
+        "1.2.7 (Build 22): FIX CRITICAL TIMING ISSUE - Call initApp() directly instead of relying on event listeners",
         "1.2.6 (Build 21): Add comprehensive logging to debug view rendering issues",
         "1.2.5 (Build 20): Fix missing setupUserMenu() and agenda fragment loading",
         "1.2.4 (Build 19): Add Agenda button and view container",
