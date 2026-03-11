@@ -49,6 +49,10 @@ header {
   font-family: 'DM Serif Display', serif;
   font-size: 1.2rem; letter-spacing: .02em; white-space: nowrap;
   color: #f4f1eb;
+  flex-shrink: 0;
+}
+.header-right {
+  display: flex; align-items: center; gap: 16px; flex: 1; justify-content: flex-end;
 }
 .main-nav { display:flex; gap:4px; }
 
@@ -2799,6 +2803,258 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   color: #d0d0d0;
 }
 
+/* User Menu Dropdown */
+.user-menu-wrap {
+  position: relative;
+}
+
+.user-menu-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f4f1eb;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+}
+
+.user-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.user-dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: #2a2824;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  min-width: 180px;
+  z-index: 500;
+  overflow: hidden;
+  padding: 4px 0;
+  animation: ddFadeIn 0.12s ease;
+}
+
+.user-dropdown-menu.open {
+  display: block;
+}
+
+.user-dd-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  color: #d0cdc8;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.1s;
+  white-space: nowrap;
+}
+
+.user-dd-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.user-dd-item.logout-item {
+  color: #ff6b6b;
+}
+
+.user-dd-item.logout-item:hover {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff8787;
+}
+
+.dropdown-separator {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 4px 0;
+}
+
+/* Footer */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--text);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 32px;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  z-index: 100;
+  font-family: 'Courier New', monospace;
+}
+
+.footer-version {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.footer-version:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Profile Modal */
+.profile-modal {
+  max-width: 500px;
+  width: 90vw;
+}
+
+.profile-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.profile-tab {
+  flex: 1;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.profile-tab:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.profile-tab.active {
+  color: #10b981;
+  border-bottom-color: #10b981;
+}
+
+.profile-tab-content {
+  display: none;
+}
+
+.profile-tab-content.active {
+  display: block;
+}
+
+.profile-section {
+  margin-bottom: 16px;
+}
+
+.profile-label {
+  display: block;
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.profile-email {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #10b981;
+  font-family: 'Courier New', monospace;
+  word-break: break-all;
+}
+
+.profile-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #f4f1eb;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  transition: all 0.15s;
+  box-sizing: border-box;
+}
+
+.profile-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.profile-error {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+  min-height: 20px;
+}
+
+.profile-btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.profile-btn:hover {
+  background: #0ea378;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.profile-btn:disabled {
+  background: rgba(255, 255, 255, 0.2);
+  cursor: not-allowed;
+}
+
+.connection-history {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.history-item {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.history-item-time {
+  color: #10b981;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.history-item-location {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
 </style>
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2807,6 +3063,11 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
   <script src="version.js"></script>
 </head>
 <body>
+
+<!-- Footer (visible everywhere) -->
+<footer>
+  <div class="footer-version" id="footerVersion"></div>
+</footer>
 
 <!-- LOGIN/SIGNUP VIEW -->
 <div id="loginView" class="login-overlay">
@@ -2861,17 +3122,25 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 <header>
   <div class="header-top">
     <div class="app-title">Planificateur</div>
-    <nav class="main-nav">
-      <button class="btn-view btn-tracker" id="btnTracker">📺 Épisodes</button>
-      <button class="btn-view btn-kanban" id="btnKanban">🎯 Objectifs</button>
-      <button class="btn-view btn-contacts-tab" id="btnContacts">👥 Contacts</button>
-      <button class="btn-view btn-agenda active" id="btnWeekly2">📅 Agenda</button>
-    </nav>
-    <button class="hdr-btn-prefs" id="btnPreferences" title="Préférences">⚙</button>
-    <button class="hdr-btn-logout" id="btnLogout" title="Déconnexion">🚪 Déconnexion</button>
-    <div id="versionBadge" class="version-badge" title="Application version"></div>
+    <div class="header-right">
+      <nav class="main-nav">
+        <button class="btn-view btn-tracker" id="btnTracker">📺 Épisodes</button>
+        <button class="btn-view btn-kanban" id="btnKanban">🎯 Objectifs</button>
+        <button class="btn-view btn-contacts-tab" id="btnContacts">👥 Contacts</button>
+        <button class="btn-view btn-agenda active" id="btnWeekly2">📅 Agenda</button>
+      </nav>
+      <!-- User Menu Dropdown -->
+      <div class="user-menu-wrap">
+        <button class="user-menu-btn" id="btnUserMenu" title="Menu utilisateur">⚙</button>
+        <div class="user-dropdown-menu" id="userDropdown">
+          <button class="user-dd-item" id="menuProfile">👤 Mon Profil</button>
+          <button class="user-dd-item" id="menuPreferences">⚙ Préférences</button>
+          <div class="dropdown-separator"></div>
+          <button class="user-dd-item logout-item" id="menuLogout">🚪 Déconnexion</button>
+        </div>
+      </div>
+    </div>
   </div>
-
 </header>
 
 <div id="annualView" style="display:none">
@@ -2920,6 +3189,48 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
     <div class="modal-ft">
       <button class="btn-cancel" id="btnCancel">Annuler</button>
       <button class="btn-save" id="btnSave">Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="overlay" id="profileOverlay">
+  <div class="modal profile-modal">
+    <div class="modal-hd">
+      <h2>Mon Profil</h2>
+      <button class="btn-x" id="btnCloseProfile">✕</button>
+    </div>
+    <div class="profile-tabs">
+      <button class="profile-tab active" data-tab="password">🔐 Mot de passe</button>
+      <button class="profile-tab" data-tab="history">📋 Historique connexions</button>
+    </div>
+    <div class="modal-bd">
+      <!-- Password Tab -->
+      <div id="passwordTab" class="profile-tab-content active">
+        <div class="profile-section">
+          <label class="profile-label">Email actuel:</label>
+          <div class="profile-email" id="profileEmail"></div>
+        </div>
+        <div class="profile-section">
+          <label class="profile-label" for="currentPassword">Mot de passe actuel</label>
+          <input type="password" id="currentPassword" placeholder="••••••••" class="profile-input">
+        </div>
+        <div class="profile-section">
+          <label class="profile-label" for="newPassword">Nouveau mot de passe</label>
+          <input type="password" id="newPassword" placeholder="••••••••" minlength="6" class="profile-input">
+        </div>
+        <div class="profile-section">
+          <label class="profile-label" for="newPasswordConfirm">Confirmer mot de passe</label>
+          <input type="password" id="newPasswordConfirm" placeholder="••••••••" minlength="6" class="profile-input">
+        </div>
+        <div id="passwordError" class="profile-error"></div>
+        <button id="btnChangePassword" class="profile-btn">Mettre à jour le mot de passe</button>
+      </div>
+      
+      <!-- History Tab -->
+      <div id="historyTab" class="profile-tab-content">
+        <div id="connectionHistory" class="connection-history"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -8710,12 +9021,262 @@ async function syncDataFromSupabase() {
   }
 }
 
+// ==========================================
+// User Menu & Profile Management
+// ==========================================
+
+// Update footer with version
+function updateFooterVersion() {
+  if (!appVersion) return;
+  const footerVersion = document.getElementById('footerVersion');
+  if (footerVersion) {
+    footerVersion.innerHTML = `<span class=\"footer-version\">v${appVersion.version} (Build ${appVersion.buildNumber}) • ${appVersion.lastUpdate}</span>`;
+  }
+}
+
+// Setup user menu dropdown
+function setupUserMenu() {
+  const userMenuBtn = document.getElementById('btnUserMenu');
+  const userDropdown = document.getElementById('userDropdown');
+  const menuProfile = document.getElementById('menuProfile');
+  const menuPreferences = document.getElementById('menuPreferences');
+  const menuLogout = document.getElementById('menuLogout');
+
+  if (!userMenuBtn || !userDropdown) {
+    console.warn('⚠️ User menu elements not found');
+    return;
+  }
+
+  // Toggle dropdown
+  userMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    userDropdown.classList.toggle('open');
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+      userDropdown.classList.remove('open');
+    }
+  });
+
+  // Menu items
+  if (menuProfile) {
+    menuProfile.addEventListener('click', () => {
+      userDropdown.classList.remove('open');
+      showProfileModal();
+    });
+  }
+
+  if (menuPreferences) {
+    menuPreferences.addEventListener('click', () => {
+      userDropdown.classList.remove('open');
+      showPreferencesModal();
+    });
+  }
+
+  if (menuLogout) {
+    menuLogout.addEventListener('click', async () => {
+      userDropdown.classList.remove('open');
+      const result = await signOut();
+      if (result.success) {
+        showLoginView();
+      }
+    });
+  }
+}
+
+// Show profile modal
+function showProfileModal() {
+  const profileOverlay = document.getElementById('profileOverlay');
+  if (profileOverlay) {
+    profileOverlay.style.display = 'flex';
+    
+    // Populate email
+    const profileEmail = document.getElementById('profileEmail');
+    if (profileEmail && currentUser) {
+      profileEmail.textContent = currentUser.email;
+    }
+
+    // Setup tab switching
+    setupProfileTabs();
+
+    // Setup buttons
+    setupProfileButtons();
+  }
+}
+
+// Setup profile modal tabs
+function setupProfileTabs() {
+  const tabs = document.querySelectorAll('.profile-tab');
+  const tabContents = document.querySelectorAll('.profile-tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active from all
+      tabs.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
+
+      // Add active to clicked tab
+      tab.classList.add('active');
+      const tabName = tab.dataset.tab;
+      const tabContent = document.getElementById(tabName + 'Tab');
+      if (tabContent) {
+        tabContent.classList.add('active');
+      }
+    });
+  });
+}
+
+// Setup profile modal buttons
+function setupProfileButtons() {
+  const btnCloseProfile = document.getElementById('btnCloseProfile');
+  const btnChangePassword = document.getElementById('btnChangePassword');
+  const profileOverlay = document.getElementById('profileOverlay');
+
+  if (btnCloseProfile) {
+    btnCloseProfile.addEventListener('click', () => {
+      profileOverlay.style.display = 'none';
+      // Clear inputs
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('newPasswordConfirm').value = '';
+      document.getElementById('passwordError').textContent = '';
+    });
+  }
+
+  if (btnChangePassword) {
+    btnChangePassword.addEventListener('click', async () => {
+      await handleChangePassword();
+    });
+  }
+
+  // Close on overlay click
+  if (profileOverlay) {
+    profileOverlay.addEventListener('click', (e) => {
+      if (e.target === profileOverlay) {
+        profileOverlay.style.display = 'none';
+      }
+    });
+  }
+}
+
+// Handle password change
+async function handleChangePassword() {
+  const currentPassword = document.getElementById('currentPassword').value;
+  const newPassword = document.getElementById('newPassword').value;
+  const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
+  const passwordError = document.getElementById('passwordError');
+  const btnChangePassword = document.getElementById('btnChangePassword');
+
+  passwordError.textContent = '';
+
+  if (!currentPassword || !newPassword || !newPasswordConfirm) {
+    passwordError.textContent = '⚠️ Tous les champs sont requis';
+    return;
+  }
+
+  if (newPassword !== newPasswordConfirm) {
+    passwordError.textContent = '⚠️ Les nouveaux mots de passe ne correspondent pas';
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    passwordError.textContent = '⚠️ Le mot de passe doit faire au moins 6 caractères';
+    return;
+  }
+
+  try {
+    btnChangePassword.disabled = true;
+    btnChangePassword.textContent = 'Mise à jour...';
+
+    // First verify current password by attempting to sign in
+    const verifyResult = await signIn(currentUser.email, currentPassword);
+    if (!verifyResult.success) {
+      passwordError.textContent = '❌ Le mot de passe actuel est incorrect';
+      return;
+    }
+
+    // Update password using Supabase
+    const { error } = await window.supabaseClient.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) {
+      passwordError.textContent = '❌ Erreur: ' + error.message;
+      return;
+    }
+
+    passwordError.textContent = '';
+    passwordError.style.color = '#10b981';
+    passwordError.textContent = '✅ Mot de passe mis à jour avec succès!';
+
+    // Clear inputs after 2 seconds
+    setTimeout(() => {
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('newPasswordConfirm').value = '';
+      passwordError.textContent = '';
+      passwordError.style.color = '#ff6b6b';
+    }, 2000);
+  } catch (error) {
+    passwordError.textContent = '❌ Erreur: ' + error.message;
+  } finally {
+    btnChangePassword.disabled = false;
+    btnChangePassword.textContent = 'Mettre à jour le mot de passe';
+  }
+}
+
+// Show connection history (placeholder - would need backend tracking)
+function loadConnectionHistory() {
+  const connectionHistory = document.getElementById('connectionHistory');
+  if (!connectionHistory) return;
+
+  // Get from localStorage if available
+  const savedHistory = localStorage.getItem('ap_connection_history');
+  const history = savedHistory ? JSON.parse(savedHistory) : [];
+
+  if (history.length === 0) {
+    connectionHistory.innerHTML = '<div style=\"padding: 20px; text-align: center; color: rgba(255,255,255,0.5);\">📭 Aucun historique de connexion enregistré</div>';
+    return;
+  }
+
+  connectionHistory.innerHTML = history.map(entry => `
+    <div class=\"history-item\">
+      <div class=\"history-item-time\">🕐 ${entry.timestamp}</div>
+      <div class=\"history-item-location\">📍 ${entry.ip || 'Non disponible'}</div>
+    </div>
+  `).join('');
+}
+
+// Save login to history
+function saveLoginToHistory() {
+  const history = JSON.parse(localStorage.getItem('ap_connection_history') || '[]');
+  const now = new Date().toLocaleString('fr-FR');
+  history.unshift({
+    timestamp: now,
+    ip: 'Local'
+  });
+  // Keep only last 20 connections
+  if (history.length > 20) {
+    history.pop();
+  }
+  localStorage.setItem('ap_connection_history', JSON.stringify(history));
+}
+
+// Show preferences modal (placeholder)
+function showPreferencesModal() {
+  console.log('📋 Preferences modal - to be implemented');
+  // TODO: Implement full preferences modal with app settings
+}
+
 // Initialize auth on page load
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 DOMContentLoaded fired');
   
   // Load version first
   await loadVersion();
+  updateFooterVersion();
   
   // Wait for Supabase SDK to be available
   let retries = 0;
@@ -8753,6 +9314,15 @@ function showPlannerView() {
   document.getElementById('loginView').style.display = 'none';
   document.getElementById('appView').style.display = 'block';
   
+  // Setup user menu dropdown
+  setupUserMenu();
+  
+  // Load connection history
+  loadConnectionHistory();
+  
+  // Save this login to history
+  saveLoginToHistory();
+  
   // Sync data from Supabase
   syncDataFromSupabase().then(() => {
     // Then initialize the app
@@ -8769,14 +9339,12 @@ function setupLoginForm() {
   const toggleText = document.getElementById('toggleText');
   const loginError = document.getElementById('loginError');
   const signupError = document.getElementById('signupError');
-  const logoutBtn = document.getElementById('btnLogout');
 
   // Debug logging
   console.log('✅ setupLoginForm() called');
   console.log('loginForm:', loginForm);
   console.log('signupForm:', signupForm);
   console.log('toggleForm:', toggleForm);
-  console.log('logoutBtn:', logoutBtn);
 
   if (!loginForm || !signupForm || !toggleForm) {
     console.error('❌ Required form elements not found!');
@@ -8883,44 +9451,8 @@ function setupLoginForm() {
     }
   });
 
-  // Handle logout
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', async () => {
-      console.log('Logout clicked');
-      const result = await signOut();
-      if (result.success) {
-        // Clear forms
-        loginForm.reset();
-        signupForm.reset();
-        loginError.textContent = '';
-        signupError.textContent = '';
-        signupError.style.color = '#c0392b';
-        showLoginView();
-        console.log('✅ Logged out successfully');
-      }
-    });
-  } else {
-    console.warn('⚠️ Logout button not found, will be set up later');
-    // Try to find it later when appView is ready
-    setTimeout(() => {
-      const btnLogout = document.getElementById('btnLogout');
-      if (btnLogout) {
-        btnLogout.addEventListener('click', async () => {
-          console.log('Logout clicked (delayed)');
-          const result = await signOut();
-          if (result.success) {
-            loginForm.reset();
-            signupForm.reset();
-            loginError.textContent = '';
-            signupError.textContent = '';
-            signupError.style.color = '#c0392b';
-            showLoginView();
-            console.log('✅ Logged out successfully');
-          }
-        });
-      }
-    }, 1000);
-  }
+  // Logout is now handled by the user menu dropdown (setupUserMenu)
+  // No longer needed here as we have setupUserMenu() called in showPlannerView()
 }
 
 // Override save functions to sync with Supabase

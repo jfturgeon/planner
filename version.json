@@ -1,8 +1,9 @@
 {
-  "version": "1.0.1",
-  "buildNumber": 2,
-  "lastUpdate": "2026-03-10",
+  "version": "1.1.0",
+  "buildNumber": 3,
+  "lastUpdate": "2026-03-11",
   "changelog": [
+    "1.1.0 (Build 3): Add UI enhancements - header alignment, dropdown menu, profile modal, version footer",
     "1.0.1 (Build 2): Add version management system",
     "1.0.0 (Build 1): Initial release with Supabase authentication"
   ]
