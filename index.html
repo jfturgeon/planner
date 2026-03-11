@@ -3152,6 +3152,7 @@ footer {
   <script src="src/lib/version.js"></script>
   <script src="src/lib/update-checker.js"></script>
   <script src="src/lib/calendars-system.js"></script>
+  <script src="src/lib/component-loader.js"></script>
 </head>
 <body>
 
@@ -3210,34 +3211,8 @@ footer {
 <!-- MAIN APP (initially hidden) -->
 <div id="appView" style="display:none">
 
-<header>
-  <div class="header-top">
-    <div class="app-title">Planificateur</div>
-    <div class="header-right">
-      <nav class="main-nav">
-        <button class="btn-view btn-tracker" id="btnTracker">📺 Épisodes</button>
-        <button class="btn-view btn-kanban" id="btnKanban">🎯 Objectifs</button>
-        <button class="btn-view btn-contacts-tab" id="btnContacts">👥 Contacts</button>
-        <button class="btn-view btn-calendars" id="btnCalendars">📆 Calendriers</button>
-        <button class="btn-view btn-agenda active" id="btnWeekly2">📅 Agenda</button>
-      </nav>
-      <!-- User Menu Dropdown -->
-      <div class="user-menu-wrap">
-        <button class="user-menu-btn" id="btnUserMenu" title="Menu utilisateur">⚙</button>
-        <div class="user-dropdown-menu" id="userDropdown">
-          <button class="user-dd-item" id="menuProfile">👤 Mon Profil</button>
-          <button class="user-dd-item" id="menuPreferences">⚙ Préférences</button>
-          <div class="dropdown-separator"></div>
-          <button class="user-dd-item" id="menuExport">💾 Exporter Données</button>
-          <button class="user-dd-item" id="menuImport">📂 Importer Données</button>
-          <div class="dropdown-separator"></div>
-          <button class="user-dd-item logout-item" id="menuLogout">🚪 Déconnexion</button>
-          <input type="file" id="importFileInput" style="display:none;" accept=".json"/>
-        </div>
-      </div>
-    </div>
-  </div>
-</header>
+<!-- Header Component (loaded from src/components/header.html) -->
+<div id="app-header"></div>
 
 <div id="annualView" style="display:none">
   <div class="strip-wrapper"><div class="strip" id="strip"></div></div>
@@ -9893,6 +9868,23 @@ window.saveHabitsWithSync = async (h) => {
   }
 };
 
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// COMPONENT LOADER - Charge les composants HTML externes
+// ═══════════════════════════════════════════════════════════════════════════
+
+(function() {
+  // Charge le header dès que le DOM est prêt
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      ComponentLoader.loadComponent('src/components/header.html', '#app-header');
+    });
+  } else {
+    ComponentLoader.loadComponent('src/components/header.html', '#app-header');
+  }
+})();
 </script>
 
 </body>

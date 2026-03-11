@@ -1,0 +1,28 @@
+<header>
+  <div class="header-top">
+    <div class="app-title">Planificateur</div>
+    <div class="header-right">
+      <nav class="main-nav">
+        <button class="btn-view btn-tracker" id="btnTracker">📺 Épisodes</button>
+        <button class="btn-view btn-kanban" id="btnKanban">🎯 Objectifs</button>
+        <button class="btn-view btn-contacts-tab" id="btnContacts">👥 Contacts</button>
+        <button class="btn-view btn-calendars" id="btnCalendars">📆 Calendriers</button>
+        <button class="btn-view btn-agenda active" id="btnWeekly2">📅 Agenda</button>
+      </nav>
+      <!-- User Menu Dropdown -->
+      <div class="user-menu-wrap">
+        <button class="user-menu-btn" id="btnUserMenu" title="Menu utilisateur">⚙</button>
+        <div class="user-dropdown-menu" id="userDropdown">
+          <button class="user-dd-item" id="menuProfile">👤 Mon Profil</button>
+          <button class="user-dd-item" id="menuPreferences">⚙ Préférences</button>
+          <div class="dropdown-separator"></div>
+          <button class="user-dd-item" id="menuExport">💾 Exporter Données</button>
+          <button class="user-dd-item" id="menuImport">📂 Importer Données</button>
+          <div class="dropdown-separator"></div>
+          <button class="user-dd-item logout-item" id="menuLogout">🚪 Déconnexion</button>
+          <input type="file" id="importFileInput" style="display:none;" accept=".json"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
