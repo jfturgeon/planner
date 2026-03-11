@@ -19,7 +19,7 @@ export function ctInitView(opts = {}) {
     onGroupFilter = null
   } = opts;
 
-  const contactView = document.getElementById('contactView');
+  const contactView = document.getElementById('contactsView');
   if (!contactView) return;
 
   contactView.innerHTML = '';

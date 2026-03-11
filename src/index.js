@@ -6,13 +6,13 @@
 
 // ── IMPORTS ──────────────────────────────────────────────────────────────
 // Core modules
-import { MONTHS, MONTH_NAMES, WEEK_DAYS, COLORS, STORAGE_KEYS } from './core/constants.js';
+import { MONTHS_FR, MONTHS_SH, DAYS_FULL, DAYS_SUN, DAY_COLORS, STORAGE_KEYS, DEFAULTS } from './core/constants.js';
 import {
   dkey, dkDow, dim, isToday, formatDateShort, formatDateRange,
   getWeekStart, getWeekDates, weekKey, monthOffset, isSameDay
 } from './core/helpers.js';
-import { loadData, saveData, loadYear, saveYear } from './core/persistence.js';
-import { showToast, showSuccess, showError, showInfo } from './core/notifications.js';
+import { loadData, saveData, getYear, setYear } from './core/persistence.js';
+import { showSuccess, showError, showInfo } from './core/notifications.js';
 
 // View modules
 import { renderAnnualView } from './views/annual/view.js';
@@ -65,7 +65,7 @@ export async function initApp() {
 async function loadApplicationData() {
   // Load from localStorage
   appState.appData = loadData() || {};
-  appState.year = loadYear();
+  appState.year = getYear();
   appState.currentMonth = new Date().getMonth();
 
   // Load shows data
@@ -241,7 +241,7 @@ function updateNavigationLabel() {
       break;
     case 'month':
     case 'month-list':
-      labelEl.textContent = `${MONTH_NAMES[appState.currentMonth]} ${appState.currentYear}`;
+      labelEl.textContent = `${MONTHS_FR[appState.currentMonth]} ${appState.currentYear}`;
       break;
     case 'week':
       labelEl.textContent = `Semaine ${Math.ceil((new Date(appState.currentYear, appState.currentMonth, 1).getDate() + new Date(appState.currentYear, appState.currentMonth, 1).getDay()) / 7)}`;

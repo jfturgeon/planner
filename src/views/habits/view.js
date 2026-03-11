@@ -20,7 +20,7 @@ export function renderHabitsTracker(opts = {}) {
     selectedDate = new Date()
   } = opts;
 
-  const habitView = document.getElementById('habitView');
+  const habitView = document.getElementById('habitsView');
   if (!habitView) return;
 
   habitView.innerHTML = '';
