@@ -3212,7 +3212,6 @@ footer {
         <button class="btn-view btn-tracker" id="btnTracker">📺 Épisodes</button>
         <button class="btn-view btn-kanban" id="btnKanban">🎯 Objectifs</button>
         <button class="btn-view btn-contacts-tab" id="btnContacts">👥 Contacts</button>
-        <button class="btn-view btn-calendars" id="btnCalendars">📆 Calendriers</button>
         <button class="btn-view btn-agenda active" id="btnWeekly2">📅 Agenda</button>
       </nav>
       <!-- User Menu Dropdown -->
@@ -3742,7 +3741,7 @@ function switchView(mode){
   viewMode = mode;
   const isAgenda = ['annual','month','weekly','gcal'].includes(mode);
   document.getElementById('btnWeekly2')?.classList.toggle('active', isAgenda);
-  ['btnTracker','btnKanban','btnContacts','btnCalendars'].forEach(id=>document.getElementById(id)?.classList.remove('active'));
+  ['btnTracker','btnKanban','btnContacts'].forEach(id=>document.getElementById(id)?.classList.remove('active'));
 
   // Hide all agenda views, then show the right one
   const views = ['strip-wrapper','scrollArea','monthView','weeklyView'];
@@ -4281,6 +4280,7 @@ function renderWvLeft(dates, wk, wdata){
           allCals[idx].visible = checkbox.checked;
           saveCalendars(allCals);
           updateCalendarsList();
+          applyFilters();
         }
       });
       item.appendChild(checkbox);
@@ -4364,6 +4364,7 @@ function renderWvLeft(dates, wk, wdata){
     checkbox.style.cssText = 'flex-shrink: 0;';
     checkbox.addEventListener('change', () => {
       localStorage.setItem(`ap_wv_filter_${option.id}`, checkbox.checked ? '1' : '0');
+      applyFilters();
     });
     item.appendChild(checkbox);
     
@@ -4605,6 +4606,11 @@ function renderWvDays(dates, wk, wdata){
         const ev=sorted[ri]||null;
         const row=document.createElement('div'); row.className='wv-event-row';
         const isAllDay=ev&&(ev.allDay||!ev.time);
+        
+        // Add calendar ID for filtering
+        if (ev) {
+          row.dataset.calendarId = ev.calendarId || 'default';
+        }
 
         const timeSpan=document.createElement('span');
         timeSpan.className='wv-row-time'+(ev?'':' empty');
@@ -4658,8 +4664,8 @@ function renderWvDays(dates, wk, wdata){
               const idx=dayExtra.events.indexOf(ev);
               if(t){ if(idx>-1){ dayExtra.events[idx].title=t; dayExtra.events[idx].time=tm; dayExtra.events[idx].allDay=isAD; } }
               else { if(idx>-1) dayExtra.events.splice(idx,1); }
-            } else if(t){ dayExtra.events.push({time:tm,title:t,allDay:isAD}); }
-            saveEvents(); renderEvRows();
+            } else if(t){ dayExtra.events.push({time:tm,title:t,allDay:isAD,calendarId:'default'}); }
+            saveEvents(); renderEvRows(); applyFilters();
             // Re-inject birthdays
             if(window.ctInjectAllBirthdays) ctInjectAllBirthdays();
           };
@@ -4667,8 +4673,8 @@ function renderWvDays(dates, wk, wdata){
           timeIn.addEventListener('blur', blurHandler);
           labelIn.addEventListener('blur', blurHandler);
           allDayCb.addEventListener('blur', blurHandler);
-          labelIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ labelIn.blur(); } if(e.key==='Escape'){ committed=true; renderEvRows(); if(window.ctInjectAllBirthdays) ctInjectAllBirthdays(); } });
-          timeIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ labelIn.focus(); } if(e.key==='Escape'){ committed=true; renderEvRows(); if(window.ctInjectAllBirthdays) ctInjectAllBirthdays(); } });
+          labelIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ labelIn.blur(); } if(e.key==='Escape'){ committed=true; renderEvRows(); applyFilters(); if(window.ctInjectAllBirthdays) ctInjectAllBirthdays(); } });
+          timeIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ labelIn.focus(); } if(e.key==='Escape'){ committed=true; renderEvRows(); applyFilters(); if(window.ctInjectAllBirthdays) ctInjectAllBirthdays(); } });
         };
 
         timeSpan.addEventListener('click',e=>{ e.stopPropagation(); startEdit(true); });
@@ -4680,7 +4686,7 @@ function renderWvDays(dates, wk, wdata){
             e.stopPropagation();
             const idx=dayExtra.events.indexOf(ev);
             if(idx>-1) dayExtra.events.splice(idx,1);
-            saveEvents(); renderEvRows();
+            saveEvents(); renderEvRows(); applyFilters();
             if(window.ctInjectAllBirthdays) ctInjectAllBirthdays();
           });
         }
@@ -4857,6 +4863,37 @@ function renderWvDays(dates, wk, wdata){
     col.appendChild(taskSec);
 
     strip.appendChild(col);
+  });
+  
+  // Apply filters after rendering all days
+  applyFilters();
+}
+
+// ── APPLY FILTERS & CALENDAR VISIBILITY ──
+function applyFilters() {
+  const visibleCals = new Set(
+    loadCalendars()
+      .filter(c => c.visible !== false)
+      .map(c => c.id)
+  );
+  if (visibleCals.size === 0) visibleCals.add('default');
+  
+  const filterTasks = localStorage.getItem('ap_wv_filter_tasks') !== '0';
+  const filterEvents = localStorage.getItem('ap_wv_filter_events') !== '0';
+  
+  // Show/hide tasks section if filter enabled/disabled
+  document.querySelectorAll('[data-taskrows]').forEach(el => {
+    el.style.display = filterTasks ? '' : 'none';
+  });
+  
+  // Show/hide events based on calendar visibility and filter
+  document.querySelectorAll('.wv-event-row').forEach(row => {
+    if (!filterEvents) {
+      row.style.display = 'none';
+    } else {
+      const calId = row.dataset.calendarId || 'default';
+      row.style.display = visibleCals.has(calId) ? '' : 'none';
+    }
   });
 }
 
@@ -10103,7 +10140,6 @@ function showEventModal(initialData = {}) {
     console.log('✅ Événement créé:', event);
     alert('✅ Événement créé avec succès!\nNotifications planifiées.');
     modal.remove();
-    renderCalendarsView();
   });
 
   buttons.appendChild(cancelBtn);
@@ -10205,7 +10241,7 @@ function renderCalendarsView() {
     deleteBtn.addEventListener('click', () => {
       calendars.splice(calendars.indexOf(cal), 1);
       saveCalendars(calendars);
-      renderCalendarsView();
+      applyFilters();
     });
     item.appendChild(deleteBtn);
 
@@ -10286,7 +10322,7 @@ document.addEventListener('DOMContentLoaded', () => {
           visible: true,
         });
         saveCalendars(calendars);
-        renderCalendarsView();
+        applyFilters();
       }
     });
   }

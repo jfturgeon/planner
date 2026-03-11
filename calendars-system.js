@@ -761,18 +761,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const btnCalendars = document.getElementById('btnCalendars');
-  if (btnCalendars) {
-    btnCalendars.addEventListener('click', () => {
-      ['trackerView','kanbanView','contactsView','scrollArea','monthView','weeklyView'].forEach(id=>{
-        const el=document.getElementById(id); if(el) el.style.display='none';
-      });
-      const sw=document.querySelector('.strip-wrapper'); if(sw) sw.style.display='none';
-      document.querySelectorAll('.btn-view,.btn-subview').forEach(b=>b.classList.remove('active'));
-      document.getElementById('btnCalendars').classList.add('active');
-      const subHdr=document.querySelector('.header-sub'); if(subHdr) subHdr.style.display='none';
-      const cv=document.getElementById('calendarsView'); if(cv) cv.style.display='flex';
-      renderCalendarsView();
-    });
-  }
+
 });
