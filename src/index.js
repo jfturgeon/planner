@@ -49,7 +49,8 @@ export async function initApp() {
     setupNavigationControls();
     setupViewCallbacks();
 
-    // Render initial view
+    // Initialize view visibility and render initial view
+    updateViewVisibility();
     renderCurrentView();
 
     showSuccess('Application démarrée');
@@ -158,6 +159,7 @@ function setupViewCallbacks() {
  */
 function switchToView(viewName) {
   appState.currentView = viewName;
+  updateViewVisibility();
   renderCurrentView();
   updateActiveViewButton();
   updateNavigationLabel();
@@ -264,6 +266,34 @@ function updateActiveViewButton() {
 }
 
 /**
+ * Update view container visibility
+ */
+function updateViewVisibility() {
+  const viewMap = {
+    'month': 'monthView',
+    'annual': 'annualView',
+    'week': 'weeklyView',
+    'habits': 'habitsView',
+    'tracker': 'trackerView',
+    'kanban': 'kanbanView',
+    'contacts': 'contactsView'
+  };
+
+  // Hide all views
+  Object.values(viewMap).forEach(viewId => {
+    const el = document.getElementById(viewId);
+    if (el) el.style.display = 'none';
+  });
+
+  // Show current view
+  const currentViewId = viewMap[appState.currentView];
+  if (currentViewId) {
+    const el = document.getElementById(currentViewId);
+    if (el) el.style.display = '';
+  }
+}
+
+/**
  * Render current view based on appState
  */
 function renderCurrentView() {
@@ -341,6 +371,9 @@ function renderCurrentView() {
         onDayClick: handleDayClick
       });
   }
+
+  // Ensure correct view visibility
+  updateViewVisibility();
 }
 
 // ── EVENT HANDLERS ───────────────────────────────────────────────────────
