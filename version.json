@@ -1,8 +1,9 @@
 {
-    "version":  "1.1.7",
-    "buildNumber":  10,
+    "version":  "1.1.8",
+    "buildNumber":  11,
     "lastUpdate":  "2026-03-11",
     "changelog":  [
+                      "1.1.8 (Build 11): Updated",
                       "1.1.7 (Build 10): Updated",
                       "1.1.6 (Build 9): Updated",
                       "1.1.5 (Build 8): Updated",
