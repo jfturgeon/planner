@@ -1,8 +1,9 @@
 {
-    "version": "1.2.4",
-    "buildNumber": 19,
+    "version": "1.2.5",
+    "buildNumber": 20,
     "lastUpdate": "2026-03-11",
     "changelog": [
+        "1.2.5 (Build 20): Fix missing setupUserMenu() and agenda fragment loading",
         "1.2.4 (Build 19): Add Agenda button and view container",
         "1.2.3 (Build 18): Fix view container visibility for tracker, kanban, and contacts views",
         "1.2.2 (Build 17): Fix signup form display and footer version display",

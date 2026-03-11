@@ -63,6 +63,7 @@ const FragmentLoader = {
     const trackerViewHTML = await this.load('./public/html/views/tracker.html');
     const kanbanViewHTML = await this.load('./public/html/views/kanban.html');
     const contactsViewHTML = await this.load('./public/html/views/contacts.html');
+    const agendaViewHTML = await this.load('./public/html/views/agenda.html');
     const modalsHTML = await this.load('./public/html/fragments/modals.html');
     
     const appView = document.createElement('div');
@@ -76,6 +77,7 @@ const FragmentLoader = {
                        trackerViewHTML + 
                        kanbanViewHTML + 
                        contactsViewHTML + 
+                       agendaViewHTML + 
                        modalsHTML;
     
     document.body.insertBefore(appView, document.body.querySelector('footer'));
@@ -90,6 +92,12 @@ const FragmentLoader = {
     if (typeof setupLoginForm === 'function') {
       setupLoginForm();
       console.log('✅ Login form setup complete');
+    }
+
+    // Setup user menu (from supabase-auth-ui.js)
+    if (typeof setupUserMenu === 'function') {
+      setupUserMenu();
+      console.log('✅ User menu setup complete');
     }
     
     // Initialize auth (from supabase.js)
