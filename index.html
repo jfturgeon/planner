@@ -54,7 +54,7 @@
         </div>
         <div class="form-group">
           <label for="loginPassword">Mot de passe</label>
-          <input type="password" id="loginPassword" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required>
+          <input type="password" id="loginPassword" placeholder="–¢–¢–¢–¢–¢–¢–¢–¢" required>
         </div>
         <button type="submit" class="btn-submit">Se connecter</button>
         <div id="loginError" class="form-error"></div>
@@ -68,11 +68,11 @@
         </div>
         <div class="form-group">
           <label for="signupPassword">Mot de passe</label>
-          <input type="password" id="signupPassword" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" minlength="6" required>
+          <input type="password" id="signupPassword" placeholder="–¢–¢–¢–¢–¢–¢–¢–¢" minlength="6" required>
         </div>
         <div class="form-group">
           <label for="signupPassword2">Confirmer mot de passe</label>
-          <input type="password" id="signupPassword2" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" minlength="6" required>
+          <input type="password" id="signupPassword2" placeholder="–¢–¢–¢–¢–¢–¢–¢–¢" minlength="6" required>
         </div>
         <button type="submit" class="btn-submit">S'inscrire</button>
         <div id="signupError" class="form-error"></div>
@@ -117,18 +117,18 @@
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal-hd">
-      <h2 id="modalTitle">â€”</h2>
+      <h2 id="modalTitle">–”</h2>
       <button class="btn-x" id="modalClose">âœ•</button>
     </div>
     <div class="modal-bd">
       <div>
         <div class="sec-label">ðŸ“ Notes</div>
-        <textarea class="notes-ta" id="dayNotes" placeholder="Notes, rappelsâ€¦" rows="3"></textarea>
+        <textarea class="notes-ta" id="dayNotes" placeholder="Notes, rappels–¦" rows="3"></textarea>
       </div>
       <div>
-        <div class="sec-label">âœ… Tâches</div>
+        <div class="sec-label">✓ Tâches</div>
         <div class="task-add-row">
-          <input type="text" id="taskInput" placeholder="Nouvelle Tâcheâ€¦">
+          <input type="text" id="taskInput" placeholder="Nouvelle Tâche–¦">
           <select id="taskPriority">
             <option value="normal">Normal</option>
             <option value="urgent">Urgent</option>
@@ -166,15 +166,15 @@
         </div>
         <div class="profile-section">
           <label class="profile-label" for="currentPassword">Mot de passe actuel</label>
-          <input type="password" id="currentPassword" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" class="profile-input">
+          <input type="password" id="currentPassword" placeholder="–¢–¢–¢–¢–¢–¢–¢–¢" class="profile-input">
         </div>
         <div class="profile-section">
           <label class="profile-label" for="newPassword">Nouveau mot de passe</label>
-          <input type="password" id="newPassword" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" minlength="6" class="profile-input">
+          <input type="password" id="newPassword" placeholder="–¢–¢–¢–¢–¢–¢–¢–¢" minlength="6" class="profile-input">
         </div>
         <div class="profile-section">
           <label class="profile-label" for="newPasswordConfirm">Confirmer mot de passe</label>
-          <input type="password" id="newPasswordConfirm" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" minlength="6" class="profile-input">
+          <input type="password" id="newPasswordConfirm" placeholder="–¢–¢–¢–¢–¢–¢–¢–¢" minlength="6" class="profile-input">
         </div>
         <div id="passwordError" class="profile-error"></div>
         <button id="btnChangePassword" class="profile-btn">Mettre Ã  jour le mot de passe</button>
@@ -209,18 +209,18 @@ const COL_W       = 220;
 // Month color palettes (softer):
 // [rowBg, rowText, rowWeBg, rowWeText, calBg, calText, calWeBg, calWeText, calDataBg, calWeDataBg]
 const MONTH_PALETTE = [
-  ['#edf4fe','#3b62a8','#dce8fc','#2952a3','#edf4fe','#3b62a8','#dce8fc','#2952a3','#c8d9f5','#b8c9e8'], // Jan â€” blue
-  ['#fdf0f8','#a0306a','#fbe2f2','#8f2060','#fdf0f8','#a0306a','#fbe2f2','#8f2060','#f5c8e4','#edbadc'], // Feb â€” pink
-  ['#edf8f2','#2e7a54','#d8f2e4','#246843','#edf8f2','#2e7a54','#d8f2e4','#246843','#b8e8cc','#a8d8bc'], // Mar â€” green
-  ['#fefdf0','#7a5c14','#fdf8d0','#6a4c0a','#fefdf0','#7a5c14','#fdf8d0','#6a4c0a','#f4e898','#ead888'], // Apr â€” yellow
-  ['#fef5ec','#8c4018','#feecd8','#7a3010','#fef5ec','#8c4018','#feecd8','#7a3010','#f8d4b0','#f0c4a0'], // May â€” orange
-  ['#ecf7fe','#1a5c84','#d4eefb','#144c74','#ecf7fe','#1a5c84','#d4eefb','#144c74','#b0dcf4','#9cccec'], // Jun â€” sky
-  ['#f4f0fe','#5024a0','#e8e0fc','#4018908','#f4f0fe','#5024a0','#e8e0fc','#401890','#d0c0f4','#c0b0e8'], // Jul â€” purple
-  ['#fef0f0','#8c2020','#fde0e0','#7c1818','#fef0f0','#8c2020','#fde0e0','#7c1818','#f8c0c0','#f0b0b0'], // Aug â€” red
-  ['#ecfcf8','#186854','#d4f8f0','#106048','#ecfcf8','#186854','#d4f8f0','#106048','#a8ecd8','#98dcc8'], // Sep â€” teal
-  ['#fefdf0','#6c4010','#fdf8d0','#5c3008','#fefdf0','#6c4010','#fdf8d0','#5c3008','#f4dc90','#e8cc80'], // Oct â€” amber
-  ['#fdf0f5','#8c2050','#fbe0ec','#7c1840','#fdf0f5','#8c2050','#fbe0ec','#7c1840','#f4c0d8','#e8b0c8'], // Nov â€” rose
-  ['#edf2fe','#263c88','#dce8fc','#1c2c78','#edf2fe','#263c88','#dce8fc','#1c2c78','#c4d0f4','#b4c0e8'], // Dec â€” indigo
+  ['#edf4fe','#3b62a8','#dce8fc','#2952a3','#edf4fe','#3b62a8','#dce8fc','#2952a3','#c8d9f5','#b8c9e8'], // Jan –” blue
+  ['#fdf0f8','#a0306a','#fbe2f2','#8f2060','#fdf0f8','#a0306a','#fbe2f2','#8f2060','#f5c8e4','#edbadc'], // Feb –” pink
+  ['#edf8f2','#2e7a54','#d8f2e4','#246843','#edf8f2','#2e7a54','#d8f2e4','#246843','#b8e8cc','#a8d8bc'], // Mar –” green
+  ['#fefdf0','#7a5c14','#fdf8d0','#6a4c0a','#fefdf0','#7a5c14','#fdf8d0','#6a4c0a','#f4e898','#ead888'], // Apr –” yellow
+  ['#fef5ec','#8c4018','#feecd8','#7a3010','#fef5ec','#8c4018','#feecd8','#7a3010','#f8d4b0','#f0c4a0'], // May –” orange
+  ['#ecf7fe','#1a5c84','#d4eefb','#144c74','#ecf7fe','#1a5c84','#d4eefb','#144c74','#b0dcf4','#9cccec'], // Jun –” sky
+  ['#f4f0fe','#5024a0','#e8e0fc','#4018908','#f4f0fe','#5024a0','#e8e0fc','#401890','#d0c0f4','#c0b0e8'], // Jul –” purple
+  ['#fef0f0','#8c2020','#fde0e0','#7c1818','#fef0f0','#8c2020','#fde0e0','#7c1818','#f8c0c0','#f0b0b0'], // Aug –” red
+  ['#ecfcf8','#186854','#d4f8f0','#106048','#ecfcf8','#186854','#d4f8f0','#106048','#a8ecd8','#98dcc8'], // Sep –” teal
+  ['#fefdf0','#6c4010','#fdf8d0','#5c3008','#fefdf0','#6c4010','#fdf8d0','#5c3008','#f4dc90','#e8cc80'], // Oct –” amber
+  ['#fdf0f5','#8c2050','#fbe0ec','#7c1840','#fdf0f5','#8c2050','#fbe0ec','#7c1840','#f4c0d8','#e8b0c8'], // Nov –” rose
+  ['#edf2fe','#263c88','#dce8fc','#1c2c78','#edf2fe','#263c88','#dce8fc','#1c2c78','#c4d0f4','#b4c0e8'], // Dec –” indigo
 ];
 
 // â”€â”€ PERSISTENCE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -379,7 +379,7 @@ function renderColumns(){
     }
     col.appendChild(cal);
 
-    // Day list â€” screenshot style: num | DOW | label (soft-edit on click)
+    // Day list –” screenshot style: num | DOW | label (soft-edit on click)
     const [palBg, palText, palWeBg, palWeText] = MONTH_PALETTE[m];
     for(let d=1;d<=days;d++){
       const dow=new Date(CY,m,d).getDay();
@@ -407,7 +407,7 @@ function renderColumns(){
       dowCell.style.color=text;
       dowCell.textContent=DAYS_SUN[dow]; // single letter
 
-      // label cell â€” soft edit
+      // label cell –” soft edit
       const labelCell=document.createElement('div'); labelCell.className='ann-label';
       if(hasData) labelCell.style.cssText=`color:${today?'#92400e':we?palWeText:palText};font-weight:${today||firstTask?.priority==='urgent'?'600':'400'};`;
       else labelCell.style.color='transparent'; // empty, show on hover
@@ -458,7 +458,7 @@ function renderColumns(){
 function bindScrollSync(){
   const sa=document.getElementById('scrollArea');
   const strip=document.getElementById('strip');
-  // remove old listener by replacing element clone â€” instead use a flag
+  // remove old listener by replacing element clone –” instead use a flag
   sa.onscroll=()=>{
     strip.style.transform=`translateX(-${sa.scrollLeft}px)`;
     const GAP2 = COL_W/7;
@@ -629,7 +629,7 @@ function switchView(mode){
   if(mode==='month')   { renderMonthView(); }
   if(mode==='weekly')  { renderWeeklyView(); }
   if(mode==='habits')  { if(typeof renderHabitsTracker==='function') renderHabitsTracker(); }
-  // gcal: renderGcal is called by applyVueScope after gcView is set â€” don't double-call here
+  // gcal: renderGcal is called by applyVueScope after gcView is set –” don't double-call here
 }
 
 // â”€â”€ DROPDOWN WIRING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -858,11 +858,11 @@ function renderMonthView(){
 
     let cont='';
     if(entry&&entry.notes&&entry.notes.trim())
-      cont+=`<div class="mv-lr-note">ðŸ“ ${esc(entry.notes.trim().substring(0,45))}${entry.notes.trim().length>45?'â€¦':''}</div>`;
+      cont+=`<div class="mv-lr-note">ðŸ“ ${esc(entry.notes.trim().substring(0,45))}${entry.notes.trim().length>45?'–¦':''}</div>`;
     if(entry&&entry.tasks&&entry.tasks.length)
       entry.tasks.forEach(t=>{ cont+=`<div class="mv-lr-task ${t.done?'done':''} ${t.priority==='urgent'?'urgent':''}">${esc(t.text)}</div>`; });
     else if(!hasData)
-      cont=`<div class="mv-lr-empty">Cliquer pour ajouterâ€¦</div>`;
+      cont=`<div class="mv-lr-empty">Cliquer pour ajouter–¦</div>`;
 
     row.innerHTML=`<div class="mv-lr-left"><span class="mv-lr-dname">${DAYS_FULL[dow].substring(0,3).toUpperCase()}</span><span class="mv-lr-dnum">${d}</span></div><div class="mv-lr-content">${cont}</div>`;
     row.addEventListener('click',()=>{ openModal(m,d); });
@@ -910,7 +910,7 @@ function renderWeeklyView(){
   let wdata=loadWeekly(wk)||{habits:[],weekTodos:[]};
 
   const fmt=d=>`${d.getDate()} ${MONTHS_FR[d.getMonth()]}`;
-  const weekLabel=`${fmt(startD)} â€“ ${fmt(endD)} ${endD.getFullYear()}`;
+  const weekLabel=`${fmt(startD)} –“ ${fmt(endD)} ${endD.getFullYear()}`;
 
   wv.innerHTML=`
   <div class="wv-layout">
@@ -918,7 +918,7 @@ function renderWeeklyView(){
     <div class="wv-right"><div class="wv-days-strip" id="wvDays"></div></div>
   </div>`;
 
-  // Shared classic bar â€” week label in bar, toggle button appended to bar-left
+  // Shared classic bar –” week label in bar, toggle button appended to bar-left
   renderClassicBar('weeklyView', 'week', weekLabel);
   // Add panel toggle button BEFORE Aujourd'hui in gc-bar-left
   const barLeft = document.querySelector('#weeklyView .gc-bar-left');
@@ -972,9 +972,9 @@ function renderWvLeft(dates, wk, wdata){
     const card=document.createElement('div'); card.className='wv-card';
     const hd=document.createElement('div'); hd.className='wv-card-hd';
     if(ci===0){
-      hd.innerHTML=`<button class="mv-nav-btn" id="calNavPrev" style="padding:2px 8px;">â€¹</button><span>${MONTHS_FR[cm]} ${cy}</span><span></span>`;
+      hd.innerHTML=`<button class="mv-nav-btn" id="calNavPrev" style="padding:2px 8px;">–¹</button><span>${MONTHS_FR[cm]} ${cy}</span><span></span>`;
     } else {
-      hd.innerHTML=`<span></span><span>${MONTHS_FR[cm]} ${cy}</span><button class="mv-nav-btn" id="calNavNext" style="padding:2px 8px;">â€º</button>`;
+      hd.innerHTML=`<span></span><span>${MONTHS_FR[cm]} ${cy}</span><button class="mv-nav-btn" id="calNavNext" style="padding:2px 8px;">–º</button>`;
     }
     card.appendChild(hd);
     const cal=document.createElement('div'); cal.className='wv-mini-cal';
@@ -998,7 +998,7 @@ function renderWvLeft(dates, wk, wdata){
       const e=document.createElement('div'); e.className='mc-day'; dg.appendChild(e);
     }
 
-    // Day cells â€“ group by week row for hover effect
+    // Day cells –“ group by week row for hover effect
     // We'll attach data-weekstart to each cell for hover grouping
     for(let d=1;d<=daysInM;d++){
       const dow=new Date(cy,cm,d).getDay();
@@ -1249,7 +1249,7 @@ function renderWvLeft(dates, wk, wdata){
   filterCard.appendChild(filterBody);
   left.appendChild(filterCard);
 
-  // â”€â”€ Daily habits (GLOBAL â€“ shared across all weeks) â”€â”€
+  // â”€â”€ Daily habits (GLOBAL –“ shared across all weeks) â”€â”€
 
   const habCard=document.createElement('div'); habCard.className='wv-card';
   habCard.innerHTML=`<div class="wv-card-hd"><span>Habitudes quotidiennes</span></div>`;
@@ -1266,12 +1266,12 @@ function renderWvLeft(dates, wk, wdata){
     const habits=loadHabits();
     habList.innerHTML='';
     if(habits.length===0){
-      habList.innerHTML=`<div style="font-size:.72rem;color:#bbb;font-style:italic;padding:6px 0;">Aucune habitude â€” ajoutez-en ci-dessous</div>`;
+      habList.innerHTML=`<div style="font-size:.72rem;color:#bbb;font-style:italic;padding:6px 0;">Aucune habitude –” ajoutez-en ci-dessous</div>`;
     }
     habits.forEach((hab,hi)=>{
       const row=document.createElement('div'); row.className='wv-habit-row';
 
-      // Name cell â€” click to edit
+      // Name cell –” click to edit
       const nameSpan=document.createElement('span');
       nameSpan.className='wv-habit-name'; nameSpan.title=hab.name; nameSpan.textContent=hab.name;
       nameSpan.style.cursor='text';
@@ -1329,7 +1329,7 @@ function renderWvLeft(dates, wk, wdata){
 
   const addHab=document.createElement('div'); addHab.className='wv-habit-add';
   const habInput=document.createElement('input');
-  habInput.type='text'; habInput.placeholder='Nouvelle habitudeâ€¦';
+  habInput.type='text'; habInput.placeholder='Nouvelle habitude–¦';
   const habBtn=document.createElement('button'); habBtn.textContent='+';
   addHab.appendChild(habInput); addHab.appendChild(habBtn);
   const doAddHabit=()=>{
@@ -1396,7 +1396,7 @@ function renderWvLeft(dates, wk, wdata){
 
   const addTodo=document.createElement('div'); addTodo.className='wv-todo-add';
   const todoInput=document.createElement('input');
-  todoInput.type='text'; todoInput.placeholder='Ajouter une Tâcheâ€¦';
+  todoInput.type='text'; todoInput.placeholder='Ajouter une Tâche–¦';
   const todoBtn=document.createElement('button'); todoBtn.textContent='+';
   addTodo.appendChild(todoInput); addTodo.appendChild(todoBtn);
   const doAddTodo=()=>{
@@ -1503,7 +1503,7 @@ function renderWvDays(dates, wk, wdata){
 
           const labelIn=document.createElement('input');
           labelIn.type='text'; labelIn.className='wv-row-edit-input';
-          labelIn.placeholder='Titre de l\'événementâ€¦';
+          labelIn.placeholder='Titre de l\'événement–¦';
           labelIn.value=ev?ev.title:'';
 
           allDayCb.addEventListener('change',()=>{ timeIn.style.display=allDayCb.checked?'none':''; if(!allDayCb.checked) timeIn.focus(); });
@@ -1642,7 +1642,7 @@ function renderWvDays(dates, wk, wdata){
           if(t&&t.done) cbNew.checked=true;
           const labelIn=document.createElement('input');
           labelIn.type='text'; labelIn.className='wv-row-edit-input';
-          labelIn.placeholder='Nouvelle Tâcheâ€¦';
+          labelIn.placeholder='Nouvelle Tâche–¦';
           labelIn.value=t?t.text:'';
           row.appendChild(cbNew); row.appendChild(labelIn);
           labelIn.focus(); labelIn.select();
@@ -1682,7 +1682,7 @@ function renderWvDays(dates, wk, wdata){
           if(data.srcDk===dk) return; // same day, no-op
 
           if(data.isEpisode) {
-            // Episodes come from the scheduler â€” just add as plain task in dest
+            // Episodes come from the scheduler –” just add as plain task in dest
             const destEntry = appData[dk] || {notes:'', tasks:[]};
             if(!destEntry.tasks) destEntry.tasks=[];
             destEntry.tasks.push(data.task);
@@ -1784,8 +1784,8 @@ function attachAllViewEvents() {
 </script>
 <script>
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  GCAL â€” Vue Calendrier style Google Calendar
-//  Mois / Semaine / Jour  â€” intégré au planner existant
+//  GCAL –” Vue Calendrier style Google Calendar
+//  Mois / Semaine / Jour  –” intégré au planner existant
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 const GC_DAYS_FR   = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
@@ -1867,8 +1867,8 @@ function gcUpdateBar(){
   else if(gcView==='week'){
     const ws=gcGetWeekStart(gcDate), we=new Date(ws); we.setDate(we.getDate()+6);
     text=ws.getMonth()===we.getMonth()
-      ?`${GC_MONTHS_SH[ws.getMonth()]} ${ws.getDate()}â€“${we.getDate()} ${ws.getFullYear()}`
-      :`${GC_MONTHS_SH[ws.getMonth()]} ${ws.getDate()} â€“ ${GC_MONTHS_SH[we.getMonth()]} ${we.getDate()}, ${ws.getFullYear()}`;
+      ?`${GC_MONTHS_SH[ws.getMonth()]} ${ws.getDate()}–“${we.getDate()} ${ws.getFullYear()}`
+      :`${GC_MONTHS_SH[ws.getMonth()]} ${ws.getDate()} –“ ${GC_MONTHS_SH[we.getMonth()]} ${we.getDate()}, ${ws.getFullYear()}`;
   } else { text=`${GC_DAYS_LONG[gcDate.getDay()]} ${gcDate.getDate()} ${GC_MONTHS[gcDate.getMonth()]} ${gcDate.getFullYear()}`; }
   if(lbl) lbl.textContent=text;
   // Also update the sub-header period label
@@ -2044,7 +2044,7 @@ function gcRenderDay(root){
   });
   if(!allDayEvs.length){
     const hint=document.createElement('span'); hint.className='gcd-allday-hint';
-    hint.textContent='Cliquer pour ajouterâ€¦';
+    hint.textContent='Cliquer pour ajouter–¦';
     hint.addEventListener('click',()=>openModal(gcDate.getMonth(),gcDate.getDate()));
     adChips.appendChild(hint);
   }
@@ -2144,11 +2144,11 @@ function gcRenderYear(root){
   root.appendChild(wrap);
 }
 
-// (gc internal dropdown helpers removed â€” dropdowns live in persistent sub-header)
+// (gc internal dropdown helpers removed –” dropdowns live in persistent sub-header)
 
 </script>
 <script>
-// â”€â”€ OSCARS DATA 2020-2025 â€” Toutes catégories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€ OSCARS DATA 2020-2025 –” Toutes catégories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const OSCARS_DATA = [
 {
   year: 2025, ceremony: 97,
@@ -2182,19 +2182,19 @@ const OSCARS_DATA = [
     { id:'actress', name:'Meilleure actrice', nominees:[
       {film:'Anora', person:'Mikey Madison', winner:true},
       {film:'Wicked', person:'Cynthia Erivo'},
-      {film:'Emilia Pérez', person:'Karla SofÃ­a GascÃ³n'},
+      {film:'Emilia Pérez', person:'Karla SofÃ­a Gascón'},
       {film:'The Substance', person:'Demi Moore'},
       {film:"I'm Still Here", person:'Fernanda Torres'},
     ]},
-    { id:'supp_actor', name:'Acteur second rÃ´le', nominees:[
+    { id:'supp_actor', name:'Acteur second rôle', nominees:[
       {film:'A Real Pain', person:'Kieran Culkin', winner:true},
       {film:'Anora', person:'Yura Borisov'},
       {film:'A Complete Unknown', person:'Edward Norton'},
       {film:'The Brutalist', person:'Guy Pearce'},
       {film:'The Apprentice', person:'Jeremy Strong'},
     ]},
-    { id:'supp_actress', name:'Actrice second rÃ´le', nominees:[
-      {film:'Emilia Pérez', person:'Zoe SaldaÃ±a', winner:true},
+    { id:'supp_actress', name:'Actrice second rôle', nominees:[
+      {film:'Emilia Pérez', person:'Zoe Saldaña', winner:true},
       {film:'A Complete Unknown', person:'Monica Barbaro'},
       {film:'Wicked', person:'Ariana Grande'},
       {film:'The Brutalist', person:'Felicity Jones'},
@@ -2265,7 +2265,7 @@ const OSCARS_DATA = [
     ]},
     { id:'editing', name:'Montage', nominees:[
       {film:'Anora', person:'Sean Baker', winner:true},
-      {film:'The Brutalist', person:'DÃ¡vid JancsÃ³'},
+      {film:'The Brutalist', person:'Dávid Jancsó'},
       {film:'Conclave', person:'Nick Emerson'},
       {film:'Emilia Pérez', person:'Juliette Welfling'},
       {film:'Wicked', person:'Myron Kerstein'},
@@ -2278,11 +2278,11 @@ const OSCARS_DATA = [
       {film:'The Wild Robot', person:'Kris Bowers'},
     ]},
     { id:'song', name:'Chanson originale', nominees:[
-      {film:'Emilia Pérez', person:'"El Mal" â€“ Camille, Clément Ducol', winner:true},
-      {film:'The Four Seasons', person:'"Beautiful Men" â€“ Lola Young'},
-      {film:'Elton John: Never Too Late', person:'"Never Too Late" â€“ Elton John'},
-      {film:'Sing Sing', person:'"Like A Bird" â€“ Abraham Alexander'},
-      {film:'Emilia Pérez', person:'"Mi Camino" â€“ Camille, Clément Ducol'},
+      {film:'Emilia Pérez', person:'"El Mal" –“ Camille, Clément Ducol', winner:true},
+      {film:'The Four Seasons', person:'"Beautiful Men" –“ Lola Young'},
+      {film:'Elton John: Never Too Late', person:'"Never Too Late" –“ Elton John'},
+      {film:'Sing Sing', person:'"Like A Bird" –“ Abraham Alexander'},
+      {film:'Emilia Pérez', person:'"Mi Camino" –“ Camille, Clément Ducol'},
     ]},
     { id:'costume', name:'Costumes', nominees:[
       {film:'Wicked', person:'Paul Tazewell', winner:true},
@@ -2352,19 +2352,19 @@ const OSCARS_DATA = [
     ]},
     { id:'actress', name:'Meilleure actrice', nominees:[
       {film:'Poor Things', person:'Emma Stone', winner:true},
-      {film:'Anatomy of a Fall', person:'Sandra HÃ¼ller'},
+      {film:'Anatomy of a Fall', person:'Sandra Hüller'},
       {film:'The Color Purple', person:'Fantasia Barrino'},
       {film:'Nyad', person:'Annette Bening'},
       {film:'Priscilla', person:'Cailee Spaeny'},
     ]},
-    { id:'supp_actor', name:'Acteur second rÃ´le', nominees:[
+    { id:'supp_actor', name:'Acteur second rôle', nominees:[
       {film:'Oppenheimer', person:'Robert Downey Jr.', winner:true},
       {film:'Oppenheimer', person:'Josh Hartnett'},
       {film:'The Holdovers', person:'Mark Ruffalo'},
       {film:'Killers of the Flower Moon', person:'Robert De Niro'},
       {film:'American Fiction', person:'Sterling K. Brown'},
     ]},
-    { id:'supp_actress', name:'Actrice second rÃ´le', nominees:[
+    { id:'supp_actress', name:'Actrice second rôle', nominees:[
       {film:'The Holdovers', person:"Da'Vine Joy Randolph", winner:true},
       {film:'Barbie', person:'America Ferrera'},
       {film:'Nyad', person:'Jodie Foster'},
@@ -2404,7 +2404,7 @@ const OSCARS_DATA = [
       {film:'The ABCs of Book Banning'},
       {film:'The Barber of Little Rock'},
       {film:'Island in Between'},
-      {film:'NÇŽi Nai & WÃ i PÃ³'},
+      {film:'NÇŽi Nai & WÃ i Pó'},
     ]},
     { id:'live_short', name:'Court métrage fiction', nominees:[
       {film:'The Wonderful Story of Henry Sugar', winner:true},
@@ -2442,18 +2442,18 @@ const OSCARS_DATA = [
       {film:'Poor Things', person:'Yorgos Mavropsaridis'},
     ]},
     { id:'score', name:'Musique originale', nominees:[
-      {film:'Oppenheimer', person:'Ludwig GÃ¶ransson', winner:true},
+      {film:'Oppenheimer', person:'Ludwig Göransson', winner:true},
       {film:'American Fiction', person:'Laura Karpman'},
       {film:'Indiana Jones 5', person:'John Williams'},
       {film:'Killers of the Flower Moon', person:'Robbie Robertson'},
       {film:'Poor Things', person:'Jerskin Fendrix'},
     ]},
     { id:'song', name:'Chanson originale', nominees:[
-      {film:'Barbie', person:'"What Was I Made For?" â€“ Billie Eilish', winner:true},
-      {film:'Barbie', person:'"I\'m Just Ken" â€“ Mark Ronson'},
-      {film:'American Symphony', person:'"It Never Went Away" â€“ Jon Batiste'},
-      {film:'Flamin\' Hot', person:'"The Fire Inside" â€“ Diane Warren'},
-      {film:'Society of the Snow', person:'"Wahzhazhe (A Song for My People)" â€“ Scott George'},
+      {film:'Barbie', person:'"What Was I Made For?" –“ Billie Eilish', winner:true},
+      {film:'Barbie', person:'"I\'m Just Ken" –“ Mark Ronson'},
+      {film:'American Symphony', person:'"It Never Went Away" –“ Jon Batiste'},
+      {film:'Flamin\' Hot', person:'"The Fire Inside" –“ Diane Warren'},
+      {film:'Society of the Snow', person:'"Wahzhazhe (A Song for My People)" –“ Scott George'},
     ]},
     { id:'costume', name:'Costumes', nominees:[
       {film:'Poor Things', person:'Holly Waddington', winner:true},
@@ -2474,12 +2474,12 @@ const OSCARS_DATA = [
       {film:'Golda', person:'Karen Hartley Thomas et al.'},
       {film:'Maestro', person:'Kazu Hiro, Kay Georgiou, Lori McCoy-Bell'},
       {film:'Oppenheimer', person:'Luisa Abel'},
-      {film:'Society of the Snow', person:'Ana LÃ³pez-Puigcerver et al.'},
+      {film:'Society of the Snow', person:'Ana López-Puigcerver et al.'},
     ]},
     { id:'sound', name:'Son', nominees:[
       {film:'The Zone of Interest', winner:true},
       {film:'Maestro'},
-      {film:'Mission: Impossible â€“ Dead Reckoning'},
+      {film:'Mission: Impossible –“ Dead Reckoning'},
       {film:'Oppenheimer'},
       {film:'Society of the Snow'},
     ]},
@@ -2487,7 +2487,7 @@ const OSCARS_DATA = [
       {film:'Godzilla Minus One', winner:true},
       {film:'Guardians of the Galaxy Vol. 3'},
       {film:'Indiana Jones 5'},
-      {film:'Mission: Impossible â€“ Dead Reckoning'},
+      {film:'Mission: Impossible –“ Dead Reckoning'},
       {film:'Napoleon'},
     ]},
   ]
@@ -2501,7 +2501,7 @@ const OSCARS_DATA = [
       {film:'The Banshees of Inisherin'},
       {film:'Elvis'},
       {film:'The Fabelmans'},
-      {film:'TÃ¡r'},
+      {film:'Tár'},
       {film:'Top Gun: Maverick'},
       {film:'Triangle of Sadness'},
       {film:'Women Talking'},
@@ -2511,31 +2511,31 @@ const OSCARS_DATA = [
       {film:'Everything Everywhere All at Once', person:'Daniel Kwan & Daniel Scheinert', winner:true},
       {film:'The Banshees of Inisherin', person:'Martin McDonagh'},
       {film:'The Fabelmans', person:'Steven Spielberg'},
-      {film:'TÃ¡r', person:'Todd Field'},
-      {film:'Triangle of Sadness', person:'Ruben Ã–stlund'},
+      {film:'Tár', person:'Todd Field'},
+      {film:'Triangle of Sadness', person:'Ruben Östlund'},
     ]},
     { id:'actor', name:'Meilleur acteur', nominees:[
       {film:'The Whale', person:'Brendan Fraser', winner:true},
       {film:'The Banshees of Inisherin', person:'Colin Farrell'},
       {film:'Elvis', person:'Austin Butler'},
-      {film:'TÃ¡r', person:'Paul Mescal'},
+      {film:'Tár', person:'Paul Mescal'},
       {film:'The Son', person:'Hugh Jackman'},
     ]},
     { id:'actress', name:'Meilleure actrice', nominees:[
       {film:'Everything Everywhere All at Once', person:'Michelle Yeoh', winner:true},
-      {film:'TÃ¡r', person:'Cate Blanchett'},
+      {film:'Tár', person:'Cate Blanchett'},
       {film:'The Whale', person:'Andrea Riseborough'},
       {film:'The Woman King', person:'Viola Davis'},
       {film:'Till', person:'Danielle Deadwyler'},
     ]},
-    { id:'supp_actor', name:'Acteur second rÃ´le', nominees:[
+    { id:'supp_actor', name:'Acteur second rôle', nominees:[
       {film:'Everything Everywhere All at Once', person:'Ke Huy Quan', winner:true},
       {film:'The Banshees of Inisherin', person:'Barry Keoghan'},
       {film:'The Fabelmans', person:'Judd Hirsch'},
       {film:'Everything Everywhere All at Once', person:'Brian Tyree Henry'},
       {film:'The Banshees of Inisherin', person:'Brendan Gleeson'},
     ]},
-    { id:'supp_actress', name:'Actrice second rÃ´le', nominees:[
+    { id:'supp_actress', name:'Actrice second rôle', nominees:[
       {film:'Everything Everywhere All at Once', person:'Jamie Lee Curtis', winner:true},
       {film:'The Banshees of Inisherin', person:'Kerry Condon'},
       {film:'Everything Everywhere All at Once', person:'Stephanie Hsu'},
@@ -2588,8 +2588,8 @@ const OSCARS_DATA = [
       {film:'Everything Everywhere All at Once', person:'Daniel Kwan, Daniel Scheinert', winner:true},
       {film:'The Banshees of Inisherin', person:'Martin McDonagh'},
       {film:'The Fabelmans', person:'Steven Spielberg, Tony Kushner'},
-      {film:'TÃ¡r', person:'Todd Field'},
-      {film:'Triangle of Sadness', person:'Ruben Ã–stlund'},
+      {film:'Tár', person:'Todd Field'},
+      {film:'Triangle of Sadness', person:'Ruben Östlund'},
     ]},
     { id:'adapted', name:'Scénario adapté', nominees:[
       {film:'Women Talking', person:'Sarah Polley', winner:true},
@@ -2603,13 +2603,13 @@ const OSCARS_DATA = [
       {film:'Bardo', person:'Darius Khondji'},
       {film:'Elvis', person:'Mandy Walker'},
       {film:'Empire of Light', person:'Roger Deakins'},
-      {film:'TÃ¡r', person:'Florian Hoffmeister'},
+      {film:'Tár', person:'Florian Hoffmeister'},
     ]},
     { id:'editing', name:'Montage', nominees:[
       {film:'Everything Everywhere All at Once', person:'Paul Rogers', winner:true},
       {film:'The Banshees of Inisherin', person:'Mikkel E.G. Nielsen'},
       {film:'Elvis', person:'Matt Villa, Jonathan Redmond'},
-      {film:'TÃ¡r', person:'Monika Willi'},
+      {film:'Tár', person:'Monika Willi'},
       {film:'Top Gun: Maverick', person:'Eddie Hamilton'},
     ]},
     { id:'score', name:'Musique originale', nominees:[
@@ -2620,11 +2620,11 @@ const OSCARS_DATA = [
       {film:'The Fabelmans', person:'John Williams'},
     ]},
     { id:'song', name:'Chanson originale', nominees:[
-      {film:'RRR', person:'"Naatu Naatu" â€“ M.M. Keeravaani', winner:true},
-      {film:'Applause', person:'"Applause" â€“ Diane Warren'},
-      {film:'Babylon', person:'"Hold My Hand" â€“ Lady Gaga'},
-      {film:'Everything Everywhere All at Once', person:'"This Is a Life" â€“ Ryan Lott, David Byrne, Mitski'},
-      {film:'Women Talking', person:'"My Body is a Cage" â€“ A.R. Rahman'},
+      {film:'RRR', person:'"Naatu Naatu" –“ M.M. Keeravaani', winner:true},
+      {film:'Applause', person:'"Applause" –“ Diane Warren'},
+      {film:'Babylon', person:'"Hold My Hand" –“ Lady Gaga'},
+      {film:'Everything Everywhere All at Once', person:'"This Is a Life" –“ Ryan Lott, David Byrne, Mitski'},
+      {film:'Women Talking', person:'"My Body is a Cage" –“ A.R. Rahman'},
     ]},
     { id:'costume', name:'Costumes', nominees:[
       {film:'Everything Everywhere All at Once', person:'Shirley Kurata', winner:true},
@@ -2642,7 +2642,7 @@ const OSCARS_DATA = [
     ]},
     { id:'makeup', name:'Maquillage et coiffure', nominees:[
       {film:'The Whale', person:'Adrien Morot, Judy Chin, Anne Marie Bradley', winner:true},
-      {film:'All Quiet on the Western Front', person:'Heike Merker, Linda EisenhamerovÃ¡'},
+      {film:'All Quiet on the Western Front', person:'Heike Merker, Linda Eisenhamerová'},
       {film:'The Batman', person:'Naomi Donne, Mike Marino, Mike Fontaine'},
       {film:'Black Panther: Wakanda Forever', person:'Camille Friend, Joel Harlow'},
       {film:'Elvis', person:'Mark Coulier, Jason Baird, Aldo Signoretti'},
@@ -2681,7 +2681,7 @@ const OSCARS_DATA = [
     { id:'director', name:'Meilleure réalisation', nominees:[
       {film:'The Power of the Dog', person:'Jane Campion', winner:true},
       {film:'Belfast', person:'Kenneth Branagh'},
-      {film:'Drive My Car', person:'RyÃ»suke Hamaguchi'},
+      {film:'Drive My Car', person:'Ryûsuke Hamaguchi'},
       {film:'Licorice Pizza', person:'Paul Thomas Anderson'},
       {film:'Tick, Tick... Boom!', person:'Lin-Manuel Miranda'},
     ]},
@@ -2699,14 +2699,14 @@ const OSCARS_DATA = [
       {film:'Parallel Mothers', person:'Penélope Cruz'},
       {film:'The Lost Daughter', person:'Olivia Colman'},
     ]},
-    { id:'supp_actor', name:'Acteur second rÃ´le', nominees:[
+    { id:'supp_actor', name:'Acteur second rôle', nominees:[
       {film:'CODA', person:'Troy Kotsur', winner:true},
       {film:'The Power of the Dog', person:'Jesse Plemons'},
       {film:'The Power of the Dog', person:'Kodi Smit-McPhee'},
-      {film:'Belfast', person:'CiarÃ¡n Hinds'},
+      {film:'Belfast', person:'Ciarán Hinds'},
       {film:'Being the Ricardos', person:'J.K. Simmons'},
     ]},
-    { id:'supp_actress', name:'Actrice second rÃ´le', nominees:[
+    { id:'supp_actress', name:'Actrice second rôle', nominees:[
       {film:'West Side Story', person:'Ariana DeBose', winner:true},
       {film:'The Power of the Dog', person:'Kirsten Dunst'},
       {film:'Belfast', person:'Judi Dench'},
@@ -2732,7 +2732,7 @@ const OSCARS_DATA = [
       {film:'Flee (Danemark)'},
       {film:'The Hand of God (Italie)'},
       {film:'Lunana: A Yak in the Classroom (Bhoutan)'},
-      {film:"The Worst Person in the World (NorvÃ¨ge)"},
+      {film:"The Worst Person in the World (Norvège)"},
     ]},
     { id:'documentary', name:'Documentaire long métrage', nominees:[
       {film:'Summer of Soul (...Or, When the Revolution Could Not Be Televised)', winner:true},
@@ -2750,7 +2750,7 @@ const OSCARS_DATA = [
     ]},
     { id:'live_short', name:'Court métrage fiction', nominees:[
       {film:'The Long Goodbye', winner:true},
-      {film:'Ala Kachuu â€“ Take and Run'},
+      {film:'Ala Kachuu –“ Take and Run'},
       {film:'On My Mind'},
       {film:'Please Hold'},
       {film:'The Dress'},
@@ -2764,7 +2764,7 @@ const OSCARS_DATA = [
     ]},
     { id:'adapted', name:'Scénario adapté', nominees:[
       {film:'CODA', person:'SiÃ¢n Heder', winner:true},
-      {film:'Drive My Car', person:'RyÃ»suke Hamaguchi, Takamasa Oe'},
+      {film:'Drive My Car', person:'Ryûsuke Hamaguchi, Takamasa Oe'},
       {film:'Dune', person:'Jon Spaihts, Denis Villeneuve, Eric Roth'},
       {film:'The Lost Daughter', person:'Maggie Gyllenhaal'},
       {film:'The Power of the Dog', person:'Jane Campion'},
@@ -2791,11 +2791,11 @@ const OSCARS_DATA = [
       {film:'The Power of the Dog', person:'Jonny Greenwood'},
     ]},
     { id:'song', name:'Chanson originale', nominees:[
-      {film:'Encanto', person:'"No Time to Die" â€“ Billie Eilish, Finneas O\'Connell', winner:true},
-      {film:"Be Alive", person:'"Be Alive" â€“ Beyoncé, DIXSON'},
-      {film:'Four Good Days', person:'"Somehow You Do" â€“ Diane Warren'},
-      {film:'Belfast', person:'"Down to Joy" â€“ Van Morrison'},
-      {film:'Encanto', person:'"Dos Oruguitas" â€“ Lin-Manuel Miranda'},
+      {film:'Encanto', person:'"No Time to Die" –“ Billie Eilish, Finneas O\'Connell', winner:true},
+      {film:"Be Alive", person:'"Be Alive" –“ Beyoncé, DIXSON'},
+      {film:'Four Good Days', person:'"Somehow You Do" –“ Diane Warren'},
+      {film:'Belfast', person:'"Down to Joy" –“ Van Morrison'},
+      {film:'Encanto', person:'"Dos Oruguitas" –“ Lin-Manuel Miranda'},
     ]},
     { id:'costume', name:'Costumes', nominees:[
       {film:'Cruella', person:'Jenny Beavan', winner:true},
@@ -2816,7 +2816,7 @@ const OSCARS_DATA = [
       {film:'Coming 2 America', person:'Mike Marino, Stacey Morris, Carla Farmer'},
       {film:'Cruella', person:'Nadia Stacey, Naomi Donne'},
       {film:'Dune', person:'Donald Mowat, Love Larson, Eva von Bahr'},
-      {film:'House of Gucci', person:'GÃ¶ran LundstrÃ¶m, Anna Carin Lock, Frederic Aspiras'},
+      {film:'House of Gucci', person:'Göran Lundström, Anna Carin Lock, Frederic Aspiras'},
     ]},
     { id:'sound', name:'Son', nominees:[
       {film:'Dune', winner:true},
@@ -2868,14 +2868,14 @@ const OSCARS_DATA = [
       {film:'Minari', person:'Youn Yuh-jung'},
       {film:'The United States vs. Billie Holiday', person:'Andra Day'},
     ]},
-    { id:'supp_actor', name:'Acteur second rÃ´le', nominees:[
+    { id:'supp_actor', name:'Acteur second rôle', nominees:[
       {film:'Judas and the Black Messiah', person:'Daniel Kaluuya', winner:true},
       {film:'Borat Subsequent Moviefilm', person:'Sacha Baron Cohen'},
       {film:'The Trial of the Chicago 7', person:'Sacha Baron Cohen'},
       {film:'Sound of Metal', person:'Paul Raci'},
       {film:'One Night in Miami', person:'Leslie Odom Jr.'},
     ]},
-    { id:'supp_actress', name:'Actrice second rÃ´le', nominees:[
+    { id:'supp_actress', name:'Actrice second rôle', nominees:[
       {film:'Minari', person:'Youn Yuh-jung', winner:true},
       {film:'Judas and the Black Messiah', person:'Dominique Fishback'},
       {film:'Promising Young Woman', person:'Laverne Cox'},
@@ -2960,11 +2960,11 @@ const OSCARS_DATA = [
       {film:'News of the World', person:'James Newton Howard'},
     ]},
     { id:'song', name:'Chanson originale', nominees:[
-      {film:'Fight for You', person:'"Fight for You" â€“ H.E.R.', winner:true},
-      {film:'Hear My Voice', person:'"Hear My Voice" â€“ Daniel Pemberton, Celeste'},
-      {film:'Husavik', person:'"Husavik" â€“ Savan Kotecha, Fat Max Gsus, Rickard GÃ¶ransson'},
-      {film:'Io SÃ¬ (Seen)', person:'"Io SÃ¬ (Seen)" â€“ Diane Warren, Laura Pausini'},
-      {film:'Speak Now', person:'"Speak Now" â€“ Leslie Odom Jr., Sam Ashworth'},
+      {film:'Fight for You', person:'"Fight for You" –“ H.E.R.', winner:true},
+      {film:'Hear My Voice', person:'"Hear My Voice" –“ Daniel Pemberton, Celeste'},
+      {film:'Husavik', person:'"Husavik" –“ Savan Kotecha, Fat Max Gsus, Rickard Göransson'},
+      {film:'Io SÃ¬ (Seen)', person:'"Io SÃ¬ (Seen)" –“ Diane Warren, Laura Pausini'},
+      {film:'Speak Now', person:'"Speak Now" –“ Leslie Odom Jr., Sam Ashworth'},
     ]},
     { id:'costume', name:'Costumes', nominees:[
       {film:"Ma Rainey's Black Bottom", person:'Ann Roth', winner:true},
@@ -3038,14 +3038,14 @@ const OSCARS_DATA = [
       {film:'Bombshell', person:'Charlize Theron'},
       {film:'Harriet', person:'Cynthia Erivo'},
     ]},
-    { id:'supp_actor', name:'Acteur second rÃ´le', nominees:[
+    { id:'supp_actor', name:'Acteur second rôle', nominees:[
       {film:'Once Upon a Time in Hollywood', person:'Brad Pitt', winner:true},
       {film:'The Irishman', person:'Al Pacino'},
       {film:'The Irishman', person:'Joe Pesci'},
       {film:'Jojo Rabbit', person:'Sam Rockwell'},
       {film:'Marriage Story', person:'Tom Hanks'},
     ]},
-    { id:'supp_actress', name:'Actrice second rÃ´le', nominees:[
+    { id:'supp_actress', name:'Actrice second rôle', nominees:[
       {film:'Marriage Story', person:'Laura Dern', winner:true},
       {film:'Bombshell', person:'Margot Robbie'},
       {film:'Little Women', person:'Florence Pugh'},
@@ -3123,18 +3123,18 @@ const OSCARS_DATA = [
       {film:'Parasite', person:'Yang Jinmo'},
     ]},
     { id:'score', name:'Musique originale', nominees:[
-      {film:'Joker', person:'Hildur GuÃ°nadÃ³ttir', winner:true},
+      {film:'Joker', person:'Hildur Guðnadóttir', winner:true},
       {film:'Little Women', person:'Alexandre Desplat'},
       {film:'Marriage Story', person:'Randy Newman'},
       {film:'1917', person:'Thomas Newman'},
       {film:'Star Wars: The Rise of Skywalker', person:'John Williams'},
     ]},
     { id:'song', name:'Chanson originale', nominees:[
-      {film:'Rocketman', person:'"(I\'m Gonna) Love Me Again" â€“ Elton John, Bernie Taupin', winner:true},
-      {film:"I Can\'t Let You Throw Yourself Away", person:'"I Can\'t Let You Throw Yourself Away" â€“ Randy Newman'},
-      {film:'Harriet', person:'"Stand Up" â€“ Joshuah Brian Campbell, Cynthia Erivo'},
-      {film:'Wild Rose', person:'"Glasgow (No Place Like Home)" â€“ Mary Steenburgen, Rodney Crowell'},
-      {film:'Breakthrough', person:'"I\'m Standing With You" â€“ Diane Warren'},
+      {film:'Rocketman', person:'"(I\'m Gonna) Love Me Again" –“ Elton John, Bernie Taupin', winner:true},
+      {film:"I Can\'t Let You Throw Yourself Away", person:'"I Can\'t Let You Throw Yourself Away" –“ Randy Newman'},
+      {film:'Harriet', person:'"Stand Up" –“ Joshuah Brian Campbell, Cynthia Erivo'},
+      {film:'Wild Rose', person:'"Glasgow (No Place Like Home)" –“ Mary Steenburgen, Rodney Crowell'},
+      {film:'Breakthrough', person:'"I\'m Standing With You" –“ Diane Warren'},
     ]},
     { id:'costume', name:'Costumes', nominees:[
       {film:'Little Women', person:'Jacqueline Durran', winner:true},
@@ -3146,7 +3146,7 @@ const OSCARS_DATA = [
     { id:'production', name:'Décors', nominees:[
       {film:'Once Upon a Time in Hollywood', person:'Barbara Ling, Nancy Haigh', winner:true},
       {film:'The Irishman', person:'Bob Shaw, Regina Graves'},
-      {film:'Jojo Rabbit', person:'Ra Vincent, Nora SopkovÃ¡'},
+      {film:'Jojo Rabbit', person:'Ra Vincent, Nora Sopková'},
       {film:'Joker', person:'Mark Friedberg, Kathy Lucas'},
       {film:'Little Women', person:'Jess Gonchor, Claire Kaufman'},
     ]},
@@ -3206,7 +3206,7 @@ function renderOscarsSection(container) {
   nextBtn.onclick = () => { const idx = OSCARS_DATA.findIndex(d=>d.year===oscarsYear); if(idx>0){ oscarsYear=OSCARS_DATA[idx-1].year; renderOscarsSection(null, panel); } };
 
   const yearLabel = document.createElement('span'); yearLabel.className = 'os-year-label';
-  yearLabel.innerHTML = `<span style="font-family:'DM Serif Display',serif;font-size:1.5rem;">${oscarsYear}</span> <span style="font-size:.8rem;color:#999;">â€” ${data?.ceremony}e cérémonie</span>`;
+  yearLabel.innerHTML = `<span style="font-family:'DM Serif Display',serif;font-size:1.5rem;">${oscarsYear}</span> <span style="font-size:.8rem;color:#999;">–” ${data?.ceremony}e cérémonie</span>`;
 
   yearRow.appendChild(prevBtn);
   yearRow.appendChild(yearLabel);
@@ -3434,7 +3434,7 @@ const TRACKER_SHOWS = [
       ]},
       { n:9, eps:[
         {e:1,t:'Nothing Important Happened Today'},{e:2,t:'Nothing Important Happened Today II'},
-        {e:3,t:'DÃ¦monicus'},{e:4,t:'4-D'},{e:5,t:'Lord of the Flies'},{e:6,t:'Trust No 1'},
+        {e:3,t:'Dæmonicus'},{e:4,t:'4-D'},{e:5,t:'Lord of the Flies'},{e:6,t:'Trust No 1'},
         {e:7,t:'John Doe'},{e:8,t:'Hellbound'},{e:9,t:'Provenance'},{e:10,t:'Providence'},
         {e:11,t:'Audrey Pauley'},{e:12,t:'Underneath'},{e:13,t:'Improbable'},
         {e:14,t:'Scary Monsters'},{e:15,t:'Jump the Shark'},{e:16,t:'William'},
@@ -3456,7 +3456,7 @@ const TRACKER_SHOWS = [
   // â”€â”€ STAR TREK â”€â”€
   { id:'startrek', name:'Star Trek', color:'#2d6bbf', tab:'startrek',
     series:[
-      { id:'tos', name:'TOS â€“ The Original Series', seasons:[
+      { id:'tos', name:'TOS –“ The Original Series', seasons:[
         { n:1, eps:[
           {e:1,t:'The Man Trap'},{e:2,t:'Charlie X'},{e:3,t:'Where No Man Has Gone Before'},
           {e:4,t:'The Naked Time'},{e:5,t:'The Enemy Within'},{e:6,t:'Mudd\'s Women'},
@@ -3495,7 +3495,7 @@ const TRACKER_SHOWS = [
           {e:23,t:'All Our Yesterdays'},{e:24,t:'Turnabout Intruder'}
         ]}
       ]},
-      { id:'tng', name:'TNG â€“ The Next Generation', seasons:[
+      { id:'tng', name:'TNG –“ The Next Generation', seasons:[
         { n:1, eps:[
           {e:1,t:'Encounter at Farpoint (1)'},{e:2,t:'Encounter at Farpoint (2)'},{e:3,t:'The Naked Now'},
           {e:4,t:'Code of Honor'},{e:5,t:'The Last Outpost'},{e:6,t:'Where No One Has Gone Before'},
@@ -3570,7 +3570,7 @@ const TRACKER_SHOWS = [
           {e:24,t:'Preemptive Strike'},{e:25,t:'All Good Things... (1)'},{e:26,t:'All Good Things... (2)'}
         ]}
       ]},
-      { id:'ds9', name:'DS9 â€“ Deep Space Nine', seasons:[
+      { id:'ds9', name:'DS9 –“ Deep Space Nine', seasons:[
         { n:1, eps:[
           {e:1,t:'Emissary (1)'},{e:2,t:'Emissary (2)'},{e:3,t:'Past Prologue'},{e:4,t:'A Man Alone'},
           {e:5,t:'Babel'},{e:6,t:'Captive Pursuit'},{e:7,t:'Q-Less'},{e:8,t:'Dax'},
@@ -3643,7 +3643,7 @@ const TRACKER_SHOWS = [
           {e:26,t:'What You Leave Behind (2)'}
         ]}
       ]},
-      { id:'voy', name:'VOY â€“ Voyager', seasons:[
+      { id:'voy', name:'VOY –“ Voyager', seasons:[
         { n:1, eps:[
           {e:1,t:'Caretaker (1)'},{e:2,t:'Caretaker (2)'},{e:3,t:'Parallax'},{e:4,t:'Time and Again'},
           {e:5,t:'Phage'},{e:6,t:'The Cloud'},{e:7,t:'Eye of the Needle'},{e:8,t:'Ex Post Facto'},
@@ -3712,7 +3712,7 @@ const TRACKER_SHOWS = [
           {e:25,t:'Endgame (1)'},{e:26,t:'Endgame (2)'}
         ]}
       ]},
-      { id:'ent', name:'ENT â€“ Enterprise', seasons:[
+      { id:'ent', name:'ENT –“ Enterprise', seasons:[
         { n:1, eps:[
           {e:1,t:'Broken Bow (1)'},{e:2,t:'Broken Bow (2)'},{e:3,t:'Fight or Flight'},{e:4,t:'Strange New World'},
           {e:5,t:'Unexpected'},{e:6,t:'Terra Nova'},{e:7,t:'The Andorian Incident'},{e:8,t:'Breaking the Ice'},
@@ -3748,7 +3748,7 @@ const TRACKER_SHOWS = [
           {e:20,t:'Demons'},{e:21,t:'Terra Prime'},{e:22,t:'These Are the Voyages...'}
         ]}
       ]},
-      { id:'dis', name:'DIS â€“ Discovery', seasons:[
+      { id:'dis', name:'DIS –“ Discovery', seasons:[
         { n:1, eps:[
           {e:1,t:'The Vulcan Hello'},{e:2,t:'Battle at the Binary Stars'},{e:3,t:'Context Is for Kings'},
           {e:4,t:'The Butcher\'s Knife Cares Not for the Lamb\'s Cry'},{e:5,t:'Choose Your Pain'},
@@ -3782,7 +3782,7 @@ const TRACKER_SHOWS = [
           {e:7,t:'Erigah'},{e:8,t:'Labyrinths'},{e:9,t:'Lagrange Point'},{e:10,t:'Life, Itself'}
         ]}
       ]},
-      { id:'pic', name:'PIC â€“ Picard', seasons:[
+      { id:'pic', name:'PIC –“ Picard', seasons:[
         { n:1, eps:[
           {e:1,t:'Remembrance'},{e:2,t:'Maps and Legends'},{e:3,t:'The End Is the Beginning'},
           {e:4,t:'Absolute Candor'},{e:5,t:'Stardust City Rag'},{e:6,t:'The Impossible Box'},
@@ -3800,7 +3800,7 @@ const TRACKER_SHOWS = [
           {e:7,t:'Dominion'},{e:8,t:'Surrender'},{e:9,t:'Vox'},{e:10,t:'The Last Generation'}
         ]}
       ]},
-      { id:'snw', name:'SNW â€“ Strange New Worlds', seasons:[
+      { id:'snw', name:'SNW –“ Strange New Worlds', seasons:[
         { n:1, eps:[
           {e:1,t:'Strange New Worlds'},{e:2,t:'Children of the Comet'},{e:3,t:'Ghosts of Illyria'},
           {e:4,t:'Memento Mori'},{e:5,t:'Spock Amok'},{e:6,t:'Lift Us Where Suffering Cannot Reach'},
@@ -4215,7 +4215,7 @@ function renderTracker() {
           bar.style.width = curPct + '%';
           checkAllBtn.textContent = curWat === tot ? 'â˜ Tout Décocher' : 'â˜‘ Tout cocher';
           // Toast
-          const _epLabel = `S${String(sn.n).padStart(2,'0')}E${String(ep.e).padStart(2,'0')}${ep.t?' â€“ '+ep.t.substring(0,28):''}`;
+          const _epLabel = `S${String(sn.n).padStart(2,'0')}E${String(ep.e).padStart(2,'0')}${ep.t?' –“ '+ep.t.substring(0,28):''}`;
           if(typeof showToast==='function') showToast((nowW?'âœ“ ':'âœ— ')+_epLabel, '', 1800);
         };
         cb.addEventListener('change', toggle);
@@ -4311,7 +4311,7 @@ function renderDayScheduleInTasks(taskListEl, dk, dow, dayColor) {
     row.draggable = true;
     row.addEventListener('dragstart', e => {
       e.dataTransfer.effectAllowed = 'move';
-      const epLabel = `${ep.label} S${String(ep.sn).padStart(2,'0')}E${String(ep.en).padStart(2,'0')} â€“ ${ep.title}`;
+      const epLabel = `${ep.label} S${String(ep.sn).padStart(2,'0')}E${String(ep.en).padStart(2,'0')} –“ ${ep.title}`;
       e.dataTransfer.setData('text/plain', JSON.stringify({
         srcDk: dk,
         taskIdx: -1,
@@ -4335,9 +4335,9 @@ function renderDayScheduleInTasks(taskListEl, dk, dow, dayColor) {
     const epNum = `S${String(ep.sn).padStart(2,'0')}E${String(ep.en).padStart(2,'0')}`;
     label.innerHTML =
       `<span style="font-weight:700;color:${ep.labelColor};letter-spacing:.02em;">${ep.label}</span>` +
-      `<span style="color:${ep.labelColor};opacity:.75;margin:0 3px;">â€”</span>` +
+      `<span style="color:${ep.labelColor};opacity:.75;margin:0 3px;">–”</span>` +
       `<span style="font-weight:600;color:${ep.labelColor};">${epNum}</span>` +
-      `<span style="color:${ep.labelColor};opacity:.75;margin:0 3px;">â€”</span>` +
+      `<span style="color:${ep.labelColor};opacity:.75;margin:0 3px;">–”</span>` +
       `<span style="${isW ? 'text-decoration:line-through;color:var(--muted);' : `color:${ep.labelColor};opacity:.9;`}">${ep.title}</span>`;
 
     row.appendChild(cb);
@@ -4471,7 +4471,7 @@ function showExportModal(json, filename) {
 
   const title = document.createElement('div');
   title.style.cssText = 'font-family:\'DM Serif Display\',serif;font-size:1.1rem;color:#25231f;';
-  title.textContent = 'â¬‡ Exporter données â€” ' + filename;
+  title.textContent = 'â¬‡ Exporter données –” ' + filename;
 
   const hint = document.createElement('div');
   hint.style.cssText = 'font-size:.78rem;color:#888;';
@@ -4490,7 +4490,7 @@ function showExportModal(json, filename) {
   copyBtn.style.cssText = 'padding:8px 18px;border-radius:6px;border:none;background:#2d6bbf;color:#fff;cursor:pointer;font-family:\'DM Sans\',sans-serif;font-size:.82rem;';
   copyBtn.addEventListener('click', () => {
     ta.select(); document.execCommand('copy');
-    copyBtn.textContent = 'âœ… Copié !';
+    copyBtn.textContent = '✓ Copié !';
     setTimeout(() => copyBtn.textContent = 'ðŸ“‹ Copier tout', 2000);
   });
 
@@ -4525,7 +4525,7 @@ function importAllData(file) {
       if (data.weeklyData)     Object.entries(data.weeklyData).forEach(([k,v]) => localStorage.setItem(k, v));
       if (data.dayEvents)      Object.entries(data.dayEvents).forEach(([k,v])  => localStorage.setItem(k, v));
 
-      alert('âœ… Données importées avec succÃ¨s !');
+      alert('✓ Données importées avec succès !');
       location.reload();
     } catch(err) {
       alert('âŒ Erreur lors de l\'importation : ' + err.message);
@@ -4595,7 +4595,7 @@ function attachExportImportButtonEvents() {
 </script>
 <script>
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// KANBAN â€” Objectifs Annuels
+// KANBAN –” Objectifs Annuels
 // localStorage keys:
 //   ap_kb_statuses  â†’ [{id, label, color}]
 //   ap_kb_cards     â†’ [{id, title, desc, year, statusId, order, color, createdAt}]
@@ -4641,7 +4641,7 @@ function renderKanban() {
 
   const progressWrap = document.createElement('div'); progressWrap.className = 'kb-progress-wrap';
   const progressLabel = document.createElement('span'); progressLabel.className = 'kb-progress-label';
-  progressLabel.textContent = total ? `${kbActiveYear} Â· ${doneCount}/${total} Â· ${pct}%` : `${kbActiveYear} Â· 0 objectif`;
+  progressLabel.textContent = total ? `${kbActiveYear} · ${doneCount}/${total} · ${pct}%` : `${kbActiveYear} · 0 objectif`;
   const progressTrack = document.createElement('div'); progressTrack.className = 'kb-progress-track';
   const progressFill = document.createElement('div'); progressFill.className = 'kb-progress-fill';
   progressFill.style.cssText = `width:${pct}%;background:${doneStatus?.color||'#2a7a4b'};`;
@@ -4656,7 +4656,7 @@ function renderKanban() {
   const compactToggleBtn = document.createElement('button');
   compactToggleBtn.className = 'kb-manage-btn';
   compactToggleBtn.textContent = kbCompactView ? 'â˜° Complet' : 'â–¤ Compact';
-  compactToggleBtn.title = kbCompactView ? 'Vue complÃ¨te' : 'Vue compacte';
+  compactToggleBtn.title = kbCompactView ? 'Vue complète' : 'Vue compacte';
   compactToggleBtn.addEventListener('click', () => { kbCompactView = !kbCompactView; localStorage.setItem('ap_kb_compact', kbCompactView); renderKanban(); });
   toolbar.appendChild(compactToggleBtn);
 
@@ -4767,7 +4767,7 @@ function kbConfirm(colLabel, onYes) {
   line1.innerHTML = 'Voulez-vous supprimer la colonne <strong>' + colLabel + '</strong> ?';
   const line2 = document.createElement('p');
   line2.style.cssText = 'margin:0;font-size:.82rem;color:var(--muted);line-height:1.5;';
-  line2.textContent = 'Les objectifs dans cette colonne seront déplacés vers la premiÃ¨re colonne.';
+  line2.textContent = 'Les objectifs dans cette colonne seront déplacés vers la première colonne.';
   bd.appendChild(line1); bd.appendChild(line2);
 
   // Footer
@@ -4930,8 +4930,8 @@ function kbShowCardModal(card=null, defaultStatusId=null) {
   const mbd=document.createElement('div'); mbd.className='kb-modal-bd';
   const mkField=(lbl,el)=>{ const w=document.createElement('div'); w.style.cssText='display:flex;flex-direction:column;gap:4px;'; const l=document.createElement('label'); l.className='kb-field-label'; l.textContent=lbl; w.appendChild(l); w.appendChild(el); return w; };
 
-  const titleInput=document.createElement('input'); titleInput.className='kb-field-input'; titleInput.placeholder='Nom de l\'objectifâ€¦'; titleInput.value=card?.title||'';
-  const descInput=document.createElement('textarea'); descInput.className='kb-field-textarea'; descInput.placeholder='Détails, notesâ€¦'; descInput.value=card?.desc||''; descInput.rows=3;
+  const titleInput=document.createElement('input'); titleInput.className='kb-field-input'; titleInput.placeholder='Nom de l\'objectif–¦'; titleInput.value=card?.title||'';
+  const descInput=document.createElement('textarea'); descInput.className='kb-field-textarea'; descInput.placeholder='Détails, notes–¦'; descInput.value=card?.desc||''; descInput.rows=3;
   const yearInput=document.createElement('input'); yearInput.className='kb-field-input'; yearInput.type='number'; yearInput.min=2020; yearInput.max=2099; yearInput.value=card?.year||kbActiveYear;
   const statusSel=document.createElement('select'); statusSel.className='kb-field-select';
   statuses.forEach(s=>{ const opt=document.createElement('option'); opt.value=s.id; opt.textContent=s.label; if((card?.statusId||defaultStatusId)===s.id) opt.selected=true; statusSel.appendChild(opt); });
@@ -5033,7 +5033,7 @@ function attachKanbanButtonEvent() {
   });
 }
 
-// Wire Préférences button â€” moved to attachPreferencesButtonEvent for deferred attachment
+// Wire Préférences button –” moved to attachPreferencesButtonEvent for deferred attachment
 
 // Attach preferences button event
 function attachPreferencesButtonEvent() {
@@ -5058,14 +5058,14 @@ window.render = function() {
 </script>
 <script>
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// CONTACTS â€” Anniversaires & événements dans la vue Semaine
+// CONTACTS –” Anniversaires & événements dans la vue Semaine
 // localStorage key: ap_contacts â†’ [{fn, ln, by, bm, bd, dy, dm, dd}]
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 const CONTACTS_KEY = 'ap_contacts';
 
 // Contacts pré-chargés depuis le CSV importé
-const CONTACTS_PRELOADED = [{"fn": "Adam", "ln": "Savage", "by": 1967, "bm": 7, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Al", "ln": "Pacino", "by": 1940, "bm": 4, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Alain", "ln": "Bélanger", "by": 1977, "bm": 10, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Alain", "ln": "Firgon", "by": 1975, "bm": 8, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Alec", "ln": "Baldwin", "by": 1958, "bm": 4, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Alejandro", "ln": "IÃ±Ã¡rritu", "by": 1963, "bm": 8, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Alexandre", "ln": "Bérubé", "by": 1982, "bm": 11, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Alexandre", "ln": "Bouchard", "by": 1989, "bm": 6, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Alexis", "ln": "Lévesque", "by": 2008, "bm": 4, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Alfonso", "ln": "CuarÃ³n", "by": 1961, "bm": 11, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Alfred", "ln": "Hitchcock", "by": 1899, "bm": 8, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Amélie", "ln": "Morrin", "by": 1980, "bm": 8, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Amy", "ln": "Adams", "by": 1974, "bm": 8, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Anabelle", "ln": "Vachon", "by": 2009, "bm": 6, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "AnaÃ¯s", "ln": "Turgeon", "by": 2007, "bm": 5, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "André", "ln": "Carrier", "by": 1938, "bm": 1, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Angelina", "ln": "Jolie", "by": 1975, "bm": 6, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Anna", "ln": "Paquin", "by": 1982, "bm": 7, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Anne", "ln": "Hathaway", "by": 1982, "bm": 11, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Anthony", "ln": "Hopkins", "by": 1937, "bm": 12, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Anthony", "ln": "Laplante", "by": 1989, "bm": 2, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Antonio", "ln": "Carrier", "by": 1939, "bm": 6, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Arnold", "ln": "Schwarzenegger", "by": 1930, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Audrey", "ln": "Gingras", "by": 2007, "bm": 3, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Audrey", "ln": "Laplante", "by": 1986, "bm": 6, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Barbra", "ln": "Streisand", "by": 1942, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Ben", "ln": "Kingsley", "by": 1943, "bm": 12, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Benedict", "ln": "Cumberbatch", "by": 1976, "bm": 7, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Benicio", "ln": "Del Toro", "by": 1967, "bm": 2, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Benoit", "ln": "Mercier", "by": 1981, "bm": 1, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Bernard", "ln": "Derome", "by": 1944, "bm": 1, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Bernard", "ln": "Fortin", "by": 1957, "bm": 1, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Bill", "ln": "Murray", "by": 1950, "bm": 9, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Billy", "ln": "Thornton", "by": 1955, "bm": 8, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Brad", "ln": "Pitt", "by": 1963, "bm": 12, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Bradley", "ln": "Cooper", "by": 1975, "bm": 1, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Brigitte", "ln": "Morneau", "by": 1953, "bm": 10, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Bruce", "ln": "Campbell", "by": 1958, "bm": 6, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Bruno", "ln": "CÃ´té", "by": 1961, "bm": 9, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Bruno", "ln": "Ratia", "by": 1982, "bm": 11, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Burt", "ln": "Reynolds", "by": 1936, "bm": 2, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Carmel", "ln": "Carrier", "by": 1935, "bm": 6, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Caroline", "ln": "Garand", "by": 1983, "bm": 8, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Carrie-Ann", "ln": "Moss", "by": 1967, "bm": 8, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Cate", "ln": "Blanchett", "by": 1969, "bm": 5, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Catherine", "ln": "Roy", "by": 1979, "bm": 4, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Catherine", "ln": "Zeta-Jones", "by": 1969, "bm": 9, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Cédric", "ln": "Vachon", "by": 2006, "bm": 9, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Chantal", "ln": "Bouchard", "by": 1965, "bm": 3, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Chantal Guillemette", "ln": "", "by": 1959, "bm": 7, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Charles", "ln": "Audet", "by": 1980, "bm": 5, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Charles", "ln": "Chaplin", "by": 1889, "bm": 4, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Charles", "ln": "Dodier", "by": 1974, "bm": 2, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Charlize", "ln": "Theron", "by": 1975, "bm": 8, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Cher", "ln": "", "by": 1946, "bm": 5, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Chris", "ln": "Cooper", "by": 1951, "bm": 7, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Chris", "ln": "O'Donnell", "by": 1970, "bm": 6, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Chris", "ln": "Pratt", "by": 1979, "bm": 6, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Christian", "ln": "Bale", "by": 1974, "bm": 1, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Christian", "ln": "Turgeon", "by": 1953, "bm": 7, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Christine", "ln": "Boyer", "by": 1983, "bm": 6, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Christine", "ln": "Carrier", "by": 1968, "bm": 1, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Christoph", "ln": "Waltz", "by": 1956, "bm": 10, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Christopher", "ln": "Nolan", "by": 1970, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Christopher", "ln": "Plummer", "by": 1929, "bm": 12, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Christopher", "ln": "Walken", "by": 1943, "bm": 3, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Chuck", "ln": "Norris", "by": 1960, "bm": 3, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Clara", "ln": "Carrier", "by": 2012, "bm": 3, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Claude", "ln": "Bérubé", "by": 1952, "bm": 9, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Claude", "ln": "Frigon", "by": 1952, "bm": 1, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Claudia", "ln": "Bérubé", "by": 1984, "bm": 7, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Clint", "ln": "Eastwood", "by": 1930, "bm": 5, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Clive", "ln": "Owen", "by": 1964, "bm": 10, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Colin", "ln": "Firth", "by": 1960, "bm": 9, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Cuba", "ln": "Gooding", "by": 1968, "bm": 1, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Daniel", "ln": "Craig", "by": 1968, "bm": 3, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Daniel", "ln": "Day-Lewis", "by": 1957, "bm": 4, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Daniel", "ln": "Laplante", "by": 1955, "bm": 9, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Daniel", "ln": "Radcliffe", "by": 1989, "bm": 7, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Danny", "ln": "Boyle", "by": 1956, "bm": 10, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Danny", "ln": "Glover", "by": 1946, "bm": 7, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "David", "ln": "Fincher", "by": 1962, "bm": 8, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "David", "ln": "Hasselhoff", "by": 1952, "bm": 7, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "David", "ln": "Lynch", "by": 1946, "bm": 1, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "David", "ln": "Turgeon", "by": 1983, "bm": 8, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Denis", "ln": "Carrier", "by": 1950, "bm": 3, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Denis", "ln": "Turgeon", "by": 1959, "bm": 3, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Denise", "ln": "Bombardier", "by": 1941, "bm": 1, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Denise", "ln": "Carrier", "by": 1941, "bm": 2, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Denise", "ln": "Turgeon", "by": 1959, "bm": 3, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Dennis", "ln": "Hopper", "by": 1936, "bm": 5, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Denzel", "ln": "Washington", "by": 1954, "bm": 12, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Diane", "ln": "Keaton", "by": 1946, "bm": 1, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Dianne", "ln": "Wiest", "by": 1948, "bm": 3, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Donald", "ln": "Sutherland", "by": 1935, "bm": 7, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Dorothée", "ln": "Turgeon", "by": 1956, "bm": 3, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Drew", "ln": "Barrymore", "by": 1975, "bm": 2, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Dustin", "ln": "Hoffman", "by": 1937, "bm": 8, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Ed", "ln": "Harris", "by": 1950, "bm": 11, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Eddie", "ln": "Murphy", "by": 1961, "bm": 4, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Eddie", "ln": "Redmayne", "by": 1982, "bm": 1, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Edward", "ln": "Norton", "by": 1997, "bm": 3, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Elisabeth", "ln": "Shue", "by": 1963, "bm": 10, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Elizabeth", "ln": "Taylor", "by": 1932, "bm": 2, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Ellen", "ln": "Page", "by": 1987, "bm": 2, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Emily", "ln": "Watson", "by": 1967, "bm": 1, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Emma", "ln": "Stone", "by": 1988, "bm": 11, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Emma", "ln": "Thompson", "by": 1959, "bm": 4, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Eric", "ln": "Bissonnette", "by": 1994, "bm": 4, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Éric", "ln": "Carrier", "by": 1977, "bm": 3, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Ethan", "ln": "Hawke", "by": 1970, "bm": 11, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Étienne", "ln": "Carrier", "by": 1983, "bm": 10, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Étienne", "ln": "Turgeon", "by": 1984, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Faye", "ln": "Dunaway", "by": 1941, "bm": 1, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Felicity", "ln": "Jones", "by": 1983, "bm": 10, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Florence", "ln": "Bégin", "by": 1954, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Forest", "ln": "Whitaker", "by": 1961, "bm": 7, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "France", "ln": "Carrier", "by": 1957, "bm": 9, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "France", "ln": "Morneau", "by": 1953, "bm": 4, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Francine", "ln": "Hamond", "by": 1950, "bm": 9, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Francis", "ln": "Coppola", "by": 1939, "bm": 4, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Francis", "ln": "Garand", "by": 1981, "bm": 8, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "François", "ln": "Morency", "by": 1966, "bm": 6, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "François", "ln": "Morneau", "by": 1979, "bm": 2, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Frédéric", "ln": "Marsolais", "by": 1979, "bm": 5, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Frédérick", "ln": "Turgeon", "by": 1983, "bm": 4, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Gaétan", "ln": "Turgeon", "by": 1950, "bm": 8, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Gaétane", "ln": "Turgeon", "by": 1950, "bm": 8, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Gary", "ln": "Oldman", "by": 1958, "bm": 3, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Geena", "ln": "Davis", "by": 1956, "bm": 1, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Gene", "ln": "Hackman", "by": 1930, "bm": 1, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "GeneviÃ¨ve", "ln": "Bérubé", "by": 1981, "bm": 4, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "GeneviÃ¨ve", "ln": "Breton", "by": 1983, "bm": 4, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Geoffrey", "ln": "Rush", "by": 1951, "bm": 7, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "George", "ln": "Clooney", "by": 1961, "bm": 5, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "George", "ln": "Lucas", "by": 1944, "bm": 5, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Georges", "ln": "Bouchard", "by": 1927, "bm": 12, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Gérard", "ln": "Depardieu", "by": 1948, "bm": 12, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Gilberte", "ln": "Labrecque", "by": 1925, "bm": 4, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Gillian", "ln": "Anderson", "by": 1968, "bm": 9, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Ginette", "ln": "Douville", "by": 1960, "bm": 10, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "GisÃ¨le", "ln": "Leclerc", "by": 1950, "bm": 10, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Glenn", "ln": "Close", "by": 1947, "bm": 3, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Goldie", "ln": "Hawn", "by": 1945, "bm": 11, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Graig", "ln": "Turgeon", "by": 1980, "bm": 12, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Guylaine", "ln": "Gosselin", "by": 1965, "bm": 4, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Gwyneth", "ln": "Paltrow", "by": 1972, "bm": 9, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Halle", "ln": "Berry", "by": 1966, "bm": 8, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Harrison", "ln": "Ford", "by": 1942, "bm": 7, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Heath", "ln": "Ledger", "by": 1979, "bm": 4, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Helen", "ln": "Hunt", "by": 1963, "bm": 6, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Hilary", "ln": "Swank", "by": 1974, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Holly", "ln": "Hunter", "by": 1958, "bm": 3, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Hugh", "ln": "Jackman", "by": 1968, "bm": 10, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Ian", "ln": "McKellen", "by": 1939, "bm": 5, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Irma", "ln": "Roy", "by": 1920, "bm": 6, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "J.", "ln": "Simmons", "by": 1955, "bm": 1, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Jack", "ln": "Nicholson", "by": 1937, "bm": 4, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Jacques", "ln": "Lapointe", "by": 1952, "bm": 12, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Jacques", "ln": "Turgeon", "by": 1949, "bm": 9, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Jake", "ln": "Gyllenhaal", "by": 1980, "bm": 12, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "James", "ln": "Cameron", "by": 1954, "bm": 8, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "James", "ln": "Franco", "by": 1978, "bm": 4, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Jamie", "ln": "Foxx", "by": 1967, "bm": 12, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Jane", "ln": "Fonda", "by": 1937, "bm": 12, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Jared", "ln": "Leto", "by": 1971, "bm": 12, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Jason", "ln": "Statham", "by": 1967, "bm": 7, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Javier", "ln": "Bardem", "by": 1969, "bm": 3, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Jean", "ln": "Reno", "by": 1948, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Jean", "ln": "Morneau", "by": 1950, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Jean-Claude", "ln": "de la Ronde", "by": 1977, "bm": 9, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Jean-Marc", "ln": "Leclerc", "by": 1979, "bm": 4, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Jean-Yves", "ln": "Turgeon", "by": 1951, "bm": 7, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Jeff", "ln": "Bridges", "by": 1949, "bm": 12, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Jennifer", "ln": "Aniston", "by": 1969, "bm": 2, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Jennifer", "ln": "Connelly", "by": 1970, "bm": 12, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Jennifer", "ln": "Lawrence", "by": 1990, "bm": 8, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Jeremy", "ln": "Irons", "by": 1948, "bm": 9, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Jeremy", "ln": "Renner", "by": 1971, "bm": 1, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "JérÃ´me", "ln": "Turgeon", "by": 1979, "bm": 12, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Jesse", "ln": "Eisenberg", "by": 1983, "bm": 10, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Jessica", "ln": "Coté", "by": 1987, "bm": 2, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Jessica", "ln": "Lange", "by": 1949, "bm": 4, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Jim", "ln": "Carrey", "by": 1962, "bm": 1, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Jimmy", "ln": "Pilote", "by": 1970, "bm": 2, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Joaquin", "ln": "Phoenix", "by": 1974, "bm": 10, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Jodie", "ln": "Foster", "by": 1962, "bm": 11, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Joe", "ln": "Pesci", "by": 1943, "bm": 2, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "John", "ln": "Cusack", "by": 1966, "bm": 6, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "John", "ln": "Lithgow", "by": 1945, "bm": 10, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "John", "ln": "Travolta", "by": 1954, "bm": 2, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Johnny", "ln": "Depp", "by": 1963, "bm": 6, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Jon", "ln": "Voight", "by": 1938, "bm": 12, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Josh", "ln": "Brolin", "by": 1968, "bm": 2, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Josianne", "ln": "Turgeon", "by": 1986, "bm": 5, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Jude", "ln": "Law", "by": 1972, "bm": 12, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Julia", "ln": "Roberts", "by": 1967, "bm": 10, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Julianne", "ln": "Moore", "by": 1960, "bm": 12, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Julie", "ln": "Carrier", "by": 1977, "bm": 12, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Juliette", "ln": "Binoche", "by": 1964, "bm": 3, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Juliette", "ln": "Lewis", "by": 1973, "bm": 6, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Karine", "ln": "Lagacé", "by": 1981, "bm": 10, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Karine", "ln": "Turgeon", "by": 1988, "bm": 10, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Kate", "ln": "Winslet", "by": 1975, "bm": 10, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Kathy", "ln": "Bates", "by": 1948, "bm": 6, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Kevin", "ln": "Bacon", "by": 1958, "bm": 7, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Kevin", "ln": "Costner", "by": 1955, "bm": 1, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Kevin", "ln": "Kline", "by": 1947, "bm": 10, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Kevin", "ln": "Spacey", "by": 1959, "bm": 7, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Kim", "ln": "Basinger", "by": 1953, "bm": 12, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Lana", "ln": "Wachowski", "by": 1965, "bm": 6, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Laura", "ln": "Dern", "by": 1967, "bm": 2, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Laurence", "ln": "Fishburne", "by": 1961, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Leonardo", "ln": "DiCaprio", "by": 1974, "bm": 11, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Liam", "ln": "Neeson", "by": 1952, "bm": 6, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Liette", "ln": "Lapointe", "by": 1956, "bm": 7, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Line", "ln": "Carrier", "by": 1964, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Livia", "ln": "Poulin", "by": 2011, "bm": 12, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "LoÃ¯c", "ln": "Turgeon", "by": 2009, "bm": 8, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Louis", "ln": "Gossett", "by": 1936, "bm": 5, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Luc", "ln": "Bissonnette", "by": 1965, "bm": 3, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Lupita", "ln": "Nyong'o", "by": 1983, "bm": 3, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Maggie", "ln": "Gyllenhaal", "by": 1977, "bm": 11, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Mahée", "ln": "Paiement", "by": 1976, "bm": 1, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Marc-André", "ln": "Bouchard", "by": 1992, "bm": 11, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Marcel", "ln": "Audet", "by": 1952, "bm": 4, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Marcia", "ln": "Harden", "by": 1959, "bm": 8, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Marie-Jeanne", "ln": "Ferron", "by": 1928, "bm": 3, "bd": 20, "dy": 2011, "dm": 5, "dd": 24}, {"fn": "Marie-Josée", "ln": "Damico", "by": 1984, "bm": 7, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Marie-Lune", "ln": "", "by": 1983, "bm": 7, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Marie-NoÃ«lle", "ln": "Turgeon", "by": 1983, "bm": 7, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Marilou", "ln": "Morneau", "by": 1995, "bm": 7, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Mariloup", "ln": "Wolfe", "by": 1978, "bm": 1, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Marina", "ln": "Orsini", "by": 1967, "bm": 1, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Marion", "ln": "Cotillard", "by": 1975, "bm": 9, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Marjorie", "ln": "Delisle", "by": 1979, "bm": 4, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Mark", "ln": "Ruffalo", "by": 1967, "bm": 11, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Mark", "ln": "Wahlberg", "by": 1971, "bm": 6, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Marthe", "ln": "Morneau", "by": 1954, "bm": 4, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Martin", "ln": "Landau", "by": 1928, "bm": 6, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Martin", "ln": "Scorsese", "by": 1942, "bm": 11, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Martine", "ln": "Turgeon", "by": 1963, "bm": 12, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Mathieu", "ln": "Morneau", "by": 1989, "bm": 8, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Matrix 4", "ln": "Resurection", "by": 2021, "bm": 12, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Matt", "ln": "Damon", "by": 1970, "bm": 10, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Matthew", "ln": "McConaughey", "by": 1969, "bm": 11, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Maxance", "ln": "Turgeon", "by": 1991, "bm": 8, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Maxime", "ln": "Bissonnette", "by": 1992, "bm": 2, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Mel", "ln": "Gibson", "by": 1956, "bm": 1, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Melanie", "ln": "Griffith", "by": 1957, "bm": 8, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Melissa", "ln": "McCarthy", "by": 1970, "bm": 8, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Caine", "by": 1933, "bm": 3, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Douglas", "by": 1944, "bm": 9, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Fassbender", "by": 1977, "bm": 4, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Keaton", "by": 1951, "bm": 9, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Mann", "by": 1943, "bm": 2, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Turgeon", "by": 1984, "bm": 10, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Michel", "ln": "Turgeon", "by": 1955, "bm": 9, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Michelle", "ln": "Pfeiffer", "by": 1958, "bm": 4, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Mickey", "ln": "Rourke", "by": 1952, "bm": 9, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Mira", "ln": "Sorvino", "by": 1967, "bm": 9, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Mireille", "ln": "Morneau", "by": 1958, "bm": 12, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Mireille", "ln": "Trempe", "by": 1984, "bm": 9, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Morgan", "ln": "Freeman", "by": 1937, "bm": 6, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Myriam", "ln": "Audet", "by": 1984, "bm": 11, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Nadia", "ln": "Carrier", "by": 1974, "bm": 10, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Nancy", "ln": "Carrier", "by": 1974, "bm": 5, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Naomi", "ln": "Watts", "by": 1968, "bm": 9, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Natalie", "ln": "Portman", "by": 1981, "bm": 6, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Nathalie", "ln": "Bouchard", "by": 1967, "bm": 10, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Nick", "ln": "Nolte", "by": 1941, "bm": 2, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Nicolas", "ln": "Cage", "by": 1964, "bm": 1, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Nicolas", "ln": "CÃ´té", "by": 1988, "bm": 9, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Nicole", "ln": "Forgues", "by": 1946, "bm": 3, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Nicole", "ln": "Kidman", "by": 1967, "bm": 6, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Normand", "ln": "Carrier", "by": 1955, "bm": 2, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Normand", "ln": "Roy", "by": 1953, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Odile", "ln": "Carrier", "by": 1970, "bm": 1, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Odile", "ln": "Turgeon", "by": 1982, "bm": 8, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Oliver", "ln": "Stone", "by": 1946, "bm": 9, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Olivier", "ln": "Carrier", "by": 1988, "bm": 8, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Orson", "ln": "Welles", "by": 1985, "bm": 10, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Patric", "ln": "Vachon", "by": 1978, "bm": 10, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Patrice", "ln": "Morneau", "by": 1977, "bm": 2, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Patricia", "ln": "Arquette", "by": 1968, "bm": 4, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Patrick", "ln": "Gingras", "by": 1981, "bm": 1, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Patrick", "ln": "Huard", "by": 1969, "bm": 1, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Patrick", "ln": "Stewart", "by": 1940, "bm": 7, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Paul", "ln": "Newman", "by": 1925, "bm": 1, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Penélope", "ln": "Cruz", "by": 1974, "bm": 4, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Peter", "ln": "Jackson", "by": 1961, "bm": 10, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Peter", "ln": "O'Toole", "by": 1932, "bm": 8, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Philip", "ln": "Hoffman", "by": 1967, "bm": 7, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Philippe", "ln": "Asselin", "by": 2012, "bm": 6, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Quentin", "ln": "Tarantino", "by": 1963, "bm": 3, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Rachel", "ln": "Weisz", "by": 1970, "bm": 3, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Ralph", "ln": "Fiennes", "by": 1962, "bm": 12, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Raymonde", "ln": "", "by": 1944, "bm": 6, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Reese", "ln": "Witherspoon", "by": 1976, "bm": 3, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Réjean", "ln": "Ratia", "by": 1946, "bm": 1, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Réjeanne", "ln": "Carbonneau", "by": 1958, "bm": 7, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "René", "ln": "Angelil", "by": 1942, "bm": 1, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "René", "ln": "Carrier", "by": 1948, "bm": 2, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Renée", "ln": "Zellweger", "by": 1969, "bm": 4, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Attenborough", "by": 1923, "bm": 8, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Carrier", "by": 1964, "bm": 9, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Dreyfuss", "by": 1947, "bm": 10, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Grenier", "by": 1978, "bm": 6, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Levesque", "by": 1979, "bm": 10, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Thibodeau", "by": 1964, "bm": 8, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Turgeon", "by": 1961, "bm": 1, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Ridley", "ln": "Scott", "by": 1937, "bm": 11, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "De Niro", "by": 1943, "bm": 8, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Downey", "by": 1965, "bm": 4, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Duvall", "by": 1931, "bm": 1, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Gosselin", "by": 1930, "bm": 9, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Redford", "by": 1936, "bm": 8, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Rodriguez", "by": 1968, "bm": 6, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Zemeckis", "by": 1951, "bm": 5, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Robin", "ln": "Borgias", "by": 1968, "bm": 2, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Robin", "ln": "Williams", "by": 1951, "bm": 7, "bd": 21, "dy": 2014, "dm": 8, "dd": 11}, {"fn": "Roman", "ln": "Polanski", "by": 1933, "bm": 8, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Ron", "ln": "Howard", "by": 1954, "bm": 3, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Rosaire", "ln": "Carrier", "by": 1936, "bm": 9, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Rosalie", "ln": "Turgeon", "by": 2005, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Russell", "ln": "Crowe", "by": 1964, "bm": 4, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Ryan", "ln": "Gosling", "by": 1980, "bm": 11, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Sally", "ln": "Field", "by": 1946, "bm": 11, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Salma", "ln": "Hayek", "by": 1966, "bm": 9, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Sam", "ln": "Mendes", "by": 1965, "bm": 8, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Samuel", "ln": "Jackson", "by": 1948, "bm": 12, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Samuel", "ln": "Turgeon", "by": 1991, "bm": 12, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Sandra", "ln": "Bullock", "by": 1964, "bm": 7, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Sean", "ln": "Connery", "by": 1930, "bm": 8, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Sean", "ln": "Penn", "by": 1960, "bm": 8, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Sébastien", "ln": "Carrier", "by": 1976, "bm": 6, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Serge", "ln": "Carrier", "by": 1972, "bm": 7, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Sharon", "ln": "Stone", "by": 1958, "bm": 3, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Sidney", "ln": "Poitier", "by": 1927, "bm": 2, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Sigourney", "ln": "Weaver", "by": 1949, "bm": 10, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Simon", "ln": "Carrier", "by": 1944, "bm": 7, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Simon", "ln": "Pegg", "by": 1970, "bm": 2, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Sonia", "ln": "Carrier", "by": 1969, "bm": 10, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Sophia", "ln": "Turgeon", "by": 1968, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Sophie", "ln": "Carrier", "by": 1971, "bm": 9, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Stanley", "ln": "Kubrick", "by": 1928, "bm": 7, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Stéphanie", "ln": "Bélanger", "by": 1993, "bm": 6, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Stéphanie", "ln": "Turgeon", "by": 1988, "bm": 5, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Steve", "ln": "Carell", "by": 1962, "bm": 8, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Steven", "ln": "Soderbergh", "by": 1963, "bm": 1, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Steven", "ln": "Spielberg", "by": 1946, "bm": 12, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Susan", "ln": "Sarandon", "by": 1946, "bm": 10, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Sylvain", "ln": "Carrier", "by": 1965, "bm": 11, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Sylvester", "ln": "Stallone", "by": 1946, "bm": 7, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Sylvie", "ln": "Carrier", "by": 1963, "bm": 7, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Thierry", "ln": "Bélanger", "by": 1991, "bm": 2, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Tim", "ln": "Robbins", "by": 1958, "bm": 10, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Tobey", "ln": "Maguire", "by": 1975, "bm": 6, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Tom", "ln": "Berenger", "by": 1949, "bm": 5, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Tom", "ln": "Cruise", "by": 1962, "bm": 7, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Tom", "ln": "Hanks", "by": 1956, "bm": 7, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Tommy", "ln": "CÃ´té", "by": 1993, "bm": 4, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Tommy", "ln": "Jones", "by": 1946, "bm": 9, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Uma", "ln": "Thurman", "by": 1970, "bm": 4, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Valérie", "ln": "Carrier", "by": 1979, "bm": 4, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Véronique", "ln": "Genest", "by": 1979, "bm": 9, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Véronique", "ln": "Roy", "by": 1981, "bm": 6, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Viggo", "ln": "Mortensen", "by": 1958, "bm": 10, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Vin", "ln": "Diesel", "by": 1967, "bm": 7, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Warren", "ln": "Beatty", "by": 1937, "bm": 3, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Wes", "ln": "Anderson", "by": 1969, "bm": 5, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Wesley", "ln": "Snipes", "by": 1962, "bm": 7, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Whoopi", "ln": "Goldberg", "by": 1955, "bm": 11, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Will", "ln": "Ferrell", "by": 1967, "bm": 7, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Will", "ln": "Smith", "by": 1968, "bm": 9, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Willem", "ln": "Dafoe", "by": 1955, "bm": 7, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "William", "ln": "Hurt", "by": 1950, "bm": 3, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Winona", "ln": "Ryder", "by": 1971, "bm": 10, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Woody", "ln": "Allen", "by": 1935, "bm": 12, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Woody", "ln": "Harrelson", "by": 1961, "bm": 7, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Yolande", "ln": "Turgeon", "by": 1952, "bm": 8, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Yvan", "ln": "Morneau", "by": 1961, "bm": 9, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Yves", "ln": "Pelletier", "by": 1961, "bm": 1, "bd": 15, "dy": null, "dm": null, "dd": null}];
+const CONTACTS_PRELOADED = [{"fn": "Adam", "ln": "Savage", "by": 1967, "bm": 7, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Al", "ln": "Pacino", "by": 1940, "bm": 4, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Alain", "ln": "Bélanger", "by": 1977, "bm": 10, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Alain", "ln": "Firgon", "by": 1975, "bm": 8, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Alec", "ln": "Baldwin", "by": 1958, "bm": 4, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Alejandro", "ln": "Iñárritu", "by": 1963, "bm": 8, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Alexandre", "ln": "Bérubé", "by": 1982, "bm": 11, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Alexandre", "ln": "Bouchard", "by": 1989, "bm": 6, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Alexis", "ln": "Lévesque", "by": 2008, "bm": 4, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Alfonso", "ln": "Cuarón", "by": 1961, "bm": 11, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Alfred", "ln": "Hitchcock", "by": 1899, "bm": 8, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Amélie", "ln": "Morrin", "by": 1980, "bm": 8, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Amy", "ln": "Adams", "by": 1974, "bm": 8, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Anabelle", "ln": "Vachon", "by": 2009, "bm": 6, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Anaïs", "ln": "Turgeon", "by": 2007, "bm": 5, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "André", "ln": "Carrier", "by": 1938, "bm": 1, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Angelina", "ln": "Jolie", "by": 1975, "bm": 6, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Anna", "ln": "Paquin", "by": 1982, "bm": 7, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Anne", "ln": "Hathaway", "by": 1982, "bm": 11, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Anthony", "ln": "Hopkins", "by": 1937, "bm": 12, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Anthony", "ln": "Laplante", "by": 1989, "bm": 2, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Antonio", "ln": "Carrier", "by": 1939, "bm": 6, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Arnold", "ln": "Schwarzenegger", "by": 1930, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Audrey", "ln": "Gingras", "by": 2007, "bm": 3, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Audrey", "ln": "Laplante", "by": 1986, "bm": 6, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Barbra", "ln": "Streisand", "by": 1942, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Ben", "ln": "Kingsley", "by": 1943, "bm": 12, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Benedict", "ln": "Cumberbatch", "by": 1976, "bm": 7, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Benicio", "ln": "Del Toro", "by": 1967, "bm": 2, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Benoit", "ln": "Mercier", "by": 1981, "bm": 1, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Bernard", "ln": "Derome", "by": 1944, "bm": 1, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Bernard", "ln": "Fortin", "by": 1957, "bm": 1, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Bill", "ln": "Murray", "by": 1950, "bm": 9, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Billy", "ln": "Thornton", "by": 1955, "bm": 8, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Brad", "ln": "Pitt", "by": 1963, "bm": 12, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Bradley", "ln": "Cooper", "by": 1975, "bm": 1, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Brigitte", "ln": "Morneau", "by": 1953, "bm": 10, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Bruce", "ln": "Campbell", "by": 1958, "bm": 6, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Bruno", "ln": "Côté", "by": 1961, "bm": 9, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Bruno", "ln": "Ratia", "by": 1982, "bm": 11, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Burt", "ln": "Reynolds", "by": 1936, "bm": 2, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Carmel", "ln": "Carrier", "by": 1935, "bm": 6, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Caroline", "ln": "Garand", "by": 1983, "bm": 8, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Carrie-Ann", "ln": "Moss", "by": 1967, "bm": 8, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Cate", "ln": "Blanchett", "by": 1969, "bm": 5, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Catherine", "ln": "Roy", "by": 1979, "bm": 4, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Catherine", "ln": "Zeta-Jones", "by": 1969, "bm": 9, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Cédric", "ln": "Vachon", "by": 2006, "bm": 9, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Chantal", "ln": "Bouchard", "by": 1965, "bm": 3, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Chantal Guillemette", "ln": "", "by": 1959, "bm": 7, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Charles", "ln": "Audet", "by": 1980, "bm": 5, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Charles", "ln": "Chaplin", "by": 1889, "bm": 4, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Charles", "ln": "Dodier", "by": 1974, "bm": 2, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Charlize", "ln": "Theron", "by": 1975, "bm": 8, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Cher", "ln": "", "by": 1946, "bm": 5, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Chris", "ln": "Cooper", "by": 1951, "bm": 7, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Chris", "ln": "O'Donnell", "by": 1970, "bm": 6, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Chris", "ln": "Pratt", "by": 1979, "bm": 6, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Christian", "ln": "Bale", "by": 1974, "bm": 1, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Christian", "ln": "Turgeon", "by": 1953, "bm": 7, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Christine", "ln": "Boyer", "by": 1983, "bm": 6, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Christine", "ln": "Carrier", "by": 1968, "bm": 1, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Christoph", "ln": "Waltz", "by": 1956, "bm": 10, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Christopher", "ln": "Nolan", "by": 1970, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Christopher", "ln": "Plummer", "by": 1929, "bm": 12, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Christopher", "ln": "Walken", "by": 1943, "bm": 3, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Chuck", "ln": "Norris", "by": 1960, "bm": 3, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Clara", "ln": "Carrier", "by": 2012, "bm": 3, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Claude", "ln": "Bérubé", "by": 1952, "bm": 9, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Claude", "ln": "Frigon", "by": 1952, "bm": 1, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Claudia", "ln": "Bérubé", "by": 1984, "bm": 7, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Clint", "ln": "Eastwood", "by": 1930, "bm": 5, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Clive", "ln": "Owen", "by": 1964, "bm": 10, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Colin", "ln": "Firth", "by": 1960, "bm": 9, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Cuba", "ln": "Gooding", "by": 1968, "bm": 1, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Daniel", "ln": "Craig", "by": 1968, "bm": 3, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Daniel", "ln": "Day-Lewis", "by": 1957, "bm": 4, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Daniel", "ln": "Laplante", "by": 1955, "bm": 9, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Daniel", "ln": "Radcliffe", "by": 1989, "bm": 7, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Danny", "ln": "Boyle", "by": 1956, "bm": 10, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Danny", "ln": "Glover", "by": 1946, "bm": 7, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "David", "ln": "Fincher", "by": 1962, "bm": 8, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "David", "ln": "Hasselhoff", "by": 1952, "bm": 7, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "David", "ln": "Lynch", "by": 1946, "bm": 1, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "David", "ln": "Turgeon", "by": 1983, "bm": 8, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Denis", "ln": "Carrier", "by": 1950, "bm": 3, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Denis", "ln": "Turgeon", "by": 1959, "bm": 3, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Denise", "ln": "Bombardier", "by": 1941, "bm": 1, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Denise", "ln": "Carrier", "by": 1941, "bm": 2, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Denise", "ln": "Turgeon", "by": 1959, "bm": 3, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Dennis", "ln": "Hopper", "by": 1936, "bm": 5, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Denzel", "ln": "Washington", "by": 1954, "bm": 12, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Diane", "ln": "Keaton", "by": 1946, "bm": 1, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Dianne", "ln": "Wiest", "by": 1948, "bm": 3, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Donald", "ln": "Sutherland", "by": 1935, "bm": 7, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Dorothée", "ln": "Turgeon", "by": 1956, "bm": 3, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Drew", "ln": "Barrymore", "by": 1975, "bm": 2, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Dustin", "ln": "Hoffman", "by": 1937, "bm": 8, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Ed", "ln": "Harris", "by": 1950, "bm": 11, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Eddie", "ln": "Murphy", "by": 1961, "bm": 4, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Eddie", "ln": "Redmayne", "by": 1982, "bm": 1, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Edward", "ln": "Norton", "by": 1997, "bm": 3, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Elisabeth", "ln": "Shue", "by": 1963, "bm": 10, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Elizabeth", "ln": "Taylor", "by": 1932, "bm": 2, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Ellen", "ln": "Page", "by": 1987, "bm": 2, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Emily", "ln": "Watson", "by": 1967, "bm": 1, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Emma", "ln": "Stone", "by": 1988, "bm": 11, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Emma", "ln": "Thompson", "by": 1959, "bm": 4, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Eric", "ln": "Bissonnette", "by": 1994, "bm": 4, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Éric", "ln": "Carrier", "by": 1977, "bm": 3, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Ethan", "ln": "Hawke", "by": 1970, "bm": 11, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Étienne", "ln": "Carrier", "by": 1983, "bm": 10, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Étienne", "ln": "Turgeon", "by": 1984, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Faye", "ln": "Dunaway", "by": 1941, "bm": 1, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Felicity", "ln": "Jones", "by": 1983, "bm": 10, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Florence", "ln": "Bégin", "by": 1954, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Forest", "ln": "Whitaker", "by": 1961, "bm": 7, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "France", "ln": "Carrier", "by": 1957, "bm": 9, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "France", "ln": "Morneau", "by": 1953, "bm": 4, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Francine", "ln": "Hamond", "by": 1950, "bm": 9, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Francis", "ln": "Coppola", "by": 1939, "bm": 4, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Francis", "ln": "Garand", "by": 1981, "bm": 8, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "François", "ln": "Morency", "by": 1966, "bm": 6, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "François", "ln": "Morneau", "by": 1979, "bm": 2, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Frédéric", "ln": "Marsolais", "by": 1979, "bm": 5, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Frédérick", "ln": "Turgeon", "by": 1983, "bm": 4, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Gaétan", "ln": "Turgeon", "by": 1950, "bm": 8, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Gaétane", "ln": "Turgeon", "by": 1950, "bm": 8, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Gary", "ln": "Oldman", "by": 1958, "bm": 3, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Geena", "ln": "Davis", "by": 1956, "bm": 1, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Gene", "ln": "Hackman", "by": 1930, "bm": 1, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Geneviève", "ln": "Bérubé", "by": 1981, "bm": 4, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Geneviève", "ln": "Breton", "by": 1983, "bm": 4, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Geoffrey", "ln": "Rush", "by": 1951, "bm": 7, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "George", "ln": "Clooney", "by": 1961, "bm": 5, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "George", "ln": "Lucas", "by": 1944, "bm": 5, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Georges", "ln": "Bouchard", "by": 1927, "bm": 12, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Gérard", "ln": "Depardieu", "by": 1948, "bm": 12, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Gilberte", "ln": "Labrecque", "by": 1925, "bm": 4, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Gillian", "ln": "Anderson", "by": 1968, "bm": 9, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Ginette", "ln": "Douville", "by": 1960, "bm": 10, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Gisèle", "ln": "Leclerc", "by": 1950, "bm": 10, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Glenn", "ln": "Close", "by": 1947, "bm": 3, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Goldie", "ln": "Hawn", "by": 1945, "bm": 11, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Graig", "ln": "Turgeon", "by": 1980, "bm": 12, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Guylaine", "ln": "Gosselin", "by": 1965, "bm": 4, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Gwyneth", "ln": "Paltrow", "by": 1972, "bm": 9, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Halle", "ln": "Berry", "by": 1966, "bm": 8, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Harrison", "ln": "Ford", "by": 1942, "bm": 7, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Heath", "ln": "Ledger", "by": 1979, "bm": 4, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Helen", "ln": "Hunt", "by": 1963, "bm": 6, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Hilary", "ln": "Swank", "by": 1974, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Holly", "ln": "Hunter", "by": 1958, "bm": 3, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Hugh", "ln": "Jackman", "by": 1968, "bm": 10, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Ian", "ln": "McKellen", "by": 1939, "bm": 5, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Irma", "ln": "Roy", "by": 1920, "bm": 6, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "J.", "ln": "Simmons", "by": 1955, "bm": 1, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Jack", "ln": "Nicholson", "by": 1937, "bm": 4, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Jacques", "ln": "Lapointe", "by": 1952, "bm": 12, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Jacques", "ln": "Turgeon", "by": 1949, "bm": 9, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Jake", "ln": "Gyllenhaal", "by": 1980, "bm": 12, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "James", "ln": "Cameron", "by": 1954, "bm": 8, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "James", "ln": "Franco", "by": 1978, "bm": 4, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Jamie", "ln": "Foxx", "by": 1967, "bm": 12, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Jane", "ln": "Fonda", "by": 1937, "bm": 12, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Jared", "ln": "Leto", "by": 1971, "bm": 12, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Jason", "ln": "Statham", "by": 1967, "bm": 7, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Javier", "ln": "Bardem", "by": 1969, "bm": 3, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Jean", "ln": "Reno", "by": 1948, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Jean", "ln": "Morneau", "by": 1950, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Jean-Claude", "ln": "de la Ronde", "by": 1977, "bm": 9, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Jean-Marc", "ln": "Leclerc", "by": 1979, "bm": 4, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Jean-Yves", "ln": "Turgeon", "by": 1951, "bm": 7, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Jeff", "ln": "Bridges", "by": 1949, "bm": 12, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Jennifer", "ln": "Aniston", "by": 1969, "bm": 2, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Jennifer", "ln": "Connelly", "by": 1970, "bm": 12, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Jennifer", "ln": "Lawrence", "by": 1990, "bm": 8, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Jeremy", "ln": "Irons", "by": 1948, "bm": 9, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Jeremy", "ln": "Renner", "by": 1971, "bm": 1, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Jérôme", "ln": "Turgeon", "by": 1979, "bm": 12, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Jesse", "ln": "Eisenberg", "by": 1983, "bm": 10, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Jessica", "ln": "Coté", "by": 1987, "bm": 2, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Jessica", "ln": "Lange", "by": 1949, "bm": 4, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Jim", "ln": "Carrey", "by": 1962, "bm": 1, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Jimmy", "ln": "Pilote", "by": 1970, "bm": 2, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Joaquin", "ln": "Phoenix", "by": 1974, "bm": 10, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Jodie", "ln": "Foster", "by": 1962, "bm": 11, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Joe", "ln": "Pesci", "by": 1943, "bm": 2, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "John", "ln": "Cusack", "by": 1966, "bm": 6, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "John", "ln": "Lithgow", "by": 1945, "bm": 10, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "John", "ln": "Travolta", "by": 1954, "bm": 2, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Johnny", "ln": "Depp", "by": 1963, "bm": 6, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Jon", "ln": "Voight", "by": 1938, "bm": 12, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Josh", "ln": "Brolin", "by": 1968, "bm": 2, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Josianne", "ln": "Turgeon", "by": 1986, "bm": 5, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Jude", "ln": "Law", "by": 1972, "bm": 12, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Julia", "ln": "Roberts", "by": 1967, "bm": 10, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Julianne", "ln": "Moore", "by": 1960, "bm": 12, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Julie", "ln": "Carrier", "by": 1977, "bm": 12, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Juliette", "ln": "Binoche", "by": 1964, "bm": 3, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Juliette", "ln": "Lewis", "by": 1973, "bm": 6, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Karine", "ln": "Lagacé", "by": 1981, "bm": 10, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Karine", "ln": "Turgeon", "by": 1988, "bm": 10, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Kate", "ln": "Winslet", "by": 1975, "bm": 10, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Kathy", "ln": "Bates", "by": 1948, "bm": 6, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Kevin", "ln": "Bacon", "by": 1958, "bm": 7, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Kevin", "ln": "Costner", "by": 1955, "bm": 1, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Kevin", "ln": "Kline", "by": 1947, "bm": 10, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Kevin", "ln": "Spacey", "by": 1959, "bm": 7, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Kim", "ln": "Basinger", "by": 1953, "bm": 12, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Lana", "ln": "Wachowski", "by": 1965, "bm": 6, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Laura", "ln": "Dern", "by": 1967, "bm": 2, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Laurence", "ln": "Fishburne", "by": 1961, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Leonardo", "ln": "DiCaprio", "by": 1974, "bm": 11, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Liam", "ln": "Neeson", "by": 1952, "bm": 6, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Liette", "ln": "Lapointe", "by": 1956, "bm": 7, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Line", "ln": "Carrier", "by": 1964, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Livia", "ln": "Poulin", "by": 2011, "bm": 12, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Loïc", "ln": "Turgeon", "by": 2009, "bm": 8, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Louis", "ln": "Gossett", "by": 1936, "bm": 5, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Luc", "ln": "Bissonnette", "by": 1965, "bm": 3, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Lupita", "ln": "Nyong'o", "by": 1983, "bm": 3, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Maggie", "ln": "Gyllenhaal", "by": 1977, "bm": 11, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Mahée", "ln": "Paiement", "by": 1976, "bm": 1, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Marc-André", "ln": "Bouchard", "by": 1992, "bm": 11, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Marcel", "ln": "Audet", "by": 1952, "bm": 4, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Marcia", "ln": "Harden", "by": 1959, "bm": 8, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Marie-Jeanne", "ln": "Ferron", "by": 1928, "bm": 3, "bd": 20, "dy": 2011, "dm": 5, "dd": 24}, {"fn": "Marie-Josée", "ln": "Damico", "by": 1984, "bm": 7, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Marie-Lune", "ln": "", "by": 1983, "bm": 7, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Marie-NoÃ«lle", "ln": "Turgeon", "by": 1983, "bm": 7, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Marilou", "ln": "Morneau", "by": 1995, "bm": 7, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Mariloup", "ln": "Wolfe", "by": 1978, "bm": 1, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Marina", "ln": "Orsini", "by": 1967, "bm": 1, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Marion", "ln": "Cotillard", "by": 1975, "bm": 9, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Marjorie", "ln": "Delisle", "by": 1979, "bm": 4, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Mark", "ln": "Ruffalo", "by": 1967, "bm": 11, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Mark", "ln": "Wahlberg", "by": 1971, "bm": 6, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Marthe", "ln": "Morneau", "by": 1954, "bm": 4, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Martin", "ln": "Landau", "by": 1928, "bm": 6, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Martin", "ln": "Scorsese", "by": 1942, "bm": 11, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Martine", "ln": "Turgeon", "by": 1963, "bm": 12, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Mathieu", "ln": "Morneau", "by": 1989, "bm": 8, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Matrix 4", "ln": "Resurection", "by": 2021, "bm": 12, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Matt", "ln": "Damon", "by": 1970, "bm": 10, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Matthew", "ln": "McConaughey", "by": 1969, "bm": 11, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Maxance", "ln": "Turgeon", "by": 1991, "bm": 8, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Maxime", "ln": "Bissonnette", "by": 1992, "bm": 2, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Mel", "ln": "Gibson", "by": 1956, "bm": 1, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Melanie", "ln": "Griffith", "by": 1957, "bm": 8, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Melissa", "ln": "McCarthy", "by": 1970, "bm": 8, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Caine", "by": 1933, "bm": 3, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Douglas", "by": 1944, "bm": 9, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Fassbender", "by": 1977, "bm": 4, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Keaton", "by": 1951, "bm": 9, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Mann", "by": 1943, "bm": 2, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Michael", "ln": "Turgeon", "by": 1984, "bm": 10, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Michel", "ln": "Turgeon", "by": 1955, "bm": 9, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Michelle", "ln": "Pfeiffer", "by": 1958, "bm": 4, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Mickey", "ln": "Rourke", "by": 1952, "bm": 9, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Mira", "ln": "Sorvino", "by": 1967, "bm": 9, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Mireille", "ln": "Morneau", "by": 1958, "bm": 12, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Mireille", "ln": "Trempe", "by": 1984, "bm": 9, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Morgan", "ln": "Freeman", "by": 1937, "bm": 6, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Myriam", "ln": "Audet", "by": 1984, "bm": 11, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Nadia", "ln": "Carrier", "by": 1974, "bm": 10, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Nancy", "ln": "Carrier", "by": 1974, "bm": 5, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Naomi", "ln": "Watts", "by": 1968, "bm": 9, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Natalie", "ln": "Portman", "by": 1981, "bm": 6, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Nathalie", "ln": "Bouchard", "by": 1967, "bm": 10, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Nick", "ln": "Nolte", "by": 1941, "bm": 2, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Nicolas", "ln": "Cage", "by": 1964, "bm": 1, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Nicolas", "ln": "Côté", "by": 1988, "bm": 9, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Nicole", "ln": "Forgues", "by": 1946, "bm": 3, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Nicole", "ln": "Kidman", "by": 1967, "bm": 6, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Normand", "ln": "Carrier", "by": 1955, "bm": 2, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Normand", "ln": "Roy", "by": 1953, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Odile", "ln": "Carrier", "by": 1970, "bm": 1, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Odile", "ln": "Turgeon", "by": 1982, "bm": 8, "bd": 19, "dy": null, "dm": null, "dd": null}, {"fn": "Oliver", "ln": "Stone", "by": 1946, "bm": 9, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Olivier", "ln": "Carrier", "by": 1988, "bm": 8, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Orson", "ln": "Welles", "by": 1985, "bm": 10, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Patric", "ln": "Vachon", "by": 1978, "bm": 10, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Patrice", "ln": "Morneau", "by": 1977, "bm": 2, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Patricia", "ln": "Arquette", "by": 1968, "bm": 4, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Patrick", "ln": "Gingras", "by": 1981, "bm": 1, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Patrick", "ln": "Huard", "by": 1969, "bm": 1, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Patrick", "ln": "Stewart", "by": 1940, "bm": 7, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Paul", "ln": "Newman", "by": 1925, "bm": 1, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Penélope", "ln": "Cruz", "by": 1974, "bm": 4, "bd": 28, "dy": null, "dm": null, "dd": null}, {"fn": "Peter", "ln": "Jackson", "by": 1961, "bm": 10, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Peter", "ln": "O'Toole", "by": 1932, "bm": 8, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Philip", "ln": "Hoffman", "by": 1967, "bm": 7, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Philippe", "ln": "Asselin", "by": 2012, "bm": 6, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Quentin", "ln": "Tarantino", "by": 1963, "bm": 3, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Rachel", "ln": "Weisz", "by": 1970, "bm": 3, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Ralph", "ln": "Fiennes", "by": 1962, "bm": 12, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Raymonde", "ln": "", "by": 1944, "bm": 6, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Reese", "ln": "Witherspoon", "by": 1976, "bm": 3, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Réjean", "ln": "Ratia", "by": 1946, "bm": 1, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Réjeanne", "ln": "Carbonneau", "by": 1958, "bm": 7, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "René", "ln": "Angelil", "by": 1942, "bm": 1, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "René", "ln": "Carrier", "by": 1948, "bm": 2, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Renée", "ln": "Zellweger", "by": 1969, "bm": 4, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Attenborough", "by": 1923, "bm": 8, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Carrier", "by": 1964, "bm": 9, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Dreyfuss", "by": 1947, "bm": 10, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Grenier", "by": 1978, "bm": 6, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Levesque", "by": 1979, "bm": 10, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Thibodeau", "by": 1964, "bm": 8, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Richard", "ln": "Turgeon", "by": 1961, "bm": 1, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Ridley", "ln": "Scott", "by": 1937, "bm": 11, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "De Niro", "by": 1943, "bm": 8, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Downey", "by": 1965, "bm": 4, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Duvall", "by": 1931, "bm": 1, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Gosselin", "by": 1930, "bm": 9, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Redford", "by": 1936, "bm": 8, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Rodriguez", "by": 1968, "bm": 6, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Robert", "ln": "Zemeckis", "by": 1951, "bm": 5, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Robin", "ln": "Borgias", "by": 1968, "bm": 2, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Robin", "ln": "Williams", "by": 1951, "bm": 7, "bd": 21, "dy": 2014, "dm": 8, "dd": 11}, {"fn": "Roman", "ln": "Polanski", "by": 1933, "bm": 8, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Ron", "ln": "Howard", "by": 1954, "bm": 3, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Rosaire", "ln": "Carrier", "by": 1936, "bm": 9, "bd": 5, "dy": null, "dm": null, "dd": null}, {"fn": "Rosalie", "ln": "Turgeon", "by": 2005, "bm": 7, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Russell", "ln": "Crowe", "by": 1964, "bm": 4, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Ryan", "ln": "Gosling", "by": 1980, "bm": 11, "bd": 12, "dy": null, "dm": null, "dd": null}, {"fn": "Sally", "ln": "Field", "by": 1946, "bm": 11, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Salma", "ln": "Hayek", "by": 1966, "bm": 9, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Sam", "ln": "Mendes", "by": 1965, "bm": 8, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Samuel", "ln": "Jackson", "by": 1948, "bm": 12, "bd": 21, "dy": null, "dm": null, "dd": null}, {"fn": "Samuel", "ln": "Turgeon", "by": 1991, "bm": 12, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Sandra", "ln": "Bullock", "by": 1964, "bm": 7, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Sean", "ln": "Connery", "by": 1930, "bm": 8, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Sean", "ln": "Penn", "by": 1960, "bm": 8, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Sébastien", "ln": "Carrier", "by": 1976, "bm": 6, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Serge", "ln": "Carrier", "by": 1972, "bm": 7, "bd": 17, "dy": null, "dm": null, "dd": null}, {"fn": "Sharon", "ln": "Stone", "by": 1958, "bm": 3, "bd": 10, "dy": null, "dm": null, "dd": null}, {"fn": "Sidney", "ln": "Poitier", "by": 1927, "bm": 2, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Sigourney", "ln": "Weaver", "by": 1949, "bm": 10, "bd": 8, "dy": null, "dm": null, "dd": null}, {"fn": "Simon", "ln": "Carrier", "by": 1944, "bm": 7, "bd": 11, "dy": null, "dm": null, "dd": null}, {"fn": "Simon", "ln": "Pegg", "by": 1970, "bm": 2, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Sonia", "ln": "Carrier", "by": 1969, "bm": 10, "bd": 2, "dy": null, "dm": null, "dd": null}, {"fn": "Sophia", "ln": "Turgeon", "by": 1968, "bm": 4, "bd": 24, "dy": null, "dm": null, "dd": null}, {"fn": "Sophie", "ln": "Carrier", "by": 1971, "bm": 9, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Stanley", "ln": "Kubrick", "by": 1928, "bm": 7, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Stéphanie", "ln": "Bélanger", "by": 1993, "bm": 6, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Stéphanie", "ln": "Turgeon", "by": 1988, "bm": 5, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Steve", "ln": "Carell", "by": 1962, "bm": 8, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Steven", "ln": "Soderbergh", "by": 1963, "bm": 1, "bd": 14, "dy": null, "dm": null, "dd": null}, {"fn": "Steven", "ln": "Spielberg", "by": 1946, "bm": 12, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Susan", "ln": "Sarandon", "by": 1946, "bm": 10, "bd": 4, "dy": null, "dm": null, "dd": null}, {"fn": "Sylvain", "ln": "Carrier", "by": 1965, "bm": 11, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Sylvester", "ln": "Stallone", "by": 1946, "bm": 7, "bd": 6, "dy": null, "dm": null, "dd": null}, {"fn": "Sylvie", "ln": "Carrier", "by": 1963, "bm": 7, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "Thierry", "ln": "Bélanger", "by": 1991, "bm": 2, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Tim", "ln": "Robbins", "by": 1958, "bm": 10, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Tobey", "ln": "Maguire", "by": 1975, "bm": 6, "bd": 27, "dy": null, "dm": null, "dd": null}, {"fn": "Tom", "ln": "Berenger", "by": 1949, "bm": 5, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Tom", "ln": "Cruise", "by": 1962, "bm": 7, "bd": 3, "dy": null, "dm": null, "dd": null}, {"fn": "Tom", "ln": "Hanks", "by": 1956, "bm": 7, "bd": 9, "dy": null, "dm": null, "dd": null}, {"fn": "Tommy", "ln": "Côté", "by": 1993, "bm": 4, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Tommy", "ln": "Jones", "by": 1946, "bm": 9, "bd": 15, "dy": null, "dm": null, "dd": null}, {"fn": "Uma", "ln": "Thurman", "by": 1970, "bm": 4, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Valérie", "ln": "Carrier", "by": 1979, "bm": 4, "bd": 7, "dy": null, "dm": null, "dd": null}, {"fn": "Véronique", "ln": "Genest", "by": 1979, "bm": 9, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Véronique", "ln": "Roy", "by": 1981, "bm": 6, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Viggo", "ln": "Mortensen", "by": 1958, "bm": 10, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Vin", "ln": "Diesel", "by": 1967, "bm": 7, "bd": 18, "dy": null, "dm": null, "dd": null}, {"fn": "Warren", "ln": "Beatty", "by": 1937, "bm": 3, "bd": 30, "dy": null, "dm": null, "dd": null}, {"fn": "Wes", "ln": "Anderson", "by": 1969, "bm": 5, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Wesley", "ln": "Snipes", "by": 1962, "bm": 7, "bd": 31, "dy": null, "dm": null, "dd": null}, {"fn": "Whoopi", "ln": "Goldberg", "by": 1955, "bm": 11, "bd": 13, "dy": null, "dm": null, "dd": null}, {"fn": "Will", "ln": "Ferrell", "by": 1967, "bm": 7, "bd": 16, "dy": null, "dm": null, "dd": null}, {"fn": "Will", "ln": "Smith", "by": 1968, "bm": 9, "bd": 25, "dy": null, "dm": null, "dd": null}, {"fn": "Willem", "ln": "Dafoe", "by": 1955, "bm": 7, "bd": 22, "dy": null, "dm": null, "dd": null}, {"fn": "William", "ln": "Hurt", "by": 1950, "bm": 3, "bd": 20, "dy": null, "dm": null, "dd": null}, {"fn": "Winona", "ln": "Ryder", "by": 1971, "bm": 10, "bd": 29, "dy": null, "dm": null, "dd": null}, {"fn": "Woody", "ln": "Allen", "by": 1935, "bm": 12, "bd": 1, "dy": null, "dm": null, "dd": null}, {"fn": "Woody", "ln": "Harrelson", "by": 1961, "bm": 7, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Yolande", "ln": "Turgeon", "by": 1952, "bm": 8, "bd": 23, "dy": null, "dm": null, "dd": null}, {"fn": "Yvan", "ln": "Morneau", "by": 1961, "bm": 9, "bd": 26, "dy": null, "dm": null, "dd": null}, {"fn": "Yves", "ln": "Pelletier", "by": 1961, "bm": 1, "bd": 15, "dy": null, "dm": null, "dd": null}];
 
 // â”€â”€ PERSISTENCE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ctLoadContacts() {
@@ -5092,17 +5092,17 @@ function ctBuildBirthdayLabel(c, displayYear) {
   const fullName = [c.fn, c.ln].filter(Boolean).join(' ');
 
   if (c.dy) {
-    // Deceased â€” show age at death
+    // Deceased –” show age at death
     const ageAtDeath = c.dy - (c.by || c.dy);
     const deathStr = c.dm && c.dd
       ? `${c.dy}-${String(c.dm).padStart(2,'0')}-${String(c.dd).padStart(2,'0')}`
       : c.dy;
-    return `ðŸ•¯ ${fullName} Â· né${c.by ? ' en ' + c.by : ''} Â· Décédé ${deathStr} Ã  ${ageAtDeath} ans`;
+    return `ðŸ•¯ ${fullName} · né${c.by ? ' en ' + c.by : ''} · Décédé ${deathStr} Ã  ${ageAtDeath} ans`;
   }
 
   if (c.by) {
     const age = displayYear - c.by;
-    return `ðŸŽ‚ ${fullName} Â· ${age} ans (${c.by})`;
+    return `ðŸŽ‚ ${fullName} · ${age} ans (${c.by})`;
   }
 
   return `ðŸŽ‚ ${fullName}`;
@@ -5199,7 +5199,7 @@ function ctImportCSV(file) {
         for (let ei = 1; ei <= 4; ei++) {
           const lbl = (cols[idx(`Event ${ei} - Label`)]||'').trim().toLowerCase();
           const val = (cols[idx(`Event ${ei} - Value`)]||'').trim();
-          if (['DécÃ¨s','died','death','deces'].includes(lbl) && val) {
+          if (['Décès','died','death','deces'].includes(lbl) && val) {
             const dp = val.split('-');
             try { dy = parseInt(dp[0]); dm = parseInt(dp[1]); dd = parseInt(dp[2]); } catch {}
             break;
@@ -5213,7 +5213,7 @@ function ctImportCSV(file) {
       if (confirm(`Importer ${contacts.length} contacts avec anniversaire ?\nCeci remplacera les contacts actuels.`)) {
         ctSaveContacts(contacts);
         ctInjectAllBirthdays();
-        alert(`âœ… ${contacts.length} anniversaires importés !`);
+        alert(`✓ ${contacts.length} anniversaires importés !`);
         // Re-render weekly view to reflect new contacts
         if (window.renderWeeklyView) renderWeeklyView();
       }
@@ -5258,8 +5258,8 @@ function ctParseCSVLine(line) {
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// CONTACTS TAB VIEW â€” Multi-tags, soft-edit, Ã—clear, colored pills
-// Data model: contact.tags = [] (array of strings) â€” replaces .grp
+// CONTACTS TAB VIEW –” Multi-tags, soft-edit, Ã—clear, colored pills
+// Data model: contact.tags = [] (array of strings) –” replaces .grp
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 let ctSortField   = 'fn';
@@ -5346,7 +5346,7 @@ function ctInitView() {
   const searchWrap = document.createElement('div'); searchWrap.className = 'ct-search-wrap';
   const searchIn = document.createElement('input'); searchIn.type = 'text';
   searchIn.className = 'ct-search-input'; searchIn.id = 'ctSearchInput';
-  searchIn.placeholder = 'Rechercherâ€¦'; searchIn.value = ctFilter;
+  searchIn.placeholder = 'Rechercher–¦'; searchIn.value = ctFilter;
   const clearBtn = document.createElement('button'); clearBtn.className = 'ct-search-clear'; clearBtn.textContent = 'âœ•';
   clearBtn.title = 'Effacer le filtre';
   clearBtn.addEventListener('click', () => {
@@ -5401,7 +5401,7 @@ function ctInitView() {
   const hrow = document.createElement('tr');
   const cols = [
     {key:'fn', label:'Prénom'}, {key:'ln', label:'Nom'}, {key:'tags', label:'Tags'},
-    {key:'bday', label:'Anniversaire'}, {key:'dday', label:'DécÃ¨s'}, {key:null, label:''}
+    {key:'bday', label:'Anniversaire'}, {key:'dday', label:'Décès'}, {key:null, label:''}
   ];
   cols.forEach(col => {
     const th = document.createElement('th'); th.className = 'ct-th' + (col.key ? ' ct-th-sort' : '');
@@ -5587,7 +5587,7 @@ function ctRenderBody() {
       return td;
     };
 
-    // Tags cell â€” inline multi-tag editor
+    // Tags cell –” inline multi-tag editor
     const mkTagsTd = () => {
       const td = document.createElement('td'); td.className = 'ct-td';
       const renderTags = () => {
@@ -5600,7 +5600,7 @@ function ctRenderBody() {
           badge.style.cssText = `background:${ctTagBg(tag,groups)};color:${col};border-color:${col};`;
           badge.textContent = tag; cell.appendChild(badge);
         });
-        if (!tags.length) { const empty = document.createElement('span'); empty.style.color='#bbb'; empty.style.fontSize='.75rem'; empty.textContent='â€”'; cell.appendChild(empty); }
+        if (!tags.length) { const empty = document.createElement('span'); empty.style.color='#bbb'; empty.style.fontSize='.75rem'; empty.textContent='–”'; cell.appendChild(empty); }
         td.appendChild(cell);
       };
       renderTags();
@@ -5631,7 +5631,7 @@ function ctRenderBody() {
           if (idx >= 0) { all[idx].tags = curTags; ctSaveContacts(all); }
           ctRenderPills(); ctRenderBody();
         };
-        // Save on click outside â€” use setTimeout to skip the current event
+        // Save on click outside –” use setTimeout to skip the current event
         setTimeout(() => document.addEventListener('click', function outsideClick(e) {
           if (!td.contains(e.target)) { document.removeEventListener('click', outsideClick); save(); }
         }), 0);
@@ -5683,7 +5683,7 @@ function ctRenderPager() {
 
   const info = document.createElement('span'); info.className = 'ct-pager-info';
   const s = (ctPage-1)*CT_PAGE_SIZE+1, e = Math.min(ctPage*CT_PAGE_SIZE, total);
-  info.textContent = total ? `${s}â€“${e} sur ${total}` : '0 contact';
+  info.textContent = total ? `${s}–“${e} sur ${total}` : '0 contact';
   _ctPagerEl.appendChild(info);
 
   if (pages <= 1) return;
@@ -5695,15 +5695,15 @@ function ctRenderPager() {
     b.addEventListener('click', () => { ctPage = page; ctRenderBody(); ctRenderPager(); });
     btns.appendChild(b);
   };
-  const dots = () => { const d=document.createElement('span'); d.className='ct-pager-dots'; d.textContent='â€¦'; btns.appendChild(d); };
+  const dots = () => { const d=document.createElement('span'); d.className='ct-pager-dots'; d.textContent='–¦'; btns.appendChild(d); };
 
-  mk('â€¹', ctPage-1, false, ctPage<=1);
+  mk('–¹', ctPage-1, false, ctPage<=1);
   for (let i=1; i<=pages; i++) {
     if (i===1||i===pages||Math.abs(i-ctPage)<=1) mk(i, i, i===ctPage);
     else if (i===2&&ctPage>4) dots();
     else if (i===pages-1&&ctPage<pages-3) dots();
   }
-  mk('â€º', ctPage+1, false, ctPage>=pages);
+  mk('–º', ctPage+1, false, ctPage>=pages);
   _ctPagerEl.appendChild(btns);
 }
 
@@ -5853,7 +5853,7 @@ function ctShowContactModal(contact) {
   mbd.appendChild(mkField('Nom', lnIn));
   mbd.appendChild(mkField('Tags', tagsPicker));
   mbd.appendChild(mkField('Anniversaire (Mois / Jour / Année)', bdRow));
-  mbd.appendChild(mkField('DécÃ¨s (Mois / Jour / Année)', ddRow));
+  mbd.appendChild(mkField('Décès (Mois / Jour / Année)', ddRow));
 
   const mft = document.createElement('div');
   mft.style.cssText='display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0;';
@@ -6042,7 +6042,7 @@ function htBuildLeft(left){
   // â”€â”€ Row: badge (160px) + chart (days Ã— 28px) â”€â”€
   const chartRow = document.createElement('div'); chartRow.className='ht-chart-row';
 
-  // Goal badge â€” fixed 160px to align with ht-hab-name
+  // Goal badge –” fixed 160px to align with ht-hab-name
   const badge = document.createElement('div'); badge.className='ht-goal-badge';
   badge.innerHTML=`
     <div class="ht-goal-plant">${htPlantEmoji(100)}</div>
@@ -6050,7 +6050,7 @@ function htBuildLeft(left){
     <div class="ht-goal-count">${goalCount}</div>`;
   chartRow.appendChild(badge);
 
-  // Chart â€” width = days Ã— 28px to align with day cells
+  // Chart –” width = days Ã— 28px to align with day cells
   const chartWrap = document.createElement('div'); chartWrap.className='ht-chart-wrap';
   const chartTitle = document.createElement('div'); chartTitle.className='ht-chart-title';
   chartTitle.textContent='POURCENTAGE COMPLÉTÉ';
@@ -6061,7 +6061,7 @@ function htBuildLeft(left){
   chartRow.appendChild(chartWrap);
   left.appendChild(chartRow);
 
-  // Draw chart after append â€” width = days * 28
+  // Draw chart after append –” width = days * 28
   requestAnimationFrame(()=>htDrawChart(canvas, pct, days));
 
   // Stats rows
@@ -6225,7 +6225,7 @@ function htBuildGrid(right){
 
   habits.forEach((hab, hi)=>{
     const row = document.createElement('div'); row.className='ht-hab-row';
-    // Name cell â€” soft-edit on click
+    // Name cell –” soft-edit on click
     const nameCell = document.createElement('div'); nameCell.className='ht-hab-name';
     const nameSpan = document.createElement('span'); nameSpan.textContent=hab.name;
     nameSpan.style.cursor='text'; nameSpan.title='Cliquer pour renommer';
@@ -6321,7 +6321,7 @@ async function syncDataFromSupabase() {
       localStorage.setItem('ap_global_habits', JSON.stringify(habitsResult.data));
     }
     
-    console.log('âœ… Data synced from Supabase');
+    console.log('✓ Data synced from Supabase');
   } catch (error) {
     console.error('âŒ Sync error:', error);
   } finally {
@@ -6338,7 +6338,7 @@ function updateFooterVersion() {
   if (!appVersion) return;
   const footerVersion = document.getElementById('footerVersion');
   if (footerVersion) {
-    footerVersion.innerHTML = `<span class=\"footer-version\">v${appVersion.version} (Build ${appVersion.buildNumber}) â€¢ ${appVersion.lastUpdate}</span>`;
+    footerVersion.innerHTML = `<span class=\"footer-version\">v${appVersion.version} (Build ${appVersion.buildNumber}) –¢ ${appVersion.lastUpdate}</span>`;
   }
 }
 
@@ -6355,7 +6355,7 @@ function setupUserMenu() {
     return;
   }
 
-  console.log('âœ… Setting up user menu...');
+  console.log('✓ Setting up user menu...');
 
   // Toggle dropdown
   userMenuBtn.addEventListener('click', (e) => {
@@ -6524,7 +6524,7 @@ async function handleChangePassword() {
   }
 
   if (newPassword.length < 6) {
-    passwordError.textContent = 'âš ï¸ Le mot de passe doit faire au moins 6 caractÃ¨res';
+    passwordError.textContent = 'âš ï¸ Le mot de passe doit faire au moins 6 caractères';
     return;
   }
 
@@ -6551,7 +6551,7 @@ async function handleChangePassword() {
 
     passwordError.textContent = '';
     passwordError.style.color = '#10b981';
-    passwordError.textContent = 'âœ… Mot de passe mis Ã  jour avec succÃ¨s!';
+    passwordError.textContent = '✓ Mot de passe mis Ã  jour avec succès!';
 
     // Clear inputs after 2 seconds
     setTimeout(() => {
@@ -6632,7 +6632,7 @@ function exportAllData() {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
   
-  console.log('âœ… Données exportées avec succÃ¨s');
+  console.log('✓ Données exportées avec succès');
 }
 
 // Import all localStorage data
@@ -6651,8 +6651,8 @@ function importAllData(file) {
         }
       }
       
-      console.log(`âœ… ${count} éléments importés avec succÃ¨s`);
-      alert(`âœ… Importation réussie!\n${count} éléments ont été restaurés.\nVeuillez rafraÃ®chir la page.`);
+      console.log(`✓ ${count} éléments importés avec succès`);
+      alert(`✓ Importation réussie!\n${count} éléments ont été restaurés.\nVeuillez rafraîchir la page.`);
       
       // Optional: reload page after import
       setTimeout(() => {
@@ -6687,18 +6687,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
   
-  console.log('âœ… Supabase SDK loaded');
+  console.log('✓ Supabase SDK loaded');
   
   // Initialize Supabase client
   await initSupabaseClient();
-  console.log('âœ… Supabase client initialized');
+  console.log('✓ Supabase client initialized');
   
   // Then initialize auth
   await initAuth();
-  console.log('âœ… Auth initialized');
+  console.log('✓ Auth initialized');
   
   setupLoginForm();
-  console.log('âœ… Login form setup done');
+  console.log('✓ Login form setup done');
 });
 
 function showLoginView() {
@@ -6737,7 +6737,7 @@ function setupLoginForm() {
   const signupError = document.getElementById('signupError');
 
   // Debug logging
-  console.log('âœ… setupLoginForm() called');
+  console.log('✓ setupLoginForm() called');
   console.log('loginForm:', loginForm);
   console.log('signupForm:', signupForm);
   console.log('toggleForm:', toggleForm);
@@ -6761,13 +6761,13 @@ function setupLoginForm() {
         signupForm.style.display = 'flex';
         toggleText.textContent = 'DéjÃ  inscrit?';
         toggleForm.textContent = 'Se connecter';
-        console.log('âœ… Switched to signup form');
+        console.log('✓ Switched to signup form');
       } else {
         loginForm.style.display = 'flex';
         signupForm.style.display = 'none';
         toggleText.textContent = 'Pas encore inscrit?';
         toggleForm.textContent = 'Créer un compte';
-        console.log('âœ… Switched to login form');
+        console.log('✓ Switched to login form');
       }
     });
   }
@@ -6823,7 +6823,7 @@ function setupLoginForm() {
     }
 
     if (password.length < 6) {
-      signupError.textContent = 'Le mot de passe doit faire au moins 6 caractÃ¨res';
+      signupError.textContent = 'Le mot de passe doit faire au moins 6 caractères';
       return;
     }
 
