@@ -854,6 +854,8 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 .wv-day-hd.dc-5 { background:linear-gradient(135deg,#bf2d78,var(--day5)); }
 .wv-day-hd.dc-6 { background:linear-gradient(135deg,#1a9e8a,var(--day6)); color:#333; }
 .wv-day-hd.today-hd { background:linear-gradient(135deg,#c85a3a,#e8834a) !important; color:#f4f1eb !important; }
+/* Current day focus styling */
+.wv-day-col.today { border-left:4px solid #e8834a; padding-left:8px; }
 .wv-day-hd .wdn { font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; opacity:.75; }
 .wv-day-hd .wdd { font-family:'DM Serif Display',serif; font-size:1.5rem; line-height:1.1; }
 .wv-day-hd .wdm { font-size:.72rem; opacity:.7; }
@@ -3768,61 +3770,42 @@ document.addEventListener('DOMContentLoaded', ()=>{
 // Used by both renderClassicBar (classic views) and renderGcal (calendar view)
 // scope: 'year'|'month'|'week'|'day'   style: 'classic'|'calendar'
 function buildBarDropdowns(barEl, scope, style){
-  const SCOPE_LABELS = {year:'Année', month:'Mois', week:'Semaine', day:'Jour'};
-  const STYLES_BY_SCOPE = {
-    day:   [{val:'calendar', label:'Vue jour'  }, {val:'habits',   label:'Habitudes' }],
-    week:  [{val:'classic',  label:'Planning'  }, {val:'calendar', label:'Calendrier'}],
-    month: [{val:'classic',  label:'Planning'  }, {val:'calendar', label:'Calendrier'}],
-    year:  [{val:'classic',  label:'Annuel'    }, {val:'calendar', label:'Calendrier'}],
-  };
-  const styleOptions = STYLES_BY_SCOPE[scope]||[];
-  const showStyle = styleOptions.length > 1;
+  // Unified dropdown with all scope+style combinations
+  const MENU_OPTIONS = [
+    {scope:'year',  style:'classic', label:'Année / Annuel'},
+    {scope:'year',  style:'calendar', label:'Année / Calendrier'},
+    {scope:'month', style:'classic', label:'Mois / Planning'},
+    {scope:'month', style:'calendar', label:'Mois / Calendrier'},
+    {scope:'week',  style:'classic', label:'Semaine / Planning'},
+    {scope:'week',  style:'calendar', label:'Semaine / Calendrier'},
+    {scope:'day',   style:'calendar', label:'Jour / Vue jour'},
+    {scope:'day',   style:'habits',   label:'Jour / Habitudes'},
+  ];
 
   const right = barEl.querySelector('.gc-bar-right');
   if(!right) return;
   right.innerHTML = '';
 
-  // ── Vue dropdown ──
-  const vueWrap = document.createElement('div'); vueWrap.className='gc-dd-wrap';
-  const vueBtn  = document.createElement('button'); vueBtn.className='gc-dd-btn';
-  vueBtn.innerHTML=`<span class="gc-dd-label">${SCOPE_LABELS[scope]||scope}</span><svg class="gc-dd-arrow" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>`;
-  const vueMenu = document.createElement('div'); vueMenu.className='gc-dd-menu';
-  ['year','month','week','day'].forEach(s=>{
+  // ── Unified dropdown ──
+  const ddWrap = document.createElement('div'); ddWrap.className='gc-dd-wrap';
+  const ddBtn  = document.createElement('button'); ddBtn.className='gc-dd-btn';
+  const curOption = MENU_OPTIONS.find(o=>o.scope===scope && o.style===style) || MENU_OPTIONS[0];
+  ddBtn.innerHTML=`<span class="gc-dd-label">${curOption.label}</span><svg class="gc-dd-arrow" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>`;
+  const ddMenu = document.createElement('div'); ddMenu.className='gc-dd-menu';
+  MENU_OPTIONS.forEach(opt=>{
     const item=document.createElement('div');
-    item.className='gc-dd-item'+(s===scope?' active':'');
-    item.textContent=SCOPE_LABELS[s];
+    const isActive = opt.scope===scope && opt.style===style;
+    item.className='gc-dd-item'+(isActive?' active':'');
+    item.textContent=opt.label;
     item.addEventListener('click',()=>{
       closeBarDropdowns(barEl);
-      const newStyle = s==='day'?'calendar':style;
-      applyVueScope(s, newStyle);
+      applyVueScope(opt.scope, opt.style);
     });
-    vueMenu.appendChild(item);
+    ddMenu.appendChild(item);
   });
-  vueBtn.addEventListener('click',e=>{ e.stopPropagation(); toggleBarDropdown(barEl, vueMenu); });
-  vueWrap.appendChild(vueBtn); vueWrap.appendChild(vueMenu);
-  right.appendChild(vueWrap);
-
-  // ── Style dropdown (only if >1 option) ──
-  if(showStyle){
-    const styleWrap = document.createElement('div'); styleWrap.className='gc-dd-wrap';
-    const styleBtn  = document.createElement('button'); styleBtn.className='gc-dd-btn';
-    const curStyleLabel = styleOptions.find(o=>o.val===style)?.label || styleOptions[0].label;
-    styleBtn.innerHTML=`<span class="gc-dd-label">${curStyleLabel}</span><svg class="gc-dd-arrow" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>`;
-    const styleMenu = document.createElement('div'); styleMenu.className='gc-dd-menu';
-    styleOptions.forEach(opt=>{
-      const item=document.createElement('div');
-      item.className='gc-dd-item'+(opt.val===style?' active':'');
-      item.textContent=opt.label;
-      item.addEventListener('click',()=>{
-        closeBarDropdowns(barEl);
-        applyVueScope(scope, opt.val);
-      });
-      styleMenu.appendChild(item);
-    });
-    styleBtn.addEventListener('click',e=>{ e.stopPropagation(); toggleBarDropdown(barEl, styleMenu); });
-    styleWrap.appendChild(styleBtn); styleWrap.appendChild(styleMenu);
-    right.appendChild(styleWrap);
-  }
+  ddBtn.addEventListener('click',e=>{ e.stopPropagation(); toggleBarDropdown(barEl, ddMenu); });
+  ddWrap.appendChild(ddBtn); ddWrap.appendChild(ddMenu);
+  right.appendChild(ddWrap);
 
   // Close on outside click (scoped to document, deduped)
   if(!barEl._barClickHandler){
@@ -4357,7 +4340,7 @@ function renderWvDays(dates, wk, wdata){
     let dayExtra=JSON.parse(localStorage.getItem('ap_de_'+dk)||'{"events":[]}');
     if(!dayExtra.events) dayExtra.events=[];
 
-    const col=document.createElement('div'); col.className='wv-day-col';
+    const col=document.createElement('div'); col.className='wv-day-col'+(isT?' today':'');
 
     // Header
     const hd=document.createElement('div');
