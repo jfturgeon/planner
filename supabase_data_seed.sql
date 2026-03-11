@@ -31,10 +31,10 @@ INSERT INTO planner_data (user_id, year, data)
 VALUES (
   '550e8400-e29b-41d4-a716-446655440000',
   2026,
-  '{
+  $${
     "2026-03-10": {
       "tasks": [
-        {"text": "Réunion d'"'"'équipe", "done": false, "priority": "urgent"},
+        {"text": "Réunion d'équipe", "done": false, "priority": "urgent"},
         {"text": "Rapport mensuel", "done": true, "priority": "normal"},
         {"text": "Appel client", "done": false, "priority": "normal"}
       ],
@@ -57,7 +57,7 @@ VALUES (
       "tasks": [],
       "notes": "Repos - week-end"
     }
-  }'::jsonb
+  }$$::jsonb
 )
 ON CONFLICT (user_id, year) DO NOTHING;
 
@@ -68,7 +68,7 @@ INSERT INTO weekly_data (user_id, week_key, data)
 VALUES (
   '550e8400-e29b-41d4-a716-446655440000',
   '2026-W10',
-  '{
+  $${
     "habits": [
       {
         "name": "Sport",
@@ -134,7 +134,7 @@ VALUES (
       "show": "all",
       "priority": "normal"
     }
-  }'::jsonb
+  }$$::jsonb
 )
 ON CONFLICT (user_id, week_key) DO NOTHING;
 
@@ -145,7 +145,7 @@ INSERT INTO day_events (user_id, day_key, data)
 VALUES (
   '550e8400-e29b-41d4-a716-446655440000',
   '2026-03-10',
-  '{
+  $${
     "events": [
       {
         "id": "ev_001",
@@ -171,12 +171,12 @@ VALUES (
         "color": "#e74c3c"
       }
     ]
-  }'::jsonb
+  }$$::jsonb
 ),
 (
   '550e8400-e29b-41d4-a716-446655440000',
   '2026-03-15',
-  '{
+  $${
     "events": [
       {
         "id": "ev_004",
@@ -187,7 +187,7 @@ VALUES (
         "color": "#f39c12"
       }
     ]
-  }'::jsonb
+  }$$::jsonb
 )
 ON CONFLICT (user_id, day_key) DO NOTHING;
 
@@ -333,8 +333,8 @@ ON CONFLICT DO NOTHING;
 -- =====================================================================
 INSERT INTO app_settings (user_id, current_year, week_start_offset, compact_view, notifications_enabled, auto_backup, settings)
 VALUES 
-  ('550e8400-e29b-41d4-a716-446655440000', 2026, 0, false, true, true, '{"theme": "light", "language": "fr", "defaultView": "week"}'::jsonb),
-  ('550e8400-e29b-41d4-a716-446655440001', 2026, 1, true, true, true, '{"theme": "dark", "language": "fr", "defaultView": "month"}'::jsonb)
+  ('550e8400-e29b-41d4-a716-446655440000', 2026, 0, false, true, true, $${"theme": "light", "language": "fr", "defaultView": "week"}$$::jsonb),
+  ('550e8400-e29b-41d4-a716-446655440001', 2026, 1, true, true, true, $${"theme": "dark", "language": "fr", "defaultView": "month"}$$::jsonb)
 ON CONFLICT (user_id) DO NOTHING;
 
 -- =====================================================================
