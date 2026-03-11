@@ -1,0 +1,165 @@
+[
+  {
+    "id": "xfiles",
+    "name": "X-Files",
+    "color": "#7a3030",
+    "tab": "xfiles",
+    "series": [
+      {
+        "id": "xf",
+        "name": "X-Files",
+        "seasons": [
+          {"n": 1, "episodeCount": 24},
+          {"n": 2, "episodeCount": 25},
+          {"n": 3, "episodeCount": 24},
+          {"n": 4, "episodeCount": 24},
+          {"n": 5, "episodeCount": 20},
+          {"n": 6, "episodeCount": 22},
+          {"n": 7, "episodeCount": 22},
+          {"n": 8, "episodeCount": 21},
+          {"n": 9, "episodeCount": 20},
+          {"n": 10, "episodeCount": 6},
+          {"n": 11, "episodeCount": 10}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "startrek",
+    "name": "Star Trek",
+    "color": "#2d6bbf",
+    "tab": "startrek",
+    "series": [
+      {
+        "id": "tos",
+        "name": "TOS - The Original Series",
+        "seasons": [
+          {"n": 1, "episodeCount": 29},
+          {"n": 2, "episodeCount": 26},
+          {"n": 3, "episodeCount": 24}
+        ]
+      },
+      {
+        "id": "tng",
+        "name": "TNG - The Next Generation",
+        "seasons": [
+          {"n": 1, "episodeCount": 26},
+          {"n": 2, "episodeCount": 22},
+          {"n": 3, "episodeCount": 26},
+          {"n": 4, "episodeCount": 26},
+          {"n": 5, "episodeCount": 26},
+          {"n": 6, "episodeCount": 26},
+          {"n": 7, "episodeCount": 26}
+        ]
+      },
+      {
+        "id": "ds9",
+        "name": "DS9 - Deep Space Nine",
+        "seasons": [
+          {"n": 1, "episodeCount": 20},
+          {"n": 2, "episodeCount": 26},
+          {"n": 3, "episodeCount": 26},
+          {"n": 4, "episodeCount": 26},
+          {"n": 5, "episodeCount": 26},
+          {"n": 6, "episodeCount": 26},
+          {"n": 7, "episodeCount": 26}
+        ]
+      },
+      {
+        "id": "voy",
+        "name": "VOY - Voyager",
+        "seasons": [
+          {"n": 1, "episodeCount": 16},
+          {"n": 2, "episodeCount": 26},
+          {"n": 3, "episodeCount": 26},
+          {"n": 4, "episodeCount": 26},
+          {"n": 5, "episodeCount": 26},
+          {"n": 6, "episodeCount": 26},
+          {"n": 7, "episodeCount": 26}
+        ]
+      },
+      {
+        "id": "ent",
+        "name": "ENT - Enterprise",
+        "seasons": [
+          {"n": 1, "episodeCount": 26},
+          {"n": 2, "episodeCount": 26},
+          {"n": 3, "episodeCount": 24},
+          {"n": 4, "episodeCount": 22}
+        ]
+      },
+      {
+        "id": "dis",
+        "name": "DIS - Discovery",
+        "seasons": [
+          {"n": 1, "episodeCount": 15},
+          {"n": 2, "episodeCount": 14},
+          {"n": 3, "episodeCount": 13},
+          {"n": 4, "episodeCount": 13},
+          {"n": 5, "episodeCount": 10}
+        ]
+      },
+      {
+        "id": "pic",
+        "name": "PIC - Picard",
+        "seasons": [
+          {"n": 1, "episodeCount": 10},
+          {"n": 2, "episodeCount": 10},
+          {"n": 3, "episodeCount": 10}
+        ]
+      },
+      {
+        "id": "snw",
+        "name": "SNW - Strange New Worlds",
+        "seasons": [
+          {"n": 1, "episodeCount": 10},
+          {"n": 2, "episodeCount": 10},
+          {"n": 3, "episodeCount": 10}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "stargate",
+    "name": "Stargate",
+    "color": "#2a5c2a",
+    "tab": "stargate",
+    "series": [
+      {
+        "id": "sg1",
+        "name": "SG-1",
+        "seasons": [
+          {"n": 1, "episodeCount": 22},
+          {"n": 2, "episodeCount": 22},
+          {"n": 3, "episodeCount": 22},
+          {"n": 4, "episodeCount": 22},
+          {"n": 5, "episodeCount": 22},
+          {"n": 6, "episodeCount": 22},
+          {"n": 7, "episodeCount": 22},
+          {"n": 8, "episodeCount": 20},
+          {"n": 9, "episodeCount": 20},
+          {"n": 10, "episodeCount": 20}
+        ]
+      },
+      {
+        "id": "sga",
+        "name": "Atlantis (SGA)",
+        "seasons": [
+          {"n": 1, "episodeCount": 20},
+          {"n": 2, "episodeCount": 20},
+          {"n": 3, "episodeCount": 20},
+          {"n": 4, "episodeCount": 20},
+          {"n": 5, "episodeCount": 20}
+        ]
+      },
+      {
+        "id": "sgu",
+        "name": "Universe (SGU)",
+        "seasons": [
+          {"n": 1, "episodeCount": 20},
+          {"n": 2, "episodeCount": 20}
+        ]
+      }
+    ]
+  }
+]
