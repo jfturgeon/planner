@@ -1,0 +1,74 @@
+<!-- DAY EDIT MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-hd">
+      <h2 id="modalTitle">—</h2>
+      <button class="btn-x" id="modalClose">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div>
+        <div class="sec-label">📝 Notes</div>
+        <textarea class="notes-ta" id="dayNotes" placeholder="Notes, rappels…" rows="3"></textarea>
+      </div>
+      <div>
+        <div class="sec-label">✅ Tâches</div>
+        <div class="task-add-row">
+          <input type="text" id="taskInput" placeholder="Nouvelle tâche…">
+          <select id="taskPriority">
+            <option value="normal">Normal</option>
+            <option value="urgent">Urgent</option>
+            <option value="low">Faible</option>
+          </select>
+          <button class="btn-plus" id="btnAddTask">+</button>
+        </div>
+        <div class="task-items" id="taskList"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn-cancel" id="btnCancel">Annuler</button>
+      <button class="btn-save" id="btnSave">Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="overlay" id="profileOverlay">
+  <div class="modal profile-modal">
+    <div class="modal-hd">
+      <h2>Mon Profil</h2>
+      <button class="btn-x" id="btnCloseProfile">✕</button>
+    </div>
+    <div class="profile-tabs">
+      <button class="profile-tab active" data-tab="password">🔐 Mot de passe</button>
+      <button class="profile-tab" data-tab="history">📋 Historique connexions</button>
+    </div>
+    <div class="modal-bd">
+      <!-- Password Tab -->
+      <div id="passwordTab" class="profile-tab-content active">
+        <div class="profile-section">
+          <label class="profile-label">Email actuel:</label>
+          <div class="profile-email" id="profileEmail"></div>
+        </div>
+        <div class="profile-section">
+          <label class="profile-label" for="currentPassword">Mot de passe actuel</label>
+          <input type="password" id="currentPassword" placeholder="••••••••" class="profile-input">
+        </div>
+        <div class="profile-section">
+          <label class="profile-label" for="newPassword">Nouveau mot de passe</label>
+          <input type="password" id="newPassword" placeholder="••••••••" minlength="6" class="profile-input">
+        </div>
+        <div class="profile-section">
+          <label class="profile-label" for="newPasswordConfirm">Confirmer mot de passe</label>
+          <input type="password" id="newPasswordConfirm" placeholder="••••••••" minlength="6" class="profile-input">
+        </div>
+        <div id="passwordError" class="profile-error"></div>
+        <button id="btnChangePassword" class="profile-btn">Mettre à jour le mot de passe</button>
+      </div>
+      
+      <!-- History Tab -->
+      <div id="historyTab" class="profile-tab-content">
+        <div id="connectionHistory" class="connection-history"></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+<header>
+  <div class="header-top">
+    <div class="app-title">Planificateur</div>
+    <div class="header-right">
+      <nav class="main-nav">
+        <button class="btn-view active" id="btnMonth" data-view="month">📅 Mois</button>
+        <button class="btn-view" id="btnAnnual" data-view="annual">📆 Annuel</button>
+        <button class="btn-view" id="btnWeekly" data-view="week">📊 Semaine</button>
+        <button class="btn-view" id="btnHabits" data-view="habits">✅ Habitudes</button>
+        <button class="btn-view btn-tracker" id="btnTracker" data-view="tracker">📺 Épisodes</button>
+        <button class="btn-view btn-kanban" id="btnKanban" data-view="kanban">🎯 Objectifs</button>
+        <button class="btn-view btn-contacts-tab" id="btnContacts" data-view="contacts">👥 Contacts</button>
+      </nav>
+      <!-- Navigation Controls -->
+      <div class="nav-controls" style="display:flex; align-items:center; gap:8px; margin-left:20px; padding-left:20px; border-left:1px solid rgba(255,255,255,.2);">
+        <button id="prevBtn" class="nav-btn" title="Période précédente" style="padding:6px 12px; border-radius:6px; border:1px solid rgba(255,255,255,.2); background:transparent; color:#ccc; cursor:pointer; font-size:.9rem;">‹</button>
+        <span id="navLabel" style="color:#f4f1eb; font-weight:500; min-width:180px; text-align:center; font-size:.9rem;">Mars 2026</span>
+        <button id="nextBtn" class="nav-btn" title="Période suivante" style="padding:6px 12px; border-radius:6px; border:1px solid rgba(255,255,255,.2); background:transparent; color:#ccc; cursor:pointer; font-size:.9rem;">›</button>
+        <button id="todayBtn" class="nav-btn today" title="Aller à aujourd'hui" style="padding:6px 14px; border-radius:6px; border:1px solid rgba(232,168,124,.5); background:transparent; color:#e8a87c; cursor:pointer; font-size:.9rem; margin-left:8px;">Aujourd'hui</button>
+      </div>
+      <button class="user-menu-btn" id="btnUserMenu" title="Menu utilisateur">⚙</button>
+      <div class="user-dropdown-menu" id="userDropdown">
+        <button class="user-dd-item" id="menuProfile">👤 Mon Profil</button>
+        <button class="user-dd-item" id="menuPreferences">⚙ Préférences</button>
+        <div class="dropdown-separator"></div>
+        <button class="user-dd-item" id="menuExport">💾 Exporter Données</button>
+        <button class="user-dd-item" id="menuImport">📂 Importer Données</button>
+        <div class="dropdown-separator"></div>
+        <button class="user-dd-item logout-item" id="menuLogout">🚪 Déconnexion</button>
+        <input type="file" id="importFileInput" style="display:none;" accept=".json"/>
+      </div>
+    </div>
+  </div>
+</header>

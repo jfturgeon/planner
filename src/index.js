@@ -451,8 +451,18 @@ function handleGroupFilter(group) {
 }
 
 // ── DOM READY INITIALIZATION ──────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+// ── INITIALIZATION ON APP START ──────────────────────────────────────────
+// Wait for fragments to be loaded before initializing the app
+document.addEventListener('fragmentsLoaded', () => {
   initApp();
+});
+
+// Fallback: Also initialize on DOMContentLoaded in case fragments are already loaded
+document.addEventListener('DOMContentLoaded', () => {
+  // Only init if not already initialized (check if appView is present)
+  if (document.getElementById('appView') && appState.currentView === 'month') {
+    initApp();
+  }
 });
 
 // Export for testing and external access
