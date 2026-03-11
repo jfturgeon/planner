@@ -398,53 +398,69 @@ function createField(name, label, type, value, options = []) {
   return wrapper;
 }
 
-// Render calendars list
+// Render calendars list and events
 function renderCalendarsView() {
   const view = document.getElementById('calendarsView');
   if (!view) return;
 
-  const list = view.querySelector('#calendars-list');
-  if (!list) return;
+  const listContainer = view.querySelector('#gc-calendars-list');
+  const eventsContainer = view.querySelector('#gc-events-container');
+  const toggleBtn = view.querySelector('#gcToggleList');
+  
+  if (!listContainer || !eventsContainer) return;
 
   const calendars = loadCalendars();
-  list.innerHTML = '';
+  const events = loadEvents();
+
+  // Render calendars list in sidebar
+  listContainer.innerHTML = '';
 
   calendars.forEach(cal => {
     const item = document.createElement('div');
     item.style.cssText = `
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px;
+      gap: 8px;
+      padding: 10px;
       background: var(--bg);
-      border-radius: 8px;
+      border-radius: 6px;
       border: 1px solid var(--border);
     `;
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.checked = cal.visible;
+    checkbox.checked = cal.visible !== false;
     checkbox.addEventListener('change', () => {
       cal.visible = checkbox.checked;
-      saveCalendars(calendars);
-      console.log(`📅 ${cal.name}: ${cal.visible ? 'visible' : 'hidden'}`);
+      const allCals = loadCalendars();
+      const idx = allCals.findIndex(c => c.id === cal.id);
+      if (idx >= 0) {
+        allCals[idx].visible = checkbox.checked;
+        saveCalendars(allCals);
+        renderCalendarsView(); // Refresh view
+      }
     });
     item.appendChild(checkbox);
 
     const colorBox = document.createElement('div');
     colorBox.style.cssText = `
-      width: 16px;
-      height: 16px;
-      background: ${cal.color};
-      border-radius: 3px;
+      width: 12px;
+      height: 12px;
+      background: ${cal.color || '#3b82f6'};
+      border-radius: 2px;
       flex-shrink: 0;
     `;
     item.appendChild(colorBox);
 
-    const nameSpan = document.createElement('span');
-    nameSpan.textContent = cal.name;
-    nameSpan.style.cssText = 'flex: 1; color: var(--text); font-weight: 500;';
-    item.appendChild(nameSpan);
+    const label = document.createElement('span');
+    label.textContent = cal.name;
+    label.style.cssText = `
+      flex: 1;
+      font-size: 0.85rem;
+      color: var(--text);
+      font-weight: 500;
+    `;
+    item.appendChild(label);
 
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = '✕';
@@ -453,17 +469,180 @@ function renderCalendarsView() {
       border: none;
       color: var(--muted);
       cursor: pointer;
-      padding: 4px 8px;
+      padding: 0;
+      font-size: 0.9rem;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     `;
     deleteBtn.addEventListener('click', () => {
-      calendars.splice(calendars.indexOf(cal), 1);
-      saveCalendars(calendars);
+      const allCals = loadCalendars();
+      const filtered = allCals.filter(c => c.id !== cal.id);
+      saveCalendars(filtered);
       renderCalendarsView();
     });
     item.appendChild(deleteBtn);
 
-    list.appendChild(item);
+    listContainer.appendChild(item);
   });
+
+  // Render events in main area
+  eventsContainer.innerHTML = '';
+
+  const visibleCalIds = calendars.filter(c => c.visible !== false).map(c => c.id);
+  const visibleEvents = events.filter(e => visibleCalIds.includes(e.calendarId));
+
+  if (visibleEvents.length === 0) {
+    const emptyMsg = document.createElement('div');
+    emptyMsg.style.cssText = `
+      color: var(--muted);
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 0.95rem;
+    `;
+    emptyMsg.innerHTML = `
+      <div style="font-size: 2rem; margin-bottom: 12px;">📭</div>
+      <div>Aucun événement</div>
+      <div style="font-size: 0.85rem; margin-top: 8px;">Cliquez sur "+ Événement" pour en ajouter</div>
+    `;
+    eventsContainer.appendChild(emptyMsg);
+  } else {
+    // Group events by calendar
+    const eventsByCalendar = {};
+    visibleEvents.forEach(e => {
+      if (!eventsByCalendar[e.calendarId]) {
+        eventsByCalendar[e.calendarId] = [];
+      }
+      eventsByCalendar[e.calendarId].push(e);
+    });
+
+    // Render each calendar's events
+    Object.entries(eventsByCalendar).forEach(([calId, calEvents]) => {
+      const cal = calendars.find(c => c.id === calId);
+      if (!cal) return;
+
+      // Calendar section header
+      const section = document.createElement('div');
+      section.style.cssText = `
+        margin-bottom: 20px;
+      `;
+
+      const header = document.createElement('div');
+      header.style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        padding: 8px 0;
+        border-bottom: 2px solid ${cal.color || '#3b82f6'};
+      `;
+
+      const colorDot = document.createElement('div');
+      colorDot.style.cssText = `
+        width: 10px;
+        height: 10px;
+        background: ${cal.color || '#3b82f6'};
+        border-radius: 50%;
+      `;
+      header.appendChild(colorDot);
+
+      const headerText = document.createElement('span');
+      headerText.textContent = cal.name;
+      headerText.style.cssText = `
+        font-weight: 600;
+        color: var(--text);
+        font-size: 0.9rem;
+      `;
+      header.appendChild(headerText);
+
+      const eventCount = document.createElement('span');
+      eventCount.textContent = `(${calEvents.length})`;
+      eventCount.style.cssText = `
+        font-size: 0.8rem;
+        color: var(--muted);
+      `;
+      header.appendChild(eventCount);
+
+      section.appendChild(header);
+
+      // Events
+      const eventsList = document.createElement('div');
+      eventsList.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      `;
+
+      calEvents.forEach(event => {
+        const eventEl = document.createElement('div');
+        eventEl.style.cssText = `
+          padding: 10px;
+          background: var(--surface);
+          border-left: 3px solid ${cal.color || '#3b82f6'};
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.2s;
+        `;
+        eventEl.addEventListener('mouseover', () => {
+          eventEl.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+        });
+        eventEl.addEventListener('mouseout', () => {
+          eventEl.style.boxShadow = 'none';
+        });
+
+        const typeIcon = event.type === 'task' ? '✓' : '📅';
+        const typeLabel = event.type === 'task' ? 'Tâche' : 'Événement';
+
+        eventEl.innerHTML = `
+          <div style="font-weight: 500; color: var(--text); margin-bottom: 4px;">
+            <span style="font-size: 0.9rem; margin-right: 6px;">${typeIcon}</span>
+            ${event.title}
+          </div>
+          <div style="font-size: 0.8rem; color: var(--muted);">
+            ${event.allDay ? '📅 Journée entière' : `🕐 ${event.time || '00:00'}`}
+            ${event.date ? ` • ${event.date}` : ''}
+          </div>
+          ${event.description ? `<div style="font-size: 0.8rem; color: var(--text); margin-top: 6px; opacity: 0.8;">${event.description}</div>` : ''}
+        `;
+
+        eventEl.addEventListener('click', () => {
+          // Edit event (optional - could open modal with event details)
+          console.log('Edit event:', event);
+        });
+
+        eventsList.appendChild(eventEl);
+      });
+
+      section.appendChild(eventsList);
+      eventsContainer.appendChild(section);
+    });
+  }
+
+  // Setup toggle button for sidebar
+  const listControlContainer = view.querySelector('#gcListContainer');
+  if (toggleBtn && listControlContainer) {
+    let isVisible = localStorage.getItem('ap_gc_left_panel') !== '0';
+    
+    const updateToggleState = () => {
+      if (isVisible) {
+        listControlContainer.style.display = 'block';
+        toggleBtn.textContent = '▼';
+      } else {
+        listControlContainer.style.display = 'none';
+        toggleBtn.textContent = '▶';
+      }
+    };
+    
+    updateToggleState();
+    
+    toggleBtn.addEventListener('click', () => {
+      isVisible = !isVisible;
+      localStorage.setItem('ap_gc_left_panel', isVisible ? '1' : '0');
+      updateToggleState();
+    });
+  }
 }
 
 // Schedule notifications for event
