@@ -1,0 +1,43 @@
+/* CSS Variables and Global Resets */
+:root {
+  --bg: #f0ede6;
+  --surface: #ffffff;
+  --border: #ddd8cf;
+  --text: #25231f;
+  --muted: #8a8478;
+  --accent: #c85a3a;
+  --accent2: #2d6bbf;
+  --today-bg: #fef3c7;
+  --today-ring: #f59e0b;
+  --weekend-bg: #fdf5f3;
+  --weekend-num: #c85a3a;
+  --col-w: 220px;
+
+  /* Day color palette */
+  --day0: #e8a87c;
+  --day1: #7cb9e8;
+  --day2: #8dd4a0;
+  --day3: #c4a8e8;
+  --day4: #e8d47c;
+  --day5: #e889b8;
+  --day6: #7ce8d4;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,582 @@
+/* OSCARS AND SPECIAL SECTIONS */
+
+/* ── OSCARS ──────────────────────────────────────────────────────────────────── */
+.tr-oscars-tab {
+  background: #fff8e1 !important;
+  color: #b8860b !important;
+  border-color: #f0c040 !important;
+}
+
+.tr-oscars-tab.active {
+  background: #f0c040 !important;
+  color: #5a4000 !important;
+}
+
+.os-panel {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 20px 24px;
+  background: #fafaf8;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Year row */
+.os-year-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #f0ede6;
+}
+
+.os-year-label {
+  font-family: 'DM Sans', sans-serif;
+}
+
+.os-year-pills {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.os-year-pill {
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid #e0dcd4;
+  background: #fff;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .72rem;
+  font-weight: 600;
+  color: #666;
+  transition: all .12s;
+}
+
+.os-year-pill:hover {
+  background: #f5f0e8;
+}
+
+.os-year-pill.active {
+  background: #f0c040;
+  color: #5a4000;
+  border-color: #d4a800;
+  font-weight: 700;
+}
+
+/* Category filter */
+.os-cat-bar {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.os-cat-pill {
+  padding: 4px 11px;
+  border-radius: 14px;
+  border: 1px solid #e0dcd4;
+  background: #fff;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .68rem;
+  font-weight: 600;
+  color: #555;
+  transition: all .12s;
+  white-space: nowrap;
+}
+
+.os-cat-pill:hover {
+  background: #f5f0e8;
+}
+
+.os-cat-pill.active {
+  background: #6e9e7e;
+  color: #fff;
+  border-color: #5a8a6a;
+}
+
+/* Stats */
+.os-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+
+.os-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.os-stat-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  color: #4a6741;
+  line-height: 1;
+}
+
+.os-stat-lbl {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .6rem;
+  font-weight: 700;
+  color: #999;
+  letter-spacing: .06em;
+}
+
+.os-stat-bar-wrap {
+  flex: 1;
+}
+
+.os-stat-bar {
+  height: 8px;
+  background: #e8e4dc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.os-stat-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6e9e7e, #f0c040);
+  border-radius: 4px;
+  transition: width .4s ease;
+}
+
+/* Grid of category cards */
+.os-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+.os-card {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(0,0,0,.07);
+  display: flex;
+  flex-direction: column;
+}
+
+.os-card-hd {
+  padding: 8px 12px;
+  background: #25231f;
+  color: #f0ede6;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* Nominee rows */
+.os-nominee {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-bottom: 1px solid #f0ede6;
+  transition: background .12s;
+}
+
+.os-nominee:last-child {
+  border-bottom: none;
+}
+
+.os-nominee:hover {
+  background: #fafaf6;
+}
+
+.os-nominee.winner {
+  background: #fffde6;
+}
+
+.os-nominee.winner:hover {
+  background: #fff8c0;
+}
+
+.os-nominee.seen .os-film-name {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+.os-nominee.seen .os-person-name {
+  color: #bbb;
+}
+
+.os-cb {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: #6e9e7e;
+}
+
+.os-nominee-label {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.os-film-name {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .78rem;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.os-person-name {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .68rem;
+  color: #777;
+  margin-top: 1px;
+}
+
+.os-trophy {
+  font-size: .9rem;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.os-empty {
+  padding: 40px;
+  text-align: center;
+  color: #aaa;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .85rem;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   HABITS TRACKER VIEW
+   ══════════════════════════════════════════════════════════════════════════ */
+.ht-root {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 52px);
+  background: #f9f7f4;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.ht-content {
+  display: flex;
+  flex-direction: column;
+  min-width: fit-content;
+}
+
+/* ── Left: goal + chart + stats ── */
+.ht-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 16px 20px 12px;
+  flex-shrink: 0;
+  min-width: fit-content;
+}
+
+/* Badge + chart side by side */
+.ht-chart-row {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 10px;
+}
+
+.ht-goal-badge {
+  width: 160px;
+  min-width: 160px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: #e8f5e9;
+  border: 2px solid #a5d6a7;
+  border-radius: 8px 0 0 8px;
+  padding: 10px 8px;
+  text-align: center;
+}
+
+.ht-goal-plant {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.ht-goal-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .58rem;
+  font-weight: 700;
+  color: #2e7d32;
+  letter-spacing: .06em;
+  line-height: 1.3;
+}
+
+.ht-goal-count {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.8rem;
+  color: #2e7d32;
+  line-height: 1;
+}
+
+.ht-chart-wrap {
+  background: #fff;
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px 6px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  flex-shrink: 0;
+  border-left: none;
+}
+
+.ht-chart-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .58rem;
+  font-weight: 700;
+  color: #999;
+  letter-spacing: .1em;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.ht-canvas {
+  display: block;
+}
+
+/* ── Stats rows ── */
+.ht-stats-wrap {
+  margin-bottom: 10px;
+}
+
+.ht-stats-row {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 2px;
+}
+
+.ht-stats-label {
+  width: 160px;
+  min-width: 160px;
+  flex-shrink: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .6rem;
+  font-weight: 700;
+  color: #555;
+  letter-spacing: .06em;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 4px 0 0 4px;
+}
+
+.ht-stats-cells {
+  display: flex;
+}
+
+.ht-stats-cell {
+  width: 28px;
+  min-width: 28px;
+  height: 26px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .62rem;
+  font-weight: 600;
+  color: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid rgba(255,255,255,.6);
+}
+
+/* ── Plants row ── */
+.ht-plants-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 4px 0;
+  margin-bottom: 4px;
+}
+
+.ht-plants-spacer {
+  width: 160px;
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.ht-plant-cell {
+  width: 28px;
+  min-width: 28px;
+  font-size: 1rem;
+  text-align: center;
+  cursor: default;
+  transition: transform .15s;
+}
+
+.ht-plant-cell:hover {
+  transform: scale(1.3);
+}
+
+/* ── Right: habit grid ── */
+.ht-right {
+  padding: 0 20px 20px;
+  flex-shrink: 0;
+}
+
+.ht-grid-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: fit-content;
+}
+
+.ht-grid-top {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 0;
+}
+
+.ht-hab-header {
+  width: 160px;
+  min-width: 160px;
+  flex-shrink: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .6rem;
+  font-weight: 700;
+  color: #fff;
+  background: #6e9e7e;
+  letter-spacing: .08em;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 6px 0 0 0;
+}
+
+.ht-weeks-row {
+  display: flex;
+}
+
+.ht-week-cell {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .6rem;
+  font-weight: 700;
+  color: #555;
+  background: #e8f5e9;
+  letter-spacing: .06em;
+  text-align: center;
+  padding: 6px 4px;
+  border-left: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ht-week-cell:first-child {
+  border-left: none;
+}
+
+/* Day numbers row */
+.ht-day-num-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.ht-hab-spacer {
+  width: 160px;
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.ht-day-num {
+  width: 28px;
+  min-width: 28px;
+  height: 22px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .65rem;
+  font-weight: 600;
+  color: #777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ht-day-num.we {
+  color: #e0a0b0;
+}
+
+.ht-day-num.today {
+  background: #fde68a;
+  color: #92400e;
+  border-radius: 4px;
+  font-weight: 800;
+}
+
+/* Habit rows */
+.ht-hab-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.ht-hab-name {
+  width: 160px;
+  min-width: 160px;
+  flex-shrink: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .75rem;
+  color: #444;
+  padding: 0 10px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: #f0f0ec;
+  border-radius: 4px 0 0 4px;
+}
+
+.ht-check-cell {
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid rgba(255,255,255,.7);
+}
+
+.ht-check-cell.today {
+  outline: 2px solid #f59e0b;
+  outline-offset: -2px;
+  border-radius: 2px;
+}
+
+.ht-cb {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: #6e9e7e;
+  border-radius: 3px;
+}
+
+.ht-empty {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .85rem;
+  color: #aaa;
+  font-style: italic;
+  padding: 24px 10px;
+  text-align: center;
+}
+
+.ht-left {
+  border-right: none;
+  border-bottom: 1px solid #e8e8e8;
+}
