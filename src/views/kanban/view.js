@@ -26,8 +26,15 @@ export function renderKanban(opts = {}) {
     onYearChange = null
   } = opts;
 
+  console.log('✅ renderKanban() called with cards:', cards.length);
+
   const kanbanView = document.getElementById('kanbanView');
-  if (!kanbanView) return;
+  if (!kanbanView) {
+    console.error('❌ kanbanView element not found!');
+    return;
+  }
+
+  console.log('✅ kanbanView element found');
 
   kanbanView.innerHTML = '';
 

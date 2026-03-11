@@ -106,11 +106,14 @@ async function loadApplicationData() {
  */
 function setupViewSwitching() {
   const viewButtons = document.querySelectorAll('[data-view]');
+  console.log('🔧 setupViewSwitching() found', viewButtons.length, 'buttons');
 
   viewButtons.forEach(btn => {
+    console.log('  - Button:', btn.textContent.trim(), 'data-view:', btn.dataset.view);
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const viewName = btn.dataset.view;
+      console.log('🖱️  Button clicked:', viewName);
       switchToView(viewName);
     });
   });
@@ -158,11 +161,13 @@ function setupViewCallbacks() {
  * Switch to a different view
  */
 function switchToView(viewName) {
+  console.log('📌 switchToView() called with:', viewName);
   appState.currentView = viewName;
   updateViewVisibility();
   renderCurrentView();
   updateActiveViewButton();
   updateNavigationLabel();
+  console.log('✅ switchToView() complete');
 }
 
 /**
@@ -290,7 +295,12 @@ function updateViewVisibility() {
   const currentViewId = viewMap[appState.currentView];
   if (currentViewId) {
     const el = document.getElementById(currentViewId);
-    if (el) el.style.display = '';
+    if (el) {
+      el.style.display = '';
+      console.log('👁️  Showing view:', currentViewId);
+    } else {
+      console.warn('⚠️  View element not found:', currentViewId);
+    }
   }
 }
 
@@ -298,6 +308,8 @@ function updateViewVisibility() {
  * Render current view based on appState
  */
 function renderCurrentView() {
+  console.log('🎨 renderCurrentView() called for:', appState.currentView);
+  
   switch (appState.currentView) {
     case 'annual':
       renderAnnualView({

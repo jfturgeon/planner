@@ -19,8 +19,15 @@ export function ctInitView(opts = {}) {
     onGroupFilter = null
   } = opts;
 
+  console.log('✅ ctInitView() called with contacts:', contacts.length);
+
   const contactView = document.getElementById('contactsView');
-  if (!contactView) return;
+  if (!contactView) {
+    console.error('❌ contactsView element not found!');
+    return;
+  }
+
+  console.log('✅ contactsView element found');
 
   contactView.innerHTML = '';
 
@@ -36,25 +43,33 @@ export function ctInitView(opts = {}) {
   addBtn.className = 'ct-add-btn';
   addBtn.textContent = '+ Nouveau';
   addBtn.addEventListener('click', () => {
+    console.log('✅ Add button clicked');
     if (onContactAdd) onContactAdd();
   });
   header.appendChild(addBtn);
   contactView.appendChild(header);
+
+  console.log('✅ Header created');
 
   // Content
   const content = document.createElement('div');
   content.className = 'ct-content';
 
   // Filters (group pills)
+  console.log('✅ Calling ctRenderPills...');
   ctRenderPills(content, contacts, selectedGroup, onGroupFilter);
 
   // Table
+  console.log('✅ Calling ctRenderBody...');
   ctRenderBody(content, contacts, selectedGroup, onContactSelect);
 
   // Pager
+  console.log('✅ Calling ctRenderPager...');
   ctRenderPager(content, contacts, selectedGroup);
 
   contactView.appendChild(content);
+  
+  console.log('✅ ctInitView() complete - content rendered');
 }
 
 /**

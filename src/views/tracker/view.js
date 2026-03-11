@@ -20,8 +20,13 @@ export function renderTracker(opts = {}) {
     activeShow = null
   } = opts;
 
+  console.log('✅ renderTracker() called with shows:', shows.length);
+
   const trackerView = document.getElementById('trackerView');
-  if (!trackerView) return;
+  if (!trackerView) {
+    console.error('❌ trackerView element not found!');
+    return;
+  }
 
   trackerView.innerHTML = '';
 
