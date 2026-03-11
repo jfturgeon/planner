@@ -6,23 +6,45 @@
 -- Ce fichier crée des données d'exemple pour tester la structure
 -- À adapter selon les UUID utilisateurs réels
 -- 
--- IMPORTANT: Remplacer 'test-user-uuid' par un UUID d'un utilisateur réel
+-- ⚠️ IMPORTANT - AVANT D'EXÉCUTER CE SCRIPT:
+-- =====================================================================
+-- 
+-- 1. CRÉER LES UTILISATEURS DANS SUPABASE AUTH D'ABORD:
+--    - Aller dans Supabase Dashboard → Authentication → Users
+--    - Créer au moins 2 utilisateurs (ou inviter via email)
+--    - Noter les UUID générés
+-- 
+-- 2. REMPLACER LES UUIDs DANS CE SCRIPT:
+--    CTRL+H (Find and Replace) puis:
+--    - Remplacer: 550e8400-e29b-41d4-a716-446655440000
+--    - Par: Votre vrai UUID (depuis auth.users)
+--    
+--    - Remplacer: 550e8400-e29b-41d4-a716-446655440001
+--    - Par: Votre 2e UUID (si vous avez 2 utilisateurs)
+-- 
+-- 3. COMMENT OBTENIR LES UUIDs RÉELS:
+--    Exécuter cette requête dans Supabase SQL Editor:
+--    SELECT id, email FROM auth.users;
+-- 
 -- =====================================================================
 
--- Variable pour UUID utilisateur (à remplacer)
--- \set user_id '550e8400-e29b-41d4-a716-446655440000'
-
 -- =====================================================================
--- 1. USER PROFILES - Exemple
+-- 1. USER PROFILES - AUTO-GÉNÉRÉS PAR SUPABASE AUTH
 -- =====================================================================
--- NOTE: Les users sont normalement créés par Supabase Auth
--- Cet insert suppose qu'on a déjà des users dans auth.users
+-- NOTE: Les user_profiles sont créés automatiquement par Supabase
+-- quand un utilisateur se crée via Supabase Auth.
+-- Vous n'avez pas besoin de créer manuellement les user_profiles.
+-- 
+-- Si vous devez mettre à jour les profils existants:
+/*
+UPDATE user_profiles 
+SET language = 'fr', theme = 'light'
+WHERE id = '550e8400-e29b-41d4-a716-446655440000';
 
-INSERT INTO user_profiles (id, email, full_name, language, theme)
-VALUES 
-  ('550e8400-e29b-41d4-a716-446655440000', 'jean@example.com', 'Jean Turgeon', 'fr', 'light'),
-  ('550e8400-e29b-41d4-a716-446655440001', 'marie@example.com', 'Marie Dubois', 'fr', 'dark')
-ON CONFLICT (id) DO NOTHING;
+UPDATE user_profiles 
+SET language = 'fr', theme = 'dark'
+WHERE id = '550e8400-e29b-41d4-a716-446655440001';
+*/
 
 -- =====================================================================
 -- 2. PLANNER DATA - Données d'agenda 2026
@@ -372,40 +394,95 @@ ON CONFLICT DO NOTHING;
 -- =====================================================================
 
 -- =====================================================================
--- NOTES D'UTILISATION
+-- NOTES D'UTILISATION - ÉTAPES ESSENTIELLES
 -- =====================================================================
 --
--- 1. REMPLACER LES UUIDs:
---    Les UUIDs utilisés ici sont des exemples:
---    - '550e8400-e29b-41d4-a716-446655440000'
---    - '550e8400-e29b-41d4-a716-446655440001'
+-- ✅ ÉTAPE 1 - CRÉER LES UTILISATEURS DANS SUPABASE AUTH
+-- =========================================================
+-- 
+-- Allez dans: Supabase Dashboard → Authentication → Users
+-- Créez au moins 2 utilisateurs (via Invite ou Sign Up)
+-- Exemple d'emails:
+--   - jean@example.com
+--   - marie@example.com
+-- 
+-- Notez les UUIDs générés automatiquement pour chaque utilisateur.
+-- Vous pouvez voir les UUIDs en exécutant:
 --
---    À remplacer par les vrais UUIDs de vos utilisateurs Supabase Auth
---    Pour obtenir les UUIDs: SELECT id, email FROM auth.users;
+--   SELECT id, email FROM auth.users;
 --
--- 2. PRÉALABLE:
---    S'assurer que les utilisateurs existent déjà dans:
---    - auth.users (créés via Supabase Auth)
---    - Sinon, les données seront rejetées par les contraintes FK
+-- ✅ ÉTAPE 2 - REMPLACER LES UUIDs DANS CE SCRIPT
+-- ================================================
 --
--- 3. EXÉCUTION:
---    - Copier ce fichier complet
---    - Aller dans Supabase dashboard → SQL Editor
---    - Coller et exécuter
+-- Les UUIDs actuels dans ce script sont des exemples:
+--   - '550e8400-e29b-41d4-a716-446655440000' (Jean)
+--   - '550e8400-e29b-41d4-a716-446655440001' (Marie)
 --
--- 4. VÉRIFICATION:
---    Après insertion, vérifier avec:
+-- À REMPLACER PAR VOS VRAIES UUIDs:
+--   1. Utiliser CTRL+H (Find and Replace)
+--   2. Remplacer '550e8400-e29b-41d4-a716-446655440000' par votre UUID réel
+--   3. Remplacer '550e8400-e29b-41d4-a716-446655440001' par votre 2e UUID (optionnel)
+--   4. Sauvegarder
 --
---    SELECT COUNT(*) FROM planner_data;         -- Devrait = 1
---    SELECT COUNT(*) FROM contacts;              -- Devrait = 8
---    SELECT COUNT(*) FROM kanban_cards;          -- Devrait = 8
---    SELECT COUNT(*) FROM tracker_episodes;      -- Devrait = 12
---    SELECT COUNT(*) FROM calendar_events;       -- Devrait = 10
+-- ✅ ÉTAPE 3 - EXÉCUTER LE SCRIPT
+-- ================================
 --
--- 5. SUPPRESSION (si besoin de reset):
+-- 1. Copier ce fichier COMPLET
+-- 2. Aller dans Supabase → SQL Editor
+-- 3. Coller le contenu
+-- 4. Cliquer "Run" (ou RUN)
 --
---    -- Supprimer un utilisateur et toutes ses données:
---    DELETE FROM user_profiles 
---    WHERE id = '550e8400-e29b-41d4-a716-446655440000';
+-- ✅ ÉTAPE 4 - VÉRIFIER LES DONNÉES
+-- ==================================
+--
+-- Après insertion, vérifier que tout s'est bien passé:
+--
+--   SELECT COUNT(*) as total FROM planner_data;      -- Devrait = 1
+--   SELECT COUNT(*) as total FROM contacts;          -- Devrait = 8
+--   SELECT COUNT(*) as total FROM kanban_cards;      -- Devrait = 8
+--   SELECT COUNT(*) as total FROM tracker_episodes;  -- Devrait = 12
+--   SELECT COUNT(*) as total FROM calendar_events;   -- Devrait = 10
+--
+-- =====================================================================
+-- TROUBLESHOOTING
+-- =====================================================================
+--
+-- ❌ Erreur: "Key is not present in table 'users'"
+--    → Solution: Créer les utilisateurs dans auth.users d'abord (Étape 1)
+--
+-- ❌ Erreur: "Syntax error near"
+--    → Solution: Vérifier que tous les UUIDs ont été remplacés correctement
+--
+-- ❌ Les données n'apparaissent pas
+--    → Solution: Vérifier que vous êtes connecté au bon projet Supabase
+--               et à la bonne base de données
+--
+-- ✅ SUPPRESSION COMPLÈTE (si besoin de reset)
+-- =====================================================
+--
+-- Pour supprimer TOUS les utilisateurs et leurs données:
+--
+--   DELETE FROM audit_log WHERE user_id IS NOT NULL;
+--   DELETE FROM connection_history WHERE user_id IS NOT NULL;
+--   DELETE FROM calendar_events WHERE user_id IS NOT NULL;
+--   DELETE FROM calendar_events WHERE user_id IS NOT NULL;
+--   DELETE FROM calendars_system WHERE user_id IS NOT NULL;
+--   DELETE FROM oscars_watched WHERE user_id IS NOT NULL;
+--   DELETE FROM tracker_schedule WHERE user_id IS NOT NULL;
+--   DELETE FROM tracker_episodes WHERE user_id IS NOT NULL;
+--   DELETE FROM kanban_cards WHERE user_id IS NOT NULL;
+--   DELETE FROM kanban_statuses WHERE user_id IS NOT NULL;
+--   DELETE FROM contacts WHERE user_id IS NOT NULL;
+--   DELETE FROM habits WHERE user_id IS NOT NULL;
+--   DELETE FROM day_events WHERE user_id IS NOT NULL;
+--   DELETE FROM weekly_data WHERE user_id IS NOT NULL;
+--   DELETE FROM planner_data WHERE user_id IS NOT NULL;
+--   DELETE FROM app_settings WHERE user_id IS NOT NULL;
+--
+-- Pour supprimer UN utilisateur spécifique ET toutes ses données:
+--
+--   DELETE FROM user_profiles 
+--   WHERE id = '550e8400-e29b-41d4-a716-446655440000';
+--   -- Les autres données se supprimeront automatiquement via CASCADE
 --
 -- =====================================================================
