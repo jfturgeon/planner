@@ -708,11 +708,32 @@ function showNotification(event) {
 }
 
 // Button handlers
+// Migrate events/tasks without calendarId to default calendar
+function migrateEventsToDefaultCalendar() {
+  const events = loadEvents();
+  let updated = false;
+  
+  events.forEach(event => {
+    if (!event.calendarId || event.calendarId === '') {
+      event.calendarId = 'default';
+      updated = true;
+    }
+  });
+  
+  if (updated) {
+    saveEvents(events);
+    console.log('✅ Events migrated to default calendar');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Request notification permission
   if ('Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
   }
+  
+  // Migrate events without calendar assignment
+  migrateEventsToDefaultCalendar();
 
   const btnAddCalendar = document.getElementById('btnAddCalendar');
   if (btnAddCalendar) {
