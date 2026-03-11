@@ -2949,37 +2949,71 @@ footer {
 
 /* Profile Modal */
 .profile-modal {
-  max-width: 500px;
-  width: 90vw;
+  max-width: 520px;
+  width: min(520px, 95vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 16px;
+}
+
+.profile-modal .modal-hd {
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 2;
+  border-radius: 16px 16px 0 0;
+}
+
+.profile-modal .modal-hd h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.profile-modal .modal-bd {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .profile-tabs {
   display: flex;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  gap: 0;
+  margin-bottom: 4px;
 }
 
 .profile-tab {
   flex: 1;
-  padding: 12px 16px;
+  padding: 10px 16px;
   background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--muted);
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   border-bottom: 2px solid transparent;
+  white-space: nowrap;
 }
 
 .profile-tab:hover {
-  color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  background: var(--bg);
 }
 
 .profile-tab.active {
-  color: #10b981;
-  border-bottom-color: #10b981;
+  color: var(--accent2);
+  border-bottom-color: var(--accent2);
 }
 
 .profile-tab-content {
@@ -2997,45 +3031,47 @@ footer {
 .profile-label {
   display: block;
   margin-bottom: 6px;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
   font-family: 'DM Sans', sans-serif;
 }
 
 .profile-email {
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  color: #10b981;
+  padding: 9px 12px;
+  background: #fafaf8;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
   font-family: 'Courier New', monospace;
   word-break: break-all;
+  font-size: 0.85rem;
 }
 
 .profile-input {
   width: 100%;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  color: #f4f1eb;
+  padding: 9px 12px;
+  background: #fafaf8;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem;
-  transition: all 0.15s;
+  font-size: 0.85rem;
+  transition: border 0.15s;
   box-sizing: border-box;
 }
 
 .profile-input:focus {
   outline: none;
-  background: rgba(255, 255, 255, 0.08);
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  border-color: var(--accent2);
+  background: #fafaf8;
 }
 
 .profile-error {
-  color: #ff6b6b;
-  font-size: 0.85rem;
+  color: var(--accent);
+  font-size: 0.8rem;
   margin-bottom: 10px;
   min-height: 20px;
 }
@@ -3043,24 +3079,23 @@ footer {
 .profile-btn {
   width: 100%;
   padding: 10px 16px;
-  background: #10b981;
+  background: var(--accent2);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.88rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.15s;
 }
 
 .profile-btn:hover {
-  background: #0ea378;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  background: #2258a0;
 }
 
 .profile-btn:disabled {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--muted);
   cursor: not-allowed;
 }
 
@@ -3697,6 +3732,13 @@ function switchView(mode){
   if(gcalEl) gcalEl.style.display = mode==='gcal' ? '' : 'none';
   const habEl = document.getElementById('habitsView');
   if(habEl) habEl.style.display = mode==='habits' ? '' : 'none';
+  // Hide other view sections when switching to agenda
+  const ctEl = document.getElementById('contactsView');
+  if(ctEl) ctEl.style.display = 'none';
+  const trEl = document.getElementById('trackerView');
+  if(trEl) trEl.style.display = 'none';
+  const kbEl = document.getElementById('kanbanView');
+  if(kbEl) kbEl.style.display = 'none';
   if(mode==='annual')  { render(); }
   if(mode==='month')   { renderMonthView(); }
   if(mode==='weekly')  { renderWeeklyView(); }
