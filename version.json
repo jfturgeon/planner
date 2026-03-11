@@ -1,8 +1,9 @@
 {
-    "version": "1.2.8",
-    "buildNumber": 23,
+    "version": "1.2.9",
+    "buildNumber": 24,
     "lastUpdate": "2026-03-11",
     "changelog": [
+        "1.2.9 (Build 24): Enhanced Contacts View - DD/MM/YYYY birthdays with dynamic age, colored tag pills with dots, page number pagination, tag toggle picker modal, groups management modal",
         "1.2.8 (Build 23): COMPLETE CONTACTS VIEW - Full CRUD, pagination, sorting, filtering, and modal from localStorage ap_contacts key",
         "1.2.7 (Build 22): FIX CRITICAL TIMING ISSUE - Call initApp() directly instead of relying on event listeners",
         "1.2.6 (Build 21): Add comprehensive logging to debug view rendering issues",

@@ -1,68 +1,102 @@
 /**
- * CONTACTS VIEW - Complete rewrite with full functionality
- * Displays searchable contact table with pagination, sorting, and filtering
+ * CONTACTS VIEW - Complete rewrite with enhanced UI
+ * - Pills with colors and count
+ * - Birthday format: DD/MM/YYYY (age ans) with dynamic age calculation
+ * - Pagination with page numbers
+ * - Tags filter with color dots
+ * - Modal for add/edit with tag picker
+ * - Groups/tags management modal
  */
 
 const CONTACTS_KEY = 'ap_contacts';
-const CONTACTS_GROUPS_KEY = 'ap_contact_groups';
+const GROUPS_KEY = 'ap_contact_groups';
 const CT_PAGE_SIZE = 15;
+const CT_TAG_COLORS = [
+  '#7cb9e8','#8dd4a0','#e8a87c','#c4a8e8',
+  '#e8d47c','#e889b8','#7ce8d4','#a8b8e8',
+  '#e88888','#b8e88d','#e8c47c','#8ab8e8',
+];
 
-// View state variables
+// View state
 let ctCurrentPage = 1;
 let ctTextFilter = '';
 let ctTagFilter = '';
 let ctSortField = 'ln';
 let ctSortAsc = true;
 
-/**
- * Load contacts from localStorage
- */
 function ctLoadContacts() {
   const data = localStorage.getItem(CONTACTS_KEY);
-  if (!data) return [];
-  try {
-    return JSON.parse(data);
-  } catch (e) {
-    console.error('Failed to load contacts:', e);
-    return [];
-  }
+  return data ? JSON.parse(data) : [];
 }
 
-/**
- * Save contacts to localStorage
- */
 function ctSaveContacts(contacts) {
   localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
-  console.log('✅ Contacts saved to localStorage');
+}
+
+function ctLoadGroups() {
+  const data = localStorage.getItem(GROUPS_KEY);
+  if (data) return JSON.parse(data);
+  // Auto-generate from contact tags
+  const allTags = new Set();
+  ctLoadContacts().forEach(c => {
+    if (c.tags) (Array.isArray(c.tags) ? c.tags : []).forEach(t => allTags.add(t));
+  });
+  return Array.from(allTags).sort();
+}
+
+function ctSaveGroups(groups) {
+  localStorage.setItem(GROUPS_KEY, JSON.stringify(groups));
+}
+
+function ctTagColor(tag, groups) {
+  const idx = groups.indexOf(tag);
+  return CT_TAG_COLORS[idx >= 0 ? idx % CT_TAG_COLORS.length : (tag.charCodeAt(0) % CT_TAG_COLORS.length)];
+}
+
+function ctTagBg(tag, groups) {
+  const col = ctTagColor(tag, groups);
+  return col + '28'; // ~16% opacity
+}
+
+function ctKey(c) {
+  return `${c.fn}|${c.ln}|${c.bm}|${c.bd}|${c.by}`;
 }
 
 /**
- * Initialize contacts view
- * @param {Object} opts - Configuration options
- * @param {Array} opts.contacts - Array of contacts
- * @param {Function} opts.onContactSelect - Callback when contact selected
- * @param {Function} opts.onContactAdd - Callback to add new contact
+ * Format birthday with age calculation
+ * @returns {string} Example: "12/10/1977 (47 ans)"
  */
-export function ctInitView(opts = {}) {
-  const {
-    contacts = [],
-    selectedGroup = 'all',
-    onContactSelect = null,
-    onContactAdd = null,
-    onGroupFilter = null
-  } = opts;
+function ctFormatBirthday(bm, bd, by) {
+  if (!bm || !bd) return null;
+  
+  let display = `${String(bd).padStart(2, '0')}/${String(bm).padStart(2, '0')}`;
+  
+  if (by) {
+    display += `/${by}`;
+    // Calculate age based on if birthday has passed this year
+    const today = new Date();
+    const thisYear = today.getFullYear();
+    let age = thisYear - by;
+    const birthDate = new Date(thisYear, bm - 1, bd);
+    if (birthDate > today) {
+      age--;
+    }
+    display += ` (${age} ans)`;
+  }
+  
+  return display;
+}
 
-  console.log('✅ ctInitView() called - loading contacts from localStorage');
+export function ctInitView(opts = {}) {
+  const allContacts = ctLoadContacts();
+  const groups = ctLoadGroups();
+  console.log('📦 Contacts:', allContacts.length, 'Groups:', groups.length);
 
   const contactView = document.getElementById('contactsView');
   if (!contactView) {
-    console.error('❌ contactsView element not found!');
+    console.error('❌ contactsView not found');
     return;
   }
-
-  // Load from localStorage
-  const allContacts = ctLoadContacts();
-  console.log('📦 Contacts loaded from localStorage:', allContacts.length);
 
   contactView.innerHTML = '';
 
@@ -84,10 +118,11 @@ export function ctInitView(opts = {}) {
   // Search box
   const searchWrap = document.createElement('div');
   searchWrap.className = 'ct-search-wrap';
+  if (ctTextFilter) searchWrap.classList.add('has-value');
+  
   const searchInput = document.createElement('input');
   searchInput.type = 'text';
   searchInput.className = 'ct-search-input';
-  searchInput.id = 'ctSearchInput';
   searchInput.placeholder = 'Rechercher…';
   searchInput.value = ctTextFilter;
   
@@ -95,12 +130,14 @@ export function ctInitView(opts = {}) {
   clearBtn.className = 'ct-search-clear';
   clearBtn.textContent = '✕';
   clearBtn.title = 'Effacer';
-  clearBtn.addEventListener('click', () => {
+  clearBtn.addEventListener('click', (e) => {
+    e.preventDefault();
     ctTextFilter = '';
     searchInput.value = '';
     searchWrap.classList.remove('has-value');
     ctCurrentPage = 1;
-    ctRenderTable(contactView, allContacts);
+    ctRenderPills(wrapper, allContacts);
+    ctRenderTable(wrapper, allContacts);
     searchInput.focus();
   });
 
@@ -108,10 +145,10 @@ export function ctInitView(opts = {}) {
     ctTextFilter = e.target.value;
     searchWrap.classList.toggle('has-value', !!ctTextFilter);
     ctCurrentPage = 1;
-    ctRenderTable(contactView, allContacts);
+    ctRenderPills(wrapper, allContacts);
+    ctRenderTable(wrapper, allContacts);
   });
 
-  if (ctTextFilter) searchWrap.classList.add('has-value');
   searchWrap.appendChild(searchInput);
   searchWrap.appendChild(clearBtn);
   toolbar.appendChild(searchWrap);
@@ -124,9 +161,9 @@ export function ctInitView(opts = {}) {
   // Add button
   const addBtn = document.createElement('button');
   addBtn.className = 'ct-add-btn';
-  addBtn.textContent = '+ Ajouter';
+  addBtn.textContent = '+ Nouveau';
+  addBtn.style.cssText = 'padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--accent);color:white;font-family:"DM Sans",sans-serif;font-size:.82rem;cursor:pointer;font-weight:500;';
   addBtn.addEventListener('click', () => {
-    console.log('➕ Add contact button clicked');
     ctShowContactModal(null, allContacts);
   });
   toolbar.appendChild(addBtn);
@@ -142,7 +179,7 @@ export function ctInitView(opts = {}) {
   wrapper.appendChild(toolbar);
 
   // ───────────────────────────────────────────────────────
-  // TAG PILLS
+  // TAG PILLS (with colors and dots)
   // ───────────────────────────────────────────────────────
   ctRenderPills(wrapper, allContacts);
 
@@ -156,50 +193,64 @@ export function ctInitView(opts = {}) {
 }
 
 /**
- * Render tag filter pills
+ * Render colored tag filter pills with dots
  */
 function ctRenderPills(container, allContacts) {
+  const groups = ctLoadGroups();
+  
+  // Remove old pills
+  const oldPills = container.querySelector('.ct-group-pills');
+  if (oldPills) oldPills.remove();
+
   const pillsDiv = document.createElement('div');
+  pillsDiv.id = 'ctGroupPills';
   pillsDiv.className = 'ct-group-pills';
 
-  const mkPill = (label, filterVal, count) => {
+  const mkPill = (label, filterVal, count, color) => {
     const pill = document.createElement('button');
     pill.className = 'ct-group-pill' + (ctTagFilter === filterVal ? ' active' : '');
-    pill.textContent = `${label} (${count})`;
+    
+    if (color && ctTagFilter !== filterVal) {
+      pill.style.borderColor = color;
+      pill.style.color = color;
+    }
+    if (color && ctTagFilter === filterVal) {
+      pill.style.background = color;
+      pill.style.borderColor = color;
+    }
+
+    if (color) {
+      const dot = document.createElement('span');
+      dot.className = 'ct-pill-dot';
+      dot.style.background = color;
+      pill.appendChild(dot);
+    }
+    
+    const span = document.createElement('span');
+    span.textContent = `${label} (${count})`;
+    pill.appendChild(span);
+
     pill.addEventListener('click', () => {
       ctTagFilter = ctTagFilter === filterVal ? '' : filterVal;
       ctCurrentPage = 1;
-      // Re-render pills and table
-      const parent = container.querySelector('.ct-group-pills')?.parentElement || container;
-      const oldPills = parent.querySelector('.ct-group-pills');
-      if (oldPills) oldPills.remove();
-      ctRenderPills(parent, allContacts);
-      const oldTable = parent.querySelector('.ct-table-wrap');
-      if (oldTable) oldTable.remove();
-      ctRenderTable(parent, allContacts);
+      ctRenderPills(container, allContacts);
+      ctRenderTable(container, allContacts);
     });
     pillsDiv.appendChild(pill);
   };
 
   // "All" pill
-  mkPill('Tous', '', allContacts.length);
+  mkPill('Tous', '', allContacts.length, null);
 
-  // Group pills
-  const groups = new Set();
-  allContacts.forEach(c => {
-    if (c.tags) {
-      (Array.isArray(c.tags) ? c.tags : []).forEach(t => groups.add(t));
-    }
-  });
-
-  groups.forEach(group => {
-    const count = allContacts.filter(c => c.tags && c.tags.includes(group)).length;
-    mkPill(group, group, count);
+  // Tag pills with colors
+  groups.forEach(g => {
+    const count = allContacts.filter(c => c.tags && c.tags.includes(g)).length;
+    mkPill(g, g, count, ctTagColor(g, groups));
   });
 
   // No-tag pill
   const noTag = allContacts.filter(c => !c.tags || c.tags.length === 0).length;
-  if (noTag > 0) mkPill('Sans tag', '__none__', noTag);
+  if (noTag > 0) mkPill('Sans tag', '__none__', noTag, '#bbb');
 
   container.appendChild(pillsDiv);
 }
@@ -397,7 +448,226 @@ function ctRenderTable(container, allContacts) {
   tableWrap.appendChild(table);
   container.appendChild(tableWrap);
 
-  // Pager
+/**
+ * Render table with pagination
+ */
+function ctRenderTable(container, allContacts) {
+  const groups = ctLoadGroups();
+  
+  // Filter by tag
+  let filtered = allContacts;
+  if (ctTagFilter === '__none__') {
+    filtered = filtered.filter(c => !c.tags || c.tags.length === 0);
+  } else if (ctTagFilter) {
+    filtered = filtered.filter(c => c.tags && c.tags.includes(ctTagFilter));
+  }
+
+  // Filter by text
+  if (ctTextFilter) {
+    const q = ctTextFilter.toLowerCase();
+    filtered = filtered.filter(c => 
+      (c.fn || '').toLowerCase().includes(q) || 
+      (c.ln || '').toLowerCase().includes(q)
+    );
+  }
+
+  // Sort
+  filtered.sort((a, b) => {
+    let aVal, bVal;
+    if (ctSortField === 'fn') {
+      aVal = (a.fn || '').toLowerCase();
+      bVal = (b.fn || '').toLowerCase();
+    } else if (ctSortField === 'ln') {
+      aVal = (a.ln || '').toLowerCase();
+      bVal = (b.ln || '').toLowerCase();
+    } else if (ctSortField === 'bm') {
+      aVal = (a.bm || 0) * 100 + (a.bd || 0);
+      bVal = (b.bm || 0) * 100 + (b.bd || 0);
+    } else {
+      aVal = bVal = 0;
+    }
+    
+    if (ctSortAsc) {
+      return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+    } else {
+      return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+    }
+  });
+
+  // Pagination
+  const total = filtered.length;
+  const pages = Math.ceil(total / CT_PAGE_SIZE) || 1;
+  if (ctCurrentPage > pages) ctCurrentPage = pages;
+  const start = (ctCurrentPage - 1) * CT_PAGE_SIZE;
+  const end = start + CT_PAGE_SIZE;
+  const pageContacts = filtered.slice(start, end);
+
+  // Remove old table and pager
+  const oldTable = container.querySelector('.ct-table-wrap');
+  if (oldTable) oldTable.remove();
+  const oldPager = container.querySelector('.ct-pager');
+  if (oldPager) oldPager.remove();
+
+  // ───────────────────────────────────────────────────────
+  // TABLE
+  // ───────────────────────────────────────────────────────
+  const tableWrap = document.createElement('div');
+  tableWrap.className = 'ct-table-wrap';
+
+  const table = document.createElement('table');
+  table.className = 'ct-table';
+
+  // Header
+  const thead = document.createElement('thead');
+  const hrow = document.createElement('tr');
+  
+  const mkHeaderCell = (label, field) => {
+    const th = document.createElement('th');
+    th.className = 'ct-th' + (field ? ' ct-th-sort' : '');
+    const span = document.createElement('span');
+    span.textContent = label;
+    th.appendChild(span);
+    
+    if (field) {
+      const icon = document.createElement('span');
+      icon.className = 'ct-sort-icon';
+      icon.textContent = ctSortField === field ? (ctSortAsc ? '▲' : '▼') : '△';
+      th.appendChild(icon);
+      th.style.cursor = 'pointer';
+      th.addEventListener('click', () => {
+        if (ctSortField === field) {
+          ctSortAsc = !ctSortAsc;
+        } else {
+          ctSortField = field;
+          ctSortAsc = true;
+        }
+        ctRenderTable(container, allContacts);
+      });
+    }
+    hrow.appendChild(th);
+  };
+
+  mkHeaderCell('Prénom', 'fn');
+  mkHeaderCell('Nom', 'ln');
+  mkHeaderCell('Tags', null);
+  mkHeaderCell('Anniversaire', 'bm');
+  mkHeaderCell('Décès', null);
+  mkHeaderCell('', null);
+
+  thead.appendChild(hrow);
+  table.appendChild(thead);
+
+  // Body
+  const tbody = document.createElement('tbody');
+  if (pageContacts.length === 0) {
+    const emptyRow = document.createElement('tr');
+    const emptyTd = document.createElement('td');
+    emptyTd.colSpan = 6;
+    emptyTd.style.cssText = 'padding:24px;text-align:center;color:#bbb;';
+    emptyTd.textContent = ctTextFilter || ctTagFilter ? 'Aucun résultat.' : 'Aucun contact.';
+    emptyRow.appendChild(emptyTd);
+    tbody.appendChild(emptyRow);
+  }
+
+  pageContacts.forEach(c => {
+    const tr = document.createElement('tr');
+
+    // First name
+    const fnTd = document.createElement('td');
+    fnTd.className = 'ct-td';
+    fnTd.textContent = c.fn || '';
+    tr.appendChild(fnTd);
+
+    // Last name
+    const lnTd = document.createElement('td');
+    lnTd.className = 'ct-td';
+    lnTd.textContent = c.ln || '';
+    tr.appendChild(lnTd);
+
+    // Tags (with color badges)
+    const tagsTd = document.createElement('td');
+    tagsTd.className = 'ct-td ct-tags-cell';
+    if (c.tags && c.tags.length > 0) {
+      const cell = document.createElement('div');
+      cell.style.display = 'flex';
+      cell.style.flexWrap = 'wrap';
+      cell.style.gap = '4px';
+      c.tags.forEach(tag => {
+        const badge = document.createElement('span');
+        badge.className = 'ct-grp-badge';
+        const col = ctTagColor(tag, groups);
+        badge.style.cssText = `background:${ctTagBg(tag, groups)};color:${col};border-color:${col};border:1px solid;`;
+        badge.textContent = tag;
+        cell.appendChild(badge);
+      });
+      tagsTd.appendChild(cell);
+    } else {
+      tagsTd.textContent = '—';
+      tagsTd.style.color = '#bbb';
+    }
+    tr.appendChild(tagsTd);
+
+    // Birthday (with age)
+    const bdayTd = document.createElement('td');
+    bdayTd.className = 'ct-td';
+    const bdayStr = ctFormatBirthday(c.bm, c.bd, c.by);
+    bdayTd.textContent = bdayStr || '—';
+    if (!bdayStr) bdayTd.style.color = '#bbb';
+    tr.appendChild(bdayTd);
+
+    // Death date
+    const ddayTd = document.createElement('td');
+    ddayTd.className = 'ct-td';
+    if (c.dy && c.dm && c.dd) {
+      ddayTd.textContent = `${c.dy}-${String(c.dm).padStart(2, '0')}-${String(c.dd).padStart(2, '0')}`;
+    } else {
+      ddayTd.textContent = '—';
+      ddayTd.style.color = '#bbb';
+    }
+    tr.appendChild(ddayTd);
+
+    // Actions
+    const actTd = document.createElement('td');
+    actTd.className = 'ct-td-actions';
+    actTd.style.cssText = 'display:flex;gap:4px;';
+    
+    const editBtn = document.createElement('button');
+    editBtn.className = 'ct-row-btn';
+    editBtn.style.cssText = 'padding:4px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;cursor:pointer;font-size:.9rem;';
+    editBtn.textContent = '✏';
+    editBtn.title = 'Modifier';
+    editBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      ctShowContactModal(c, allContacts);
+    });
+    actTd.appendChild(editBtn);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'ct-row-btn ct-row-btn-del';
+    delBtn.style.cssText = 'padding:4px 8px;background:#fee;border:1px solid #f99;border-radius:4px;cursor:pointer;font-size:.9rem;color:#c33;';
+    delBtn.textContent = '✕';
+    delBtn.title = 'Supprimer';
+    delBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (confirm(`Supprimer ${c.fn} ${c.ln} ?`)) {
+        const updated = allContacts.filter(x => ctKey(x) !== ctKey(c));
+        ctSaveContacts(updated);
+        ctInitView({});
+      }
+    });
+    actTd.appendChild(delBtn);
+
+    tr.appendChild(actTd);
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  tableWrap.appendChild(table);
+  container.appendChild(tableWrap);
+
+  // ───────────────────────────────────────────────────────
+  // PAGINATION (page numbers)
+  // ───────────────────────────────────────────────────────
   const pagerDiv = document.createElement('div');
   pagerDiv.className = 'ct-pager';
 
@@ -409,33 +679,56 @@ function ctRenderTable(container, allContacts) {
   pagerDiv.appendChild(info);
 
   if (pages > 1) {
-    const prevBtn = document.createElement('button');
-    prevBtn.className = 'ct-pager-btn';
-    prevBtn.textContent = '‹ Précédent';
-    prevBtn.disabled = ctCurrentPage === 1;
-    prevBtn.addEventListener('click', () => {
-      if (ctCurrentPage > 1) {
-        ctCurrentPage--;
-        ctRenderTable(container, allContacts);
-      }
-    });
-    pagerDiv.appendChild(prevBtn);
+    const btns = document.createElement('div');
+    btns.className = 'ct-pager-btns';
+    btns.style.cssText = 'display:flex;gap:4px;align-items:center;';
 
-    const pageInfo = document.createElement('span');
-    pageInfo.textContent = ` Page ${ctCurrentPage}/${pages} `;
-    pagerDiv.appendChild(pageInfo);
-
-    const nextBtn = document.createElement('button');
-    nextBtn.className = 'ct-pager-btn';
-    nextBtn.textContent = 'Suivant ›';
-    nextBtn.disabled = ctCurrentPage === pages;
-    nextBtn.addEventListener('click', () => {
-      if (ctCurrentPage < pages) {
-        ctCurrentPage++;
-        ctRenderTable(container, allContacts);
+    const mkBtn = (label, page, active = false, disabled = false) => {
+      const b = document.createElement('button');
+      b.className = 'ct-pager-btn' + (active ? ' active' : '');
+      b.style.cssText = `
+        padding:5px 10px;border-radius:4px;border:1px solid var(--border);
+        background:var(--surface);cursor:pointer;font-size:.8rem;
+        ${active ? 'background:var(--accent2);color:white;border-color:var(--accent2);font-weight:700;' : ''}
+        ${disabled ? 'opacity:.35;cursor:default;' : ''}
+      `;
+      b.textContent = label;
+      b.disabled = disabled;
+      if (!disabled && !active) {
+        b.addEventListener('click', () => {
+          ctCurrentPage = page;
+          ctRenderTable(container, allContacts);
+        });
       }
-    });
-    pagerDiv.appendChild(nextBtn);
+      btns.appendChild(b);
+    };
+
+    const dots = () => {
+      const d = document.createElement('span');
+      d.className = 'ct-pager-dots';
+      d.style.cssText = 'font-size:.8rem;color:var(--muted);padding:0 2px;';
+      d.textContent = '…';
+      btns.appendChild(d);
+    };
+
+    // Previous
+    mkBtn('‹', ctCurrentPage - 1, false, ctCurrentPage <= 1);
+
+    // Page numbers with ellipsis
+    for (let i = 1; i <= pages; i++) {
+      if (i === 1 || i === pages || Math.abs(i - ctCurrentPage) <= 1) {
+        mkBtn(i, i, i === ctCurrentPage);
+      } else if (i === 2 && ctCurrentPage > 4) {
+        dots();
+      } else if (i === pages - 1 && ctCurrentPage < pages - 3) {
+        dots();
+      }
+    }
+
+    // Next
+    mkBtn('›', ctCurrentPage + 1, false, ctCurrentPage >= pages);
+
+    pagerDiv.appendChild(btns);
   }
 
   container.appendChild(pagerDiv);
@@ -445,44 +738,22 @@ function ctRenderTable(container, allContacts) {
  * Show contact modal for add/edit
  */
 function ctShowContactModal(contact, allContacts) {
-  console.log('📋 Showing contact modal for:', contact ? `${contact.fn} ${contact.ln}` : 'new contact');
-  
-  // Create modal
-  const modal = document.createElement('div');
-  modal.className = 'ct-modal';
-  modal.id = 'contactModal';
-  modal.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  `;
+  const groups = ctLoadGroups();
+  console.log('📋 Contact modal:', contact ? 'edit' : 'new');
 
+  // Modal overlay
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9000;';
+
+  // Content
   const content = document.createElement('div');
-  content.className = 'ct-modal-content';
-  content.style.cssText = `
-    background: white;
-    padding: 24px;
-    border-radius: 8px;
-    max-width: 500px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  `;
+  content.style.cssText = 'background:white;padding:24px;border-radius:8px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.15);';
 
   const title = document.createElement('h2');
   title.textContent = contact ? `Modifier: ${contact.fn} ${contact.ln}` : 'Nouveau Contact';
   title.style.marginBottom = '16px';
   content.appendChild(title);
 
-  // Form
   const form = document.createElement('form');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -491,211 +762,233 @@ function ctShowContactModal(contact, allContacts) {
     const bm = form.bm.value ? Number(form.bm.value) : null;
     const bd = form.bd.value ? Number(form.bd.value) : null;
     const by = form.by.value ? Number(form.by.value) : null;
-    const tags = form.tags.value.split(',').map(t => t.trim()).filter(t => t);
+    
+    // Get selected tags from toggles
+    const selectedTags = [];
+    form.querySelectorAll('.ct-tag-toggle.selected').forEach(btn => {
+      selectedTags.push(btn.textContent);
+    });
 
-    const newContact = { fn, ln, bm, bd, by, tags };
+    const newContact = { fn, ln, bm, bd, by, tags: selectedTags };
 
     if (contact) {
-      // Edit
       const idx = allContacts.findIndex(c => ctKey(c) === ctKey(contact));
       if (idx >= 0) allContacts[idx] = newContact;
     } else {
-      // Add
       allContacts.push(newContact);
     }
-    
+
     ctSaveContacts(allContacts);
     modal.remove();
     ctInitView({});
   });
 
-  // First name
-  const fnGroup = document.createElement('div');
-  fnGroup.style.marginBottom = '12px';
-  const fnLabel = document.createElement('label');
-  fnLabel.textContent = 'Prénom:';
-  fnLabel.style.display = 'block';
-  fnLabel.style.marginBottom = '4px';
-  fnLabel.style.fontWeight = '500';
-  const fnInput = document.createElement('input');
-  fnInput.type = 'text';
-  fnInput.name = 'fn';
-  fnInput.value = contact?.fn || '';
-  fnInput.style.width = '100%';
-  fnInput.style.padding = '6px';
-  fnInput.style.border = '1px solid var(--border)';
-  fnInput.style.borderRadius = '4px';
-  fnInput.style.boxSizing = 'border-box';
-  fnGroup.appendChild(fnLabel);
-  fnGroup.appendChild(fnInput);
-  form.appendChild(fnGroup);
+  // Field factory
+  const mkField = (label, name, type = 'text', value = '') => {
+    const div = document.createElement('div');
+    div.style.marginBottom = '12px';
+    const lbl = document.createElement('label');
+    lbl.style.cssText = 'display:block;font-family:"DM Sans",sans-serif;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;';
+    lbl.textContent = label;
+    div.appendChild(lbl);
+    const inp = document.createElement('input');
+    inp.type = type;
+    inp.name = name;
+    inp.value = value;
+    inp.style.cssText = 'width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;box-sizing:border-box;font-size:.85rem;';
+    if (type === 'number') {
+      inp.step = '1';
+      if (name === 'bm') { inp.min = '1'; inp.max = '12'; }
+      if (name === 'bd') { inp.min = '1'; inp.max = '31'; }
+    }
+    div.appendChild(inp);
+    form.appendChild(div);
+    return inp;
+  };
 
-  // Last name
-  const lnGroup = document.createElement('div');
-  lnGroup.style.marginBottom = '12px';
-  const lnLabel = document.createElement('label');
-  lnLabel.textContent = 'Nom:';
-  lnLabel.style.display = 'block';
-  lnLabel.style.marginBottom = '4px';
-  lnLabel.style.fontWeight = '500';
-  const lnInput = document.createElement('input');
-  lnInput.type = 'text';
-  lnInput.name = 'ln';
-  lnInput.value = contact?.ln || '';
-  lnInput.style.width = '100%';
-  lnInput.style.padding = '6px';
-  lnInput.style.border = '1px solid var(--border)';
-  lnInput.style.borderRadius = '4px';
-  lnInput.style.boxSizing = 'border-box';
-  lnGroup.appendChild(lnLabel);
-  lnGroup.appendChild(lnInput);
-  form.appendChild(lnGroup);
+  form.fn = mkField('Prénom', 'fn', 'text', contact?.fn || '');
+  form.ln = mkField('Nom', 'ln', 'text', contact?.ln || '');
+  form.bm = mkField('Anniversaire - Mois (1-12)', 'bm', 'number', contact?.bm || '');
+  form.bd = mkField('Anniversaire - Jour (1-31)', 'bd', 'number', contact?.bd || '');
+  form.by = mkField('Anniversaire - Année', 'by', 'number', contact?.by || '');
 
-  // Birthday month
-  const bmGroup = document.createElement('div');
-  bmGroup.style.marginBottom = '12px';
-  const bmLabel = document.createElement('label');
-  bmLabel.textContent = 'Anniversaire - Mois (1-12):';
-  bmLabel.style.display = 'block';
-  bmLabel.style.marginBottom = '4px';
-  bmLabel.style.fontWeight = '500';
-  const bmInput = document.createElement('input');
-  bmInput.type = 'number';
-  bmInput.name = 'bm';
-  bmInput.min = '1';
-  bmInput.max = '12';
-  bmInput.value = contact?.bm || '';
-  bmInput.style.width = '100%';
-  bmInput.style.padding = '6px';
-  bmInput.style.border = '1px solid var(--border)';
-  bmInput.style.borderRadius = '4px';
-  bmInput.style.boxSizing = 'border-box';
-  bmGroup.appendChild(bmLabel);
-  bmGroup.appendChild(bmInput);
-  form.appendChild(bmGroup);
-
-  // Birthday day
-  const bdGroup = document.createElement('div');
-  bdGroup.style.marginBottom = '12px';
-  const bdLabel = document.createElement('label');
-  bdLabel.textContent = 'Anniversaire - Jour (1-31):';
-  bdLabel.style.display = 'block';
-  bdLabel.style.marginBottom = '4px';
-  bdLabel.style.fontWeight = '500';
-  const bdInput = document.createElement('input');
-  bdInput.type = 'number';
-  bdInput.name = 'bd';
-  bdInput.min = '1';
-  bdInput.max = '31';
-  bdInput.value = contact?.bd || '';
-  bdInput.style.width = '100%';
-  bdInput.style.padding = '6px';
-  bdInput.style.border = '1px solid var(--border)';
-  bdInput.style.borderRadius = '4px';
-  bdInput.style.boxSizing = 'border-box';
-  bdGroup.appendChild(bdLabel);
-  bdGroup.appendChild(bdInput);
-  form.appendChild(bdGroup);
-
-  // Birthday year
-  const byGroup = document.createElement('div');
-  byGroup.style.marginBottom = '12px';
-  const byLabel = document.createElement('label');
-  byLabel.textContent = 'Anniversaire - Année (optionnel):';
-  byLabel.style.display = 'block';
-  byLabel.style.marginBottom = '4px';
-  byLabel.style.fontWeight = '500';
-  const byInput = document.createElement('input');
-  byInput.type = 'number';
-  byInput.name = 'by';
-  byInput.value = contact?.by || '';
-  byInput.style.width = '100%';
-  byInput.style.padding = '6px';
-  byInput.style.border = '1px solid var(--border)';
-  byInput.style.borderRadius = '4px';
-  byInput.style.boxSizing = 'border-box';
-  byGroup.appendChild(byLabel);
-  byGroup.appendChild(byInput);
-  form.appendChild(byGroup);
-
-  // Tags
-  const tagsGroup = document.createElement('div');
-  tagsGroup.style.marginBottom = '16px';
+  // Tags picker (with toggle buttons)
+  const tagsDiv = document.createElement('div');
+  tagsDiv.style.cssText = 'display:flex;flex-direction:column;gap:5px;margin-bottom:16px;';
   const tagsLabel = document.createElement('label');
-  tagsLabel.textContent = 'Tags (séparés par des virgules):';
-  tagsLabel.style.display = 'block';
-  tagsLabel.style.marginBottom = '4px';
-  tagsLabel.style.fontWeight = '500';
-  const tagsInput = document.createElement('input');
-  tagsInput.type = 'text';
-  tagsInput.name = 'tags';
-  tagsInput.value = (contact?.tags || []).join(', ');
-  tagsInput.style.width = '100%';
-  tagsInput.style.padding = '6px';
-  tagsInput.style.border = '1px solid var(--border)';
-  tagsInput.style.borderRadius = '4px';
-  tagsInput.style.boxSizing = 'border-box';
-  tagsGroup.appendChild(tagsLabel);
-  tagsGroup.appendChild(tagsInput);
-  form.appendChild(tagsGroup);
+  tagsLabel.style.cssText = 'font-family:"DM Sans",sans-serif;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;';
+  tagsLabel.textContent = 'Tags';
+  tagsDiv.appendChild(tagsLabel);
+
+  const picker = document.createElement('div');
+  picker.className = 'ct-tags-picker';
+  picker.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;';
+  
+  const curTags = contact?.tags || [];
+  groups.forEach(g => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ct-tag-toggle' + (curTags.includes(g) ? ' selected' : '');
+    btn.textContent = g;
+    btn.style.cssText = `
+      padding:4px 12px;border-radius:16px;border:1.5px solid var(--border);
+      background:var(--surface);color:var(--text);
+      font-family:"DM Sans",sans-serif;font-size:.78rem;cursor:pointer;transition:all .12s;
+      ${curTags.includes(g) ? `background:${ctTagColor(g, groups)};color:white;border-color:transparent;font-weight:600;` : ''}
+    `;
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      btn.classList.toggle('selected');
+      const col = ctTagColor(g, groups);
+      if (btn.classList.contains('selected')) {
+        btn.style.background = col;
+        btn.style.color = 'white';
+        btn.style.borderColor = 'transparent';
+        btn.style.fontWeight = '600';
+      } else {
+        btn.style.background = 'var(--surface)';
+        btn.style.color = 'var(--text)';
+        btn.style.borderColor = 'var(--border)';
+        btn.style.fontWeight = 'normal';
+      }
+    });
+    picker.appendChild(btn);
+  });
+
+  tagsDiv.appendChild(picker);
+  form.appendChild(tagsDiv);
 
   // Buttons
   const btnGroup = document.createElement('div');
-  btnGroup.style.display = 'flex';
-  btnGroup.style.gap = '8px';
-  btnGroup.style.marginTop = '16px';
+  btnGroup.style.cssText = 'display:flex;gap:8px;margin-top:16px;';
 
   const saveBtn = document.createElement('button');
   saveBtn.type = 'submit';
   saveBtn.textContent = contact ? 'Mettre à jour' : 'Créer';
-  saveBtn.style.flex = '1';
-  saveBtn.style.padding = '8px';
-  saveBtn.style.background = 'var(--accent)';
-  saveBtn.style.color = 'white';
-  saveBtn.style.border = 'none';
-  saveBtn.style.borderRadius = '4px';
-  saveBtn.style.cursor = 'pointer';
-  saveBtn.style.fontWeight = '500';
+  saveBtn.style.cssText = 'flex:1;padding:8px;background:var(--accent);color:white;border:none;border-radius:4px;cursor:pointer;font-weight:500;';
   btnGroup.appendChild(saveBtn);
 
   const cancelBtn = document.createElement('button');
   cancelBtn.type = 'button';
   cancelBtn.textContent = 'Annuler';
-  cancelBtn.style.flex = '1';
-  cancelBtn.style.padding = '8px';
-  cancelBtn.style.background = '#ddd';
-  cancelBtn.style.border = 'none';
-  cancelBtn.style.borderRadius = '4px';
-  cancelBtn.style.cursor = 'pointer';
+  cancelBtn.style.cssText = 'flex:1;padding:8px;background:#ddd;border:none;border-radius:4px;cursor:pointer';
   cancelBtn.addEventListener('click', () => modal.remove());
   btnGroup.appendChild(cancelBtn);
 
   form.appendChild(btnGroup);
   content.appendChild(form);
-
-  // Close on background click
   modal.appendChild(content);
+
   modal.addEventListener('click', (e) => {
     if (e.target === modal) modal.remove();
   });
 
   document.body.appendChild(modal);
-  fnInput.focus();
+  form.fn.focus();
 }
 
 /**
- * Show groups modal
+ * Show groups/tags management modal
  */
 function ctShowGroupsModal() {
-  console.log('⚙️ Showing groups modal');
-  alert('Gestion des tags - À implémenter');
-}
+  console.log('⚙️ Groups modal');
+  const groups = ctLoadGroups();
 
-/**
- * Helper: Generate unique key for contact
- */
-function ctKey(c) {
-  return `${c.fn}|${c.ln}|${c.bm}-${c.bd}`;
+  const modal = document.createElement('div');
+  modal.id = 'ctGrpModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;display:flex;align-items:center;justify-content:center;';
+
+  const content = document.createElement('div');
+  content.style.cssText = 'background:white;padding:24px;border-radius:8px;max-width:400px;width:90%;max-height:70vh;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.15);';
+
+  const title = document.createElement('h2');
+  title.textContent = 'Gérer les Tags';
+  title.style.marginBottom = '16px';
+  content.appendChild(title);
+
+  const list = document.createElement('div');
+  list.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:16px;';
+
+  groups.forEach((g, idx) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:8px;align-items:center;';
+
+    const badge = document.createElement('span');
+    badge.style.cssText = `width:12px;height:12px;border-radius:50%;background:${ctTagColor(g, groups)};flex-shrink:0;`;
+    row.appendChild(badge);
+
+    const name = document.createElement('span');
+    name.textContent = g;
+    name.style.flex = '1';
+    row.appendChild(name);
+
+    const delBtn = document.createElement('button');
+    delBtn.textContent = '✕';
+    delBtn.style.cssText = 'padding:4px 8px;background:#fee;border:1px solid #f99;border-radius:4px;cursor:pointer;color:#c33;font-size:.85rem;';
+    delBtn.addEventListener('click', () => {
+      if (confirm(`Supprimer le tag "${g}" ?`)) {
+        const updated = groups.filter((x, i) => i !== idx);
+        ctSaveGroups(updated);
+        modal.remove();
+        ctShowGroupsModal();
+      }
+    });
+    row.appendChild(delBtn);
+
+    list.appendChild(row);
+  });
+
+  content.appendChild(list);
+
+  // Add new tag
+  const addForm = document.createElement('form');
+  addForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newTag = addForm.newTag.value.trim();
+    if (newTag && !groups.includes(newTag)) {
+      groups.push(newTag);
+      groups.sort();
+      ctSaveGroups(groups);
+      modal.remove();
+      ctShowGroupsModal();
+    }
+  });
+
+  const addLabel = document.createElement('label');
+  addLabel.style.cssText = 'display:block;font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px;';
+  addLabel.textContent = 'Ajouter un tag';
+  addForm.appendChild(addLabel);
+
+  const addInput = document.createElement('input');
+  addInput.type = 'text';
+  addInput.name = 'newTag';
+  addInput.placeholder = 'Nouveau tag…';
+  addInput.style.cssText = 'width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;box-sizing:border-box;margin-bottom:8px;';
+  addForm.appendChild(addInput);
+
+  const addBtn = document.createElement('button');
+  addBtn.type = 'submit';
+  addBtn.textContent = 'Ajouter';
+  addBtn.style.cssText = 'width:100%;padding:8px;background:var(--accent);color:white;border:none;border-radius:4px;cursor:pointer;font-weight:500;';
+  addForm.appendChild(addBtn);
+
+  content.appendChild(addForm);
+
+  // Close button
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent = 'Fermer';
+  closeBtn.style.cssText = 'width:100%;padding:8px;background:#ddd;border:none;border-radius:4px;cursor:pointer;margin-top:8px;';
+  closeBtn.addEventListener('click', () => modal.remove());
+  content.appendChild(closeBtn);
+
+  modal.appendChild(content);
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+
+  document.body.appendChild(modal);
+  addInput.focus();
 }
 
 /**
