@@ -27,6 +27,11 @@ body {
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 40px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* HEADER */
@@ -34,9 +39,12 @@ body {
 header {
   background: var(--text);
   color: #f4f1eb;
-  position: sticky; top:0; z-index:200;
+  position: sticky;
+  top: 0;
+  z-index: 200;
   box-shadow: 0 2px 16px rgba(0,0,0,.22);
-  display: flex; flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Top row */
@@ -116,6 +124,30 @@ header {
 .sub-sep { display:none; }
 .btn-subview { display:none; }
 .year-display { display:none; }
+
+/* Login and App Views */
+#loginView {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--text) 0%, #3a3530 100%);
+  min-height: calc(100vh - 40px);
+  padding: 20px 20px 20px 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#appView {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 92px);
+  background: var(--bg);
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
 
 /* STICKY MONTH TABS STRIP */
 .strip-wrapper {
@@ -2806,6 +2838,9 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 /* User Menu Dropdown */
 .user-menu-wrap {
   position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 201;
 }
 
 .user-menu-btn {
@@ -2829,23 +2864,24 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 }
 
 .user-dropdown-menu {
-  display: none;
+  display: none !important;
   position: absolute;
-  right: 0;
-  top: calc(100% + 8px);
+  right: -20px;
+  top: 100%;
   background: #2a2824;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-  min-width: 180px;
-  z-index: 500;
-  overflow: hidden;
-  padding: 4px 0;
-  animation: ddFadeIn 0.12s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  min-width: 200px;
+  z-index: 9999;
+  overflow: visible;
+  padding: 6px 0;
+  margin-top: 8px;
 }
 
 .user-dropdown-menu.open {
-  display: block;
+  display: block !important;
+  animation: ddFadeIn 0.12s ease;
 }
 
 .user-dd-item {
@@ -2898,7 +2934,7 @@ footer {
   height: 32px;
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.5);
-  z-index: 100;
+  z-index: 10000;
   font-family: 'Courier New', monospace;
 }
 
@@ -9047,15 +9083,21 @@ function setupUserMenu() {
     return;
   }
 
+  console.log('✅ Setting up user menu...');
+
   // Toggle dropdown
   userMenuBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    console.log('User menu button clicked');
     userDropdown.classList.toggle('open');
   });
 
   // Close dropdown when clicking outside
   document.addEventListener('click', (e) => {
-    if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+    const isClickInside = userMenuBtn.contains(e.target) || userDropdown.contains(e.target);
+    if (!isClickInside && userDropdown.classList.contains('open')) {
+      console.log('Clicking outside, closing dropdown');
       userDropdown.classList.remove('open');
     }
   });
@@ -9397,6 +9439,12 @@ function setupLoginForm() {
     if (!result.success) {
       loginError.textContent = result.error || 'Erreur de connexion';
       btn.disabled = false;
+      btn.textContent = 'Se connecter';
+    } else {
+      // Clear form on success
+      loginForm.reset();
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPassword').value = '';
       btn.textContent = 'Se connecter';
     }
     // Success: showPlannerView will be called by auth state change
