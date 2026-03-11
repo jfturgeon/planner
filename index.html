@@ -8404,12 +8404,29 @@ function ctInitView() {
   const view = document.getElementById('contactsView');
   if (_ctViewInit) return;
   _ctViewInit = true;
-  view.innerHTML = '';
-
-  const wrap = document.createElement('div'); wrap.className = 'ct-view';
+  
+  // Check if component is already loaded with structure
+  let wrap = view.querySelector('.ct-view');
+  let isComponentLoaded = wrap !== null;
+  
+  if (!isComponentLoaded) {
+    // Component not loaded, create full structure
+    view.innerHTML = '';
+    wrap = document.createElement('div'); wrap.className = 'ct-view';
+  } else {
+    // Component is loaded, clear only the dynamic content
+    // but keep the wrapper and container structure
+  }
 
   // ── Toolbar ──
-  const toolbar = document.createElement('div'); toolbar.className = 'ct-toolbar';
+  let toolbar = view.querySelector('.ct-toolbar');
+  if (!toolbar) {
+    toolbar = document.createElement('div'); toolbar.className = 'ct-toolbar';
+    wrap.appendChild(toolbar);
+  } else {
+    toolbar.innerHTML = ''; // Clear existing toolbar
+  }
+  
   const title = document.createElement('div'); title.className = 'ct-view-title'; title.textContent = '👥 Contacts';
   toolbar.appendChild(title);
 
@@ -8445,14 +8462,27 @@ function ctInitView() {
   grpBtn.textContent = '⚙ Tags';
   grpBtn.addEventListener('click', ctShowGroupsModal);
   toolbar.appendChild(grpBtn);
-  wrap.appendChild(toolbar);
 
   // ── Tag Pills ──
-  _ctPillsEl = document.createElement('div'); _ctPillsEl.id = 'ctGroupPills'; _ctPillsEl.className = 'ct-group-pills';
-  wrap.appendChild(_ctPillsEl);
+  _ctPillsEl = document.getElementById('ctPillsContainer') || document.createElement('div');
+  if (!_ctPillsEl.id) {
+    _ctPillsEl.id = 'ctGroupPills';
+    _ctPillsEl.className = 'ct-group-pills';
+    wrap.appendChild(_ctPillsEl);
+  } else {
+    _ctPillsEl.className = 'ct-group-pills';
+    _ctPillsEl.innerHTML = '';
+  }
 
   // ── Table ──
-  const tableWrap = document.createElement('div'); tableWrap.className = 'ct-table-wrap';
+  let tableWrap = view.querySelector('.ct-table-wrap');
+  if (!tableWrap) {
+    tableWrap = document.createElement('div'); tableWrap.className = 'ct-table-wrap';
+    wrap.appendChild(tableWrap);
+  } else {
+    tableWrap.innerHTML = '';
+  }
+  
   const table = document.createElement('table'); table.className = 'ct-table';
 
   const thead = document.createElement('thead');
@@ -8477,13 +8507,23 @@ function ctInitView() {
 
   _ctTableBody = document.createElement('tbody');
   table.appendChild(_ctTableBody);
-  tableWrap.appendChild(table); wrap.appendChild(tableWrap);
+  tableWrap.appendChild(table);
 
   // ── Pager ──
-  _ctPagerEl = document.createElement('div'); _ctPagerEl.className = 'ct-pager';
-  wrap.appendChild(_ctPagerEl);
+  _ctPagerEl = document.getElementById('ctPagerContainer') || document.createElement('div');
+  if (!_ctPagerEl.className) {
+    _ctPagerEl.className = 'ct-pager';
+    wrap.appendChild(_ctPagerEl);
+  } else {
+    _ctPagerEl.className = 'ct-pager';
+    _ctPagerEl.innerHTML = '';
+  }
 
-  view.appendChild(wrap);
+  // Add wrap to view if it's new
+  if (!isComponentLoaded) {
+    view.appendChild(wrap);
+  }
+  
   ctRenderPills(); ctRenderBody(); ctRenderPager();
 }
 
@@ -8937,7 +8977,7 @@ function attachContactsButtonEvent() {
   const btnContacts = document.getElementById('btnContacts');
   if (!btnContacts) return;
   
-  btnContacts.addEventListener('click', () => {
+  btnContacts.addEventListener('click', async () => {
     ['trackerView','kanbanView','scrollArea','monthView','weeklyView'].forEach(id=>{
       const el=document.getElementById(id); if(el) el.style.display='none';
     });
@@ -8945,7 +8985,16 @@ function attachContactsButtonEvent() {
     document.querySelectorAll('.btn-view,.btn-subview').forEach(b=>b.classList.remove('active'));
     document.getElementById('btnContacts').classList.add('active');
     const subHdr=document.querySelector('.header-sub'); if(subHdr) subHdr.style.display='none';
-    const cv=document.getElementById('contactsView'); cv.style.display='flex';
+    const cv=document.getElementById('contactsView');
+    
+    // Load contacts component if not already loaded
+    if (!cv.innerHTML.trim()) {
+      console.log('Loading contacts component...');
+      await ComponentLoader.loadComponent('src/components/contacts.html', '#contactsView');
+      console.log('Contacts component loaded');
+    }
+    
+    cv.style.display='flex';
     ctInitView();
     ctRenderPills(); ctRenderBody(); ctRenderPager();
   });
