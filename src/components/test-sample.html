@@ -1,0 +1,19 @@
+<div style="padding: 16px; background: #f0f4f8; border-radius: 8px; border-left: 4px solid #2d6bbf;">
+  <h3 style="margin: 0 0 12px 0; color: #2d6bbf; font-family: 'DM Serif Display', serif; font-size: 1.1rem;">
+    ✨ Component Test Sample
+  </h3>
+  <p style="margin: 0 0 8px 0; color: #666; font-size: 0.9rem;">
+    Ceci est un composant externe chargé dynamiquement via le ComponentLoader!
+  </p>
+  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <button onclick="alert('✓ Test Button 1 - Composant fonctionnel!')" style="padding: 8px 12px; background: #2d6bbf; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+      Test Button 1
+    </button>
+    <button onclick="alert('✓ Test Button 2 - Système de components opérationnel!')" style="padding: 8px 12px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+      Test Button 2
+    </button>
+    <button onclick="this.closest('[data-component-test]').remove()" style="padding: 8px 12px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+      Fermer
+    </button>
+  </div>
+</div>

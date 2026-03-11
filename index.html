@@ -3214,6 +3214,9 @@ footer {
 <!-- Header Component (loaded from src/components/header.html) -->
 <div id="app-header"></div>
 
+<!-- Test Component Container -->
+<div id="test-component-container" style="margin: 16px; display: none;"></div>
+
 <div id="annualView" style="display:none">
   <div class="strip-wrapper"><div class="strip" id="strip"></div></div>
   <div class="scroll-area" id="scrollArea">
@@ -9880,9 +9883,35 @@ window.saveHabitsWithSync = async (h) => {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       ComponentLoader.loadComponent('src/components/header.html', '#app-header');
+      setupComponentLoaderEvents();
     });
   } else {
     ComponentLoader.loadComponent('src/components/header.html', '#app-header');
+    setupComponentLoaderEvents();
+  }
+
+  // Configuration des événements de test du component loader
+  function setupComponentLoaderEvents() {
+    const btnTest = document.getElementById('btnTestComponent');
+    if (btnTest) {
+      btnTest.addEventListener('click', () => {
+        const container = document.getElementById('test-component-container');
+        if (container) {
+          const isVisible = container.style.display !== 'none';
+          if (isVisible) {
+            // Fermer le conteneur
+            container.style.display = 'none';
+            btnTest.style.opacity = '0.7';
+          } else {
+            // Charger et afficher le composant test
+            container.style.display = 'block';
+            btnTest.style.opacity = '1';
+            container.innerHTML = '<p style="text-align: center; color: #999;">Chargement...</p>';
+            ComponentLoader.loadComponent('src/components/test-sample.html', '#test-component-container');
+          }
+        }
+      });
+    }
   }
 })();
 </script>
