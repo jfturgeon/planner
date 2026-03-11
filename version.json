@@ -1,8 +1,9 @@
 {
-    "version": "1.2.1",
-    "buildNumber": 16,
+    "version": "1.2.2",
+    "buildNumber": 17,
     "lastUpdate": "2026-03-11",
     "changelog": [
+        "1.2.2 (Build 17): Fix signup form display and footer version display",
         "1.2.1 (Build 16): Fix fragment loading and login form initialization",
         "1.2.0 (Build 15): Phase 6 - HTML refactorization into modular fragments",
         "1.1.11 (Build 14): Phase 5 - Add view buttons and navigation controls",

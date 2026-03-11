@@ -80,6 +80,12 @@ const FragmentLoader = {
     
     document.body.insertBefore(appView, document.body.querySelector('footer'));
     
+    // Load and display version
+    if (typeof loadVersion === 'function') {
+      await loadVersion();
+      console.log('✅ Version loaded and displayed');
+    }
+    
     // Setup login form (from supabase-auth-ui.js)
     if (typeof setupLoginForm === 'function') {
       setupLoginForm();

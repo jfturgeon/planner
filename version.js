@@ -26,7 +26,14 @@ function displayVersion() {
   // Display in console
   console.log(`%c🚀 Planificateur v${appVersion.version}`, 'color: #10b981; font-weight: bold; font-size: 12px;');
   
-  // Add version badge to page (if element exists)
+  // Add version to footer (if element exists)
+  const footerVersion = document.getElementById('footerVersion');
+  if (footerVersion) {
+    footerVersion.textContent = `v${appVersion.version} (Build ${appVersion.buildNumber})`;
+    footerVersion.title = `Updated: ${appVersion.lastUpdate}`;
+  }
+  
+  // Also check for versionBadge (backward compatibility)
   const versionBadge = document.getElementById('versionBadge');
   if (versionBadge) {
     versionBadge.textContent = `v${appVersion.version}`;
