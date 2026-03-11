@@ -7723,29 +7723,16 @@ function kbUid() { return 'kb_' + Date.now() + '_' + Math.random().toString(36).
 // ── RENDER ──────────────────────────────────────────────────────────────────
 function renderKanban() {
   const view = document.getElementById('kanbanView');
+  if (!view) return;
   
-  // Check if we have the component structure
-  let toolbar = view.querySelector('.kb-toolbar');
-  let board = view.querySelector('.kb-board');
-  let isComponentLoaded = board !== null;
-  
-  if (!isComponentLoaded) {
-    // Component not loaded, create full structure
-    view.innerHTML = '';
-    toolbar = document.createElement('div'); toolbar.className = 'kb-toolbar';
-    board = document.createElement('div'); board.id = 'kbBoard';
-    view.appendChild(toolbar);
-    view.appendChild(board);
-  } else {
-    // Clear existing toolbar and board content
-    if (toolbar) toolbar.innerHTML = '';
-    if (board) board.innerHTML = '';
-  }
+  // Always clear and recreate structure to avoid DOM issues
+  view.innerHTML = '';
 
   const statuses = kbLoadStatuses();
   const allCards = kbLoadCards();
 
   // Toolbar: progress bar only
+  const toolbar = document.createElement('div'); toolbar.className = 'kb-toolbar';
   const yearCards = allCards.filter(c => c.year === kbActiveYear);
   const doneStatus = statuses.find(s => s.id === 'done' || s.label.toLowerCase().includes('complét') || s.label.toLowerCase().includes('done'));
   const doneCount = doneStatus ? yearCards.filter(c => c.statusId === doneStatus.id).length : 0;
@@ -7780,11 +7767,14 @@ function renderKanban() {
     kbSaveStatuses(s); renderKanban();
   });
   toolbar.appendChild(addColBtn);
+  view.appendChild(toolbar);
 
   // Board
+  const board = document.createElement('div');
   board.className = 'kb-board' + (kbCompactView ? ' kb-board-compact' : '');
   const cards = allCards.filter(c => c.year === kbActiveYear);
   statuses.forEach(status => board.appendChild(kbBuildColumn(status, cards)));
+  view.appendChild(board);
 }
 
 // ── COLUMN ──────────────────────────────────────────────────────────────────
