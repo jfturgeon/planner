@@ -25,8 +25,21 @@ const ComponentLoader = {
       
       target.innerHTML = html;
       console.log(`✓ Component loaded: ${componentPath}`);
+      
+      // Émettre un événement personnalisé quand le composant est chargé
+      const event = new CustomEvent('componentLoaded', { 
+        detail: { path: componentPath, target: targetSelector }
+      });
+      document.dispatchEvent(event);
+      
+      // Retourner une Promise résolue après un petit délai
+      return new Promise(resolve => {
+        // Donner le temps au navigateur de rendre le DOM
+        setTimeout(() => resolve(), 0);
+      });
     } catch (error) {
       console.error(`✗ Error loading component ${componentPath}:`, error);
+      return Promise.reject(error);
     }
   },
 
@@ -48,11 +61,11 @@ const ComponentLoader = {
    */
   loadWhenReady(componentPath, targetSelector) {
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => {
-        this.loadComponent(componentPath, targetSelector);
+      document.addEventListener('DOMContentLoaded', async () => {
+        await this.loadComponent(componentPath, targetSelector);
       });
     } else {
-      this.loadComponent(componentPath, targetSelector);
+      return this.loadComponent(componentPath, targetSelector);
     }
   }
 };

@@ -9878,43 +9878,63 @@ window.saveHabitsWithSync = async (h) => {
 // COMPONENT LOADER - Charge les composants HTML externes
 // ═══════════════════════════════════════════════════════════════════════════
 
-(function() {
-  // Charge le header dès que le DOM est prêt
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      ComponentLoader.loadComponent('src/components/header.html', '#app-header');
-      setupComponentLoaderEvents();
+(async function() {
+  // Fonction pour attendre que le DOM soit prêt
+  async function waitForDOM() {
+    return new Promise(resolve => {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', resolve);
+      } else {
+        resolve();
+      }
     });
-  } else {
-    ComponentLoader.loadComponent('src/components/header.html', '#app-header');
-    setupComponentLoaderEvents();
   }
 
-  // Configuration des événements de test du component loader
-  function setupComponentLoaderEvents() {
-    debugger;
-    const btnTest = document.getElementById('btnTestComponent');
-    if (btnTest) {
-      btnTest.addEventListener('click', () => {
-        const container = document.getElementById('test-component-container');
-        if (container) {
-          const isVisible = container.style.display !== 'none';
-          if (isVisible) {
-            // Fermer le conteneur
-            container.style.display = 'none';
-            btnTest.style.opacity = '0.7';
-          } else {
-            // Charger et afficher le composant test
-            container.style.display = 'block';
-            btnTest.style.opacity = '1';
-            container.innerHTML = '<p style="text-align: center; color: #999;">Chargement...</p>';
-            ComponentLoader.loadComponent('src/components/test-sample.html', '#test-component-container');
-          }
-        }
-      });
-    }
-  }
+  // Attendre que le DOM soit prêt
+  await waitForDOM();
+
+  // Charger le header
+  console.log('Loading header component...');
+  await ComponentLoader.loadComponent('src/components/header.html', '#app-header');
+  
+  // Configuration des événements - APRÈS le chargement du header
+  setupComponentLoaderEvents();
 })();
+
+// Configuration des événements de test du component loader
+function setupComponentLoaderEvents() {
+  console.log('Setting up component loader events...');
+  
+  const btnTest = document.getElementById('btnTestComponent');
+  console.log('btnTest found:', btnTest ? '✓ Yes' : '✗ No');
+  
+  if (btnTest) {
+    btnTest.addEventListener('click', async () => {
+      console.log('Test button clicked!');
+      const container = document.getElementById('test-component-container');
+      if (container) {
+        const isVisible = container.style.display !== 'none';
+        if (isVisible) {
+          // Fermer le conteneur
+          container.style.display = 'none';
+          btnTest.style.opacity = '0.7';
+          console.log('Component container hidden');
+        } else {
+          // Charger et afficher le composant test
+          container.style.display = 'block';
+          btnTest.style.opacity = '1';
+          container.innerHTML = '<p style="text-align: center; color: #999;">Chargement...</p>';
+          console.log('Loading test component...');
+          await ComponentLoader.loadComponent('src/components/test-sample.html', '#test-component-container');
+          console.log('Test component loaded successfully!');
+        }
+      }
+    });
+    console.log('✓ Test button event listener attached');
+  } else {
+    console.warn('⚠ btnTestComponent not found in DOM');
+  }
+}
 </script>
 
 </body>
