@@ -7136,7 +7136,19 @@ const trOpenSeasons = new Set(); // tracks 'seriesId_sn' keys
 // ── RENDER TRACKER VIEW ────────────────────────────────────────────────────
 function renderTracker() {
   const view = document.getElementById('trackerView');
-  view.innerHTML = '';
+  if (!view) return;
+  
+  // Clear only the main content, keep the component wrapper
+  let content = view.querySelector('#trackerContent');
+  if (!content) {
+    // Component not loaded, clear and recreate
+    view.innerHTML = '';
+    content = document.createElement('div');
+    content.id = 'trackerContent';
+    view.appendChild(content);
+  } else {
+    content.innerHTML = '';
+  }
 
   const watched = trLoadWatched();
 
@@ -7172,9 +7184,9 @@ function renderTracker() {
   ctrlRow.appendChild(toggleTitlesBtn);
 
   hdr.appendChild(ctrlRow);
-  view.appendChild(hdr);
+  content.appendChild(hdr);
 
-  if (trShowOscars) { renderOscarsSection(view); return; }
+  if (trShowOscars) { renderOscarsSection(content); return; }
 
   const show = TRACKER_SHOWS.find(s => s.id === trCurrentShow);
   if (!show) return;
@@ -7196,10 +7208,10 @@ function renderTracker() {
   const stTotal = document.createElement('div'); stTotal.className = 'tr-stat';
   stTotal.innerHTML = `<div class="tr-stat-num" style="color:var(--accent)">${watchedAll}/${totalAll}</div><div class="tr-stat-lbl">Total (${totalAll ? Math.round(watchedAll/totalAll*100) : 0}%)</div>`;
   statsBar.appendChild(stTotal);
-  view.appendChild(statsBar);
+  content.appendChild(statsBar);
 
-  // Content
-  const content = document.createElement('div'); content.className = 'tr-content';
+  // Main content wrapper
+  const mainContent = document.createElement('div'); mainContent.className = 'tr-content';
 
   // Series list (left sidebar)
   const serList = document.createElement('div'); serList.className = 'tr-series-list';
@@ -7216,7 +7228,7 @@ function renderTracker() {
     btn.addEventListener('click', () => { trCurrentSeries = ser.id; renderTracker(); });
     serList.appendChild(btn);
   });
-  content.appendChild(serList);
+  mainContent.appendChild(serList);
 
   // Seasons + episodes
   const seasonsDiv = document.createElement('div'); seasonsDiv.className = 'tr-seasons';
@@ -7337,8 +7349,8 @@ function renderTracker() {
       seasonsDiv.appendChild(seasonDiv);
     });
   }
-  content.appendChild(seasonsDiv);
-  view.appendChild(content);
+  mainContent.appendChild(seasonsDiv);
+  content.appendChild(mainContent);
 }
 
 // ── WEEKLY SCHEDULE IN DAY COLUMNS ─────────────────────────────────────────
@@ -7664,7 +7676,7 @@ function attachTrackerButtonEvent() {
   const btnTracker = document.getElementById('btnTracker');
   if (!btnTracker) return;
   
-  btnTracker.addEventListener('click', () => {
+  btnTracker.addEventListener('click', async () => {
     ['kanbanView','contactsView','scrollArea','monthView','weeklyView'].forEach(id=>{
       const el=document.getElementById(id); if(el) el.style.display='none';
     });
@@ -7672,7 +7684,16 @@ function attachTrackerButtonEvent() {
     document.querySelectorAll('.btn-view,.btn-subview').forEach(b => b.classList.remove('active'));
     document.getElementById('btnTracker').classList.add('active');
     const subHdr=document.querySelector('.header-sub'); if(subHdr) subHdr.style.display='none';
-    document.getElementById('trackerView').style.display = 'block';
+    const tv=document.getElementById('trackerView');
+    
+    // Load tracker component if not already loaded
+    if (!tv.innerHTML.trim()) {
+      console.log('Loading tracker component...');
+      await ComponentLoader.loadComponent('src/components/tracker.html', '#trackerView');
+      console.log('Tracker component loaded');
+    }
+    
+    tv.style.display = 'block';
     renderTracker();
   });
 }
