@@ -1,8 +1,9 @@
 {
-  "version": "1.2.3",
-  "buildNumber": 16,
+  "version": "1.2.4",
+  "buildNumber": 17,
   "lastUpdate": "2026-03-11",
   "changelog": [
+    "1.2.4 (Build 17): Updated",
     "1.2.3 (Build 16): Updated",
     "1.2.2 (Build 15): Reorganize project structure - move .md files to docs, .js files to src/lib",
     "1.2.1 (Build 14): Add Tailwind CSS and FontAwesome integration",
