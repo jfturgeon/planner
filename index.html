@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planificateur Annuel</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-
-<!-- Modular CSS Imports -->
 <style>
 :root {
   --bg: #f0ede6;
@@ -447,18 +445,6 @@ textarea.notes-ta:focus { outline:none; border-color:var(--accent2); }
 }
 .btn-view.active { background:#e8a87c; color:#25231f; border-color:#e8a87c; }
 .btn-view:hover:not(.active) { background:#3d3a35; color:#f4f1eb; }
-
-/* Navigation buttons */
-.nav-btn:hover {
-  background: rgba(255,255,255,.15) !important;
-  color: #fff !important;
-  border-color: rgba(255,255,255,.4) !important;
-}
-.nav-btn.today:hover {
-  background: #e8a87c22 !important;
-  color: #e8a87c !important;
-  border-color: #e8a87c !important;
-}
 
 /* ── MONTH VIEW ── */
 #monthView {
@@ -3229,13 +3215,8 @@ footer {
         <button class="btn-view btn-calendars" id="btnCalendars">📆 Calendriers</button>
         <button class="btn-view btn-agenda active" id="btnWeekly2">📅 Agenda</button>
       </nav>
-      <!-- Navigation Controls -->
-      <div class="nav-controls" style="display:flex; align-items:center; gap:8px; margin-left:20px; padding-left:20px; border-left:1px solid rgba(255,255,255,.2);">
-        <button id="prevBtn" class="nav-btn" title="Période précédente" style="padding:6px 12px; border-radius:6px; border:1px solid rgba(255,255,255,.2); background:transparent; color:#ccc; cursor:pointer; font-size:.9rem;">‹</button>
-        <span id="navLabel" style="color:#f4f1eb; font-weight:500; min-width:180px; text-align:center; font-size:.9rem;">Mars 2026</span>
-        <button id="nextBtn" class="nav-btn" title="Période suivante" style="padding:6px 12px; border-radius:6px; border:1px solid rgba(255,255,255,.2); background:transparent; color:#ccc; cursor:pointer; font-size:.9rem;">›</button>
-        <button id="todayBtn" class="nav-btn today" title="Aller à aujourd'hui" style="padding:6px 14px; border-radius:6px; border:1px solid rgba(232,168,124,.5); background:transparent; color:#e8a87c; cursor:pointer; font-size:.9rem; margin-left:8px;">Aujourd'hui</button>
-      </div>
+      <!-- User Menu Dropdown -->
+      <div class="user-menu-wrap">
         <button class="user-menu-btn" id="btnUserMenu" title="Menu utilisateur">⚙</button>
         <div class="user-dropdown-menu" id="userDropdown">
           <button class="user-dd-item" id="menuProfile">👤 Mon Profil</button>
@@ -10320,27 +10301,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
-
-<!-- ──────────────────────────────────────────────────────────────────────
-     PHASE 3: MAIN APPLICATION MODULE  
-     Import modular application bootstrapper
-     This initializes all extracted modules:
-     - Core: constants, helpers, persistence, notifications
-     - Views: annual, month, habits, tracker, kanban, contacts
-     - CSS: base, layout, components, modals, views (linked above)
-     
-     The modular architecture enables:
-     ✓ Independent view development and testing
-     ✓ Reusable utility functions across views
-     ✓ Centralized data persistence layer
-     ✓ Event-driven component communication
-     ✓ Cleaner separation of concerns
-     ✓ Easier maintenance and refactoring
-     
-     Original monolithic file: 10,342 lines
-     Refactored structure: ~5,800 lines extracted to modules
-     ────────────────────────────────────────────────────────────────────-->
-<script type="module" src="./src/index.js"></script>
 
 </body>
 </html>
