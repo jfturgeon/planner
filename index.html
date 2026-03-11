@@ -4205,14 +4205,49 @@ function renderWvLeft(dates, wk, wdata){
   calHeader.className = 'wv-card-hd';
   calHeader.style.cssText = 'display: flex; align-items: center; gap: 8px; cursor: pointer;';
   
-  const calToggle = document.createElement('span');
-  calToggle.textContent = '▼';
-  calToggle.style.cssText = 'font-size: 0.9rem;';
-  calHeader.appendChild(calToggle);
-  
+  // Title (left)
   const calTitle = document.createElement('span');
   calTitle.textContent = 'Calendriers';
+  calTitle.style.cssText = 'flex: 1;';
   calHeader.appendChild(calTitle);
+  
+  // Add button (before toggle)
+  const calAddBtn = document.createElement('button');
+  calAddBtn.textContent = '+';
+  calAddBtn.style.cssText = `
+    padding: 4px 8px;
+    background: var(--border);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+    flex-shrink: 0;
+  `;
+  calAddBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const name = prompt('Nom du calendrier:');
+    if (name) {
+      const calendars = loadCalendars();
+      const colors = ['#2d6bbf', '#d32f2f', '#f57c00', '#fbc02d', '#689f38'];
+      calendars.push({
+        id: 'cal_' + Date.now(),
+        name: name,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        visible: true,
+      });
+      saveCalendars(calendars);
+      updateCalendarsList();
+    }
+  });
+  calHeader.appendChild(calAddBtn);
+  
+  // Toggle (right)
+  const calToggle = document.createElement('span');
+  calToggle.textContent = '▼';
+  calToggle.style.cssText = 'font-size: 0.9rem; flex-shrink: 0;';
+  calHeader.appendChild(calToggle);
   
   let calListVisible = localStorage.getItem('ap_wv_calendars_visible') !== '0';
   
@@ -4267,36 +4302,6 @@ function renderWvLeft(dates, wk, wdata){
       
       calBody.appendChild(item);
     });
-    
-    const addBtn = document.createElement('button');
-    addBtn.textContent = '+ Ajouter';
-    addBtn.style.cssText = `
-      width: 100%;
-      padding: 6px;
-      background: var(--border);
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.75rem;
-      margin-top: 6px;
-      color: var(--text);
-    `;
-    addBtn.addEventListener('click', () => {
-      const name = prompt('Nom du calendrier:');
-      if (name) {
-        const calendars = loadCalendars();
-        const colors = ['#2d6bbf', '#d32f2f', '#f57c00', '#fbc02d', '#689f38'];
-        calendars.push({
-          id: 'cal_' + Date.now(),
-          name: name,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          visible: true,
-        });
-        saveCalendars(calendars);
-        updateCalendarsList();
-      }
-    });
-    calBody.appendChild(addBtn);
   };
   
   updateCalendarsList();
@@ -4311,6 +4316,75 @@ function renderWvLeft(dates, wk, wdata){
   calCard.appendChild(calHeader);
   calCard.appendChild(calBody);
   left.appendChild(calCard);
+
+  // ── FILTERS CARD ──
+  const filterCard = document.createElement('div'); filterCard.className = 'wv-card';
+  
+  const filterHeader = document.createElement('div');
+  filterHeader.className = 'wv-card-hd';
+  filterHeader.style.cssText = 'display: flex; align-items: center; gap: 8px; cursor: pointer;';
+  
+  const filterTitle = document.createElement('span');
+  filterTitle.textContent = 'Filtres';
+  filterTitle.style.cssText = 'flex: 1;';
+  filterHeader.appendChild(filterTitle);
+  
+  const filterToggle = document.createElement('span');
+  filterToggle.textContent = '▼';
+  filterToggle.style.cssText = 'font-size: 0.9rem; flex-shrink: 0;';
+  filterHeader.appendChild(filterToggle);
+  
+  let filterListVisible = localStorage.getItem('ap_wv_filters_visible') !== '0';
+  
+  const filterBody = document.createElement('div');
+  filterBody.id = 'wv-filters-list';
+  filterBody.style.cssText = filterListVisible ? '' : 'display: none;';
+  
+  // Filter options
+  const filterOptions = [
+    { id: 'tasks', label: '✓ Tâches' },
+    { id: 'events', label: '📅 Événements' },
+    { id: 'birthdays', label: '🎂 Anniversaires' },
+    { id: 'episodes', label: '📺 Épisodes' }
+  ];
+  
+  filterOptions.forEach(option => {
+    const item = document.createElement('div');
+    item.style.cssText = `
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      font-size: 0.75rem;
+    `;
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = localStorage.getItem(`ap_wv_filter_${option.id}`) !== '0';
+    checkbox.style.cssText = 'flex-shrink: 0;';
+    checkbox.addEventListener('change', () => {
+      localStorage.setItem(`ap_wv_filter_${option.id}`, checkbox.checked ? '1' : '0');
+    });
+    item.appendChild(checkbox);
+    
+    const label = document.createElement('span');
+    label.textContent = option.label;
+    label.style.cssText = 'color: var(--text);';
+    item.appendChild(label);
+    
+    filterBody.appendChild(item);
+  });
+  
+  filterHeader.addEventListener('click', () => {
+    filterListVisible = !filterListVisible;
+    localStorage.setItem('ap_wv_filters_visible', filterListVisible ? '1' : '0');
+    filterBody.style.display = filterListVisible ? '' : 'none';
+    filterToggle.textContent = filterListVisible ? '▼' : '▶';
+  });
+  
+  filterCard.appendChild(filterHeader);
+  filterCard.appendChild(filterBody);
+  left.appendChild(filterCard);
 
   // ── Daily habits (GLOBAL – shared across all weeks) ──
 
